@@ -1,0 +1,40 @@
+<?php
+session_start();
+if (!isset($_SESSION['username'])) {
+    // Redirect to login if not logged in
+    header('Location: login.html');
+    exit();
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Passenger Ride Booking</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Welcome, <?php echo $_SESSION['username']; ?>! Book your Ride</h1>
+    <a href="logout.php">Logout</a>
+
+    <div id="ride-container">
+        <h2>Available Rides</h2>
+        <div id="ride-list"></div>
+    </div>
+
+    <h2>Book a Ride</h2>
+    <form id="bookingForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+        <label for="ride">Select Ride:</label>
+        <select id="rideSelect" name="ride" required></select>
+        <button type="submit">Book Ride</button>
+    </form>
+
+    <div id="confirmation"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
