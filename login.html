@@ -1,27 +1,28 @@
-<?php
-session_start();
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Jeepney Booking System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Quickie Jeepney</h1>
+    <h3>Booking</h3>
+    <form id="loginForm" action="login.php" method="POST">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        
+        <button type="submit">Log In</button>
+    </form>
 
-$users = [
-    ['username' => 'student', 'password' => 'pass123'],
-    ['username' => 'faculty', 'password' => 'pass456'],
-    ['username' => 'employee', 'password' => 'pass789'],
-];
-
-$username = $_POST['username'];
-$password = $_POST['password'];
-
-$valid = false;
-foreach ($users as $user) {
-    if ($user['username'] == $username && $user['password'] == $password) {
-        $valid = true;
-        break;
-    }
-}
-
-if ($valid) {
-    $_SESSION['username'] = $username;
-    header('Location: index.html');
-} else {
-    header('Location: login.html?error=1');
-}
-?>
+    <div id="error-message">
+        <?php if (isset($_GET['error'])): ?>
+            <p style="color: red;">Invalid login credentials, please try again.</p>
+        <?php endif; ?>
+    </div>
+</body>
+</html>
