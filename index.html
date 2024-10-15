@@ -15,26 +15,35 @@ if (!isset($_SESSION['username'])) {
     <title>Passenger Ride Booking</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <h1>Welcome, <?php echo $_SESSION['username']; ?>! Book your Ride</h1>
-    <a href="logout.php">Logout</a>
-
-    <div id="ride-container">
-        <h2>Available Rides</h2>
-        <div id="ride-list"></div>
-    </div>
-
-    <h2>Book a Ride</h2>
-    <form id="bookingForm">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required>
-        <label for="ride">Select Ride:</label>
-        <select id="rideSelect" name="ride" required></select>
-        <button type="submit">Book Ride</button>
-    </form>
-
-    <div id="confirmation"></div>
+    <div class="background-overlay"></div>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>Quickie Jeepney</h1>
+                <p>BOOKING</p>
+            </div>
+                <form action="#">
+                    <div class="information">
+                        <input type="text" placeholder="Email or Phone" required>
+                    </div>
+                    <div class="information">
+                        <input type="password" placeholder="Password" required>
+                    </div>
+                    <div class="forgot-password">
+                        <a href="#">Forgot Password?</a>
+                    </div>
+                    <button type="submit" class="login-btn">Login</button>
+                    <div class="or-section">
+                        <span>or</span>
+                    </div>
+                    <button type="button" class="create-account-btn">Create an account</button>
+                </form>
+            </div>
+        </div>
 
     <script src="script.js"></script>
+
 </body>
 </html>
