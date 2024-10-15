@@ -1,124 +1,43 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Arial', sans-serif;
-}
-
 body {
-    background-image: url('images/loginpic.png');
-    background-size: cover;
-    background-position: center;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-}
-
-.background-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1;
-}
-
-.login-container {
-    position: relative;
-    z-index: 2;
-    width: 100%;
-    max-width: 400px;
-    display: flex;
-    justify-content: center;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
     padding: 20px;
 }
 
-
-.login-card {
-    width: 100%;
-    background-color: rgba(255, 255, 255, 0.9);
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    text-align: center;
+h1 {
+    color: #333;
 }
 
-.information {
-    width: 100%;
-    margin-bottom: 15px;
-}
-
-.information input {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    font-size: 1em;
-}
-
-.forgot-password {
-    width: 100%;
-    text-align: center;
+form {
     margin-bottom: 20px;
 }
 
-.forgot-password a {
-    font-size: 0.9em;
-    color: #6b6b6b;
-    text-decoration: none;
+label {
+    display: block;
+    margin: 10px 0 5px;
 }
 
-.login-btn {
+input {
+    padding: 8px;
     width: 100%;
-    padding: 12px;
-    background-color: #8b6b41;
-    color: white;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+}
+
+button {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
     border: none;
-    border-radius: 10px;
-    font-size: 1.1em;
     cursor: pointer;
-}
-
-.or-section {
-    margin: 20px 0;
-    font-size: 1.2em;
-    color: #8b6b41;
-}
-
-.create-account-btn {
     width: 100%;
-    padding: 12px;
-    background-color: #d1bfa8;
-    color: #4b4b4b;
-    border: none;
-    border-radius: 10px;
-    font-size: 1.1em;
-    cursor: pointer;
 }
 
-@media only screen and (max-width: 600px) {
-    body {
-        padding: 10px;
-    }
+button:hover {
+    background-color: #555;
+}
 
-    .login-box {
-        padding: 15px;
-    }
-
-    .input-group input {
-        padding: 10px;
-        font-size: 0.9em;
-    }
-
-    .login-btn, .create-account-btn {
-        padding: 10px;
-        font-size: 1em;
-    }
-
-    .forgot-password a {
-        font-size: 0.8em;
-    }
+#error-message {
+    margin-top: 10px;
 }
