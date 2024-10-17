@@ -56,6 +56,16 @@ body {
     font-size: 16px;
 }
 
+.input-container select {
+    width: 100%;
+    padding: 15px;
+    border-radius: 30px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    background-color: white;
+    color: #333;
+}
+
 .terms-container {
     display: flex;
     align-items: center;

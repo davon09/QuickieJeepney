@@ -1,6 +1,6 @@
 <?php
 // Include the database connection file
-include 'db_conn.php';
+include '../dbConnection/dbConnection.php';  // Make sure this points to the correct location
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get form data
@@ -14,28 +14,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $sql = "INSERT INTO users (fullname, email, password, phone, occupation) VALUES (?, ?, ?, ?, ?)";
 
     // Prepare the SQL statement to avoid SQL injection
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssss", $fullname, $email, $password, $phone, $occupation);
+    if ($stmt = $conn->prepare($sql)) {
+        $stmt->bind_param("sssss", $fullname, $email, $password, $phone, $occupation);
 
-    if ($stmt->execute()) {
-        // Redirect to a success page or show a success message
-        echo "Account created successfully!";
+        // Execute the statement
+        if ($stmt->execute()) {
+            // Redirect to index.php after successful registration
+            header("Location: index.php?registered=success");
+            exit(); // Ensure the script stops after the redirect
+        } else {
+            // Debug message
+            echo "Error inserting data: " . $stmt->error;  // For debugging SQL errors
+        }
+
+        // Close the statement
+        $stmt->close();
     } else {
-        echo "Error: " . $stmt->error;
+        // Debug message
+        echo "Error preparing statement: " . $conn->error;  // For debugging statement preparation issues
     }
 
-    // Close the statement and connection
-    $stmt->close();
+    // Close the connection
     $conn->close();
 }
 ?>
 
+<!-- HTML for the form -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Create Account</title>
     <link rel="stylesheet" href="register.css">
 </head>
@@ -59,17 +68,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <input type="tel" id="phone" name="phone" placeholder="Phone Number" required>
             </div>
             <div class="input-container">
-                <input type="text" id="occupation" name="occupation" placeholder="Occupation" required>
+                <select id="occupation" name="occupation" required>
+                    <option value="" disabled selected>Select Occupation</option>
+                    <option value="Student">Student</option>
+                    <option value="Teacher">Teacher</option>
+                </select>
             </div>
             <div class="terms-container">
                 <input type="checkbox" id="terms" name="terms" required>
                 <label for="terms">I agree to the <a href="#">Terms & Privacy</a></label>
             </div>
             <button type="submit" class="signup-btn">Sign Up</button>
-            <p class="signin-link">Have an account? <a href="#">Sign In</a></p>
         </form>
     </div>
-
     <script src="register.js"></script>
 </body>
 </html>

@@ -1,6 +1,5 @@
 <?php
-session_start();
-include '../dbConnection/db_Connection.php';
+include 'dbConnection/dbConnection.php';
 
 // Hardcoded users array
 $users = [
@@ -26,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($valid) {
         // If user is found in the hardcoded list
         $_SESSION['username'] = $username;
-        header('Location: index.html');
+        header('Location: menu.html');
     } else {
         // 2. Check against the database if not found in hardcoded users
         $sql = "SELECT * FROM users WHERE email = ?";
@@ -55,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         } else {
             // No user found with the given username/email in either array or database
-            header('Location: login.html?error=1');
+            header('Location: index.php?error=1');
         }
 
         // Close the statement and connection
@@ -66,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 // Display error message if login fails
 if (isset($_GET['error'])) {
-    echo '<p style="color: red;">Invalid login credentials, please try again.</p>';
+    echo '<p style="color: red; text-align: center;">Invalid login credentials, please try again.</p>';
 }
 ?>
 
@@ -76,10 +75,15 @@ if (isset($_GET['error'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Passenger Ride Booking</title>
-    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
+    <!-- Display registration success message here -->
+    <?php if (isset($_GET['registered']) && $_GET['registered'] == 'success'): ?>
+        <p style="color: green; text-align: center;">Registration successful! You can now log in.</p>
+    <?php endif; ?>
+
     <div class="background-overlay"></div>
     <div class="login-container">
         <div class="login-card">
@@ -88,7 +92,7 @@ if (isset($_GET['error'])) {
                 <p>BOOKING</p>
             </div>
             <!-- Update form action to point to the current PHP script -->
-            <form action="login.php" method="POST" id="bookingForm">
+            <form action="index.php" method="POST" id="bookingForm">
                 <div class="information">
                     <input type="text" id="username" name="username" placeholder="Email or Phone" required>
                 </div>
@@ -105,12 +109,12 @@ if (isset($_GET['error'])) {
                 <div class="or-section">
                     <span>or</span>
                 </div>
-                <a href="register.php" class="create-account-btn">Create an account</a>
+                <a href="register/register.php" class="create-account-btn">Create an account</a>
             </form>
         </div>
     </div>
 
     <!-- Link the external JavaScript file -->
-    <script src="login.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
