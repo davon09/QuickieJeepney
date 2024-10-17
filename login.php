@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../dbConn/db_Conn.php';
+include '../dbConnection/db_Connection.php';
 
 // Hardcoded users array
 $users = [
