@@ -49,7 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['name'] = $user['firstname'];  // Or any other user data
                 
                 // Redirect to the dashboard or homepage
-                header("Location: dashboard.php");
+                header("Location: menu.html");
             } else {
                 echo "Invalid password.";
             }
@@ -70,29 +70,47 @@ if (isset($_GET['error'])) {
 }
 ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Jeepney Booking System</title>
+    <title>Passenger Ride Booking</title>
     <link rel="stylesheet" href="login.css">
 </head>
-<body>
-    <h1>Quickie Jeepney</h1>
-    <h3>Booking</h3>
-    <form id="loginForm" action="login.php" method="POST">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        
-        <button type="submit">Log In</button>
-    </form>
 
-    <div id="error-message">
+<body>
+    <div class="background-overlay"></div>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>Quickie Jeepney</h1>
+                <p>BOOKING</p>
+            </div>
+            <!-- Update form action to point to the current PHP script -->
+            <form action="login.php" method="POST" id="bookingForm">
+                <div class="information">
+                    <input type="text" id="username" name="username" placeholder="Email or Phone" required>
+                </div>
+                <div class="information">
+                    <input type="password" id="password" name="password" placeholder="Password" required>
+                    <span class="toggle-password" onclick="togglePasswordVisibility('password')">
+                        <i class="fa fa-eye-slash"></i> <!-- Initial icon is eye-slash -->
+                    </span>
+                </div>
+                <div class="forgot-password">
+                    <a href="#">Forgot Password?</a>
+                </div>
+                <button type="submit" class="login-btn">Login</button>
+                <div class="or-section">
+                    <span>or</span>
+                </div>
+                <a href="register.php" class="create-account-btn">Create an account</a>
+            </form>
+        </div>
     </div>
+
+    <!-- Link the external JavaScript file -->
+    <script src="login.js"></script>
 </body>
 </html>
