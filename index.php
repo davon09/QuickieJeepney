@@ -2,34 +2,49 @@
 include 'dbConnection/dbConnection.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = $conn->real_escape_string($_POST['email']);
-    $password = $conn->real_escape_string($_POST['password']);
+    // Get the login input (either email or contact number) and password
+    $loginInput = $conn->real_escape_string($_POST['loginInput']);
+    $password = $_POST['password'];  // Plain text password entered by the user
 
-    // Query to find the user by email
-    $query = "SELECT * FROM user WHERE email='$email'";
-    $result = $conn->query($query);
-
-    if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
-        // Verify password
-        if (password_verify($password, $user['password']) || $password === $user['password']) {
-            // Successful login
-            // Store user information in session
-            $_SESSION['userID'] = $user['userID']; // Store user ID
-            $_SESSION['lastName'] = $user['lastName']; // Store user's name
-            $_SESSION['firstName'] = $user['firstName']; // Store user's name
-            $_SESSION['email'] = $user['email']; // Store user's email
-
-            header("Location: menu.html");
-            exit();
-        } else {
-            echo "<script>alert('Invalid password!'); window.history.back();</script>";
-        }
+    // Check if the input is an email or contact number
+    if (filter_var($loginInput, FILTER_VALIDATE_EMAIL)) {
+        $query = "SELECT * FROM user WHERE email=?";
     } else {
-        echo "<script>alert('Email not found!'); window.history.back();</script>";
+        $query = "SELECT * FROM user WHERE contactNumber=?";
     }
 
-    // Close the database connection
+    // Prepare and execute the query
+    if ($stmt = $conn->prepare($query)) {
+        $stmt->bind_param("s", $loginInput);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $user = $result->fetch_assoc();
+            
+            // Verify the hashed password using password_verify()
+            if (password_verify($password, $user['password'])) {
+                // Successful login
+                session_start();
+                $_SESSION['userID'] = $user['userID'];
+                $_SESSION['lastName'] = $user['lastName'];
+                $_SESSION['firstName'] = $user['firstName'];
+                $_SESSION['email'] = $user['email'];
+
+                header("Location: menu.html");
+                exit();
+            } else {
+                echo "<script>alert('Invalid password!'); window.history.back();</script>";
+            }
+        } else {
+            echo "<script>alert('Email or contact number not found!'); window.history.back();</script>";
+        }
+
+        $stmt->close();
+    } else {
+        echo "Error preparing statement: " . $conn->error;
+    }
+
     $conn->close();
 }
 ?>
@@ -42,7 +57,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Passenger Ride Booking</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
     <div class="background-overlay"></div>
     <div class="login-container">
@@ -54,7 +68,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <!-- Update form action to point to the current PHP script -->
             <form action="index.php" method="POST" id="bookingForm">
                 <div class="information">
-                    <input type="email" name="email" placeholder="Email or Phone" required>
+                    <!-- Input field for email or contact number -->
+                    <input type="text" name="loginInput" placeholder="Email or Contact Number" required>
                 </div>
                 <div class="information">
                     <input type="password" id="password" name="password" placeholder="Password" required>

@@ -4,35 +4,56 @@ include '../dbConnection/dbConnection.php';  // Make sure this points to the cor
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get form data
-    $lastName = $conn->real_escape_string($_POST['lastName']);
-    $firstName = $conn->real_escape_string($_POST['firstName']);
-    $email = $conn->real_escape_string($_POST['email']);
-    $password = $conn->real_escape_string($_POST['password']);
-    $phone = $conn->real_escape_string($_POST['phone']);
-    $occupation = $conn->real_escape_string($_POST['occupation']);
+    $lastName = $_POST['lastName'];
+    $firstName = $_POST['firstName'];
+    $email = $_POST['email'];
+    $password = password_hash($_POST['password'], PASSWORD_BCRYPT); // Hash the password for security
+    $contactNumber = $_POST['contactNumber'];
+    $occupation = $_POST['occupation'];
 
-    // Hash the password for security
-    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-    echo "Hashed Password: " . $hashed_password; // Debug line
+    // Check if email already exists in the database
+    $checkEmailQuery = "SELECT * FROM user WHERE email = ?";
+    if ($stmt = $conn->prepare($checkEmailQuery)) {
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-    // Check if the email already exists
-    $check_email_query = "SELECT * FROM user WHERE email = '$email'";
-    $result = $conn->query($check_email_query);
+        if ($result->num_rows > 0) {
+            // Email already exists, redirect to register.html with an error message
+            header("Location: register.php?error=email_exists");
+            $stmt->close();
+            $conn->close();
+            exit(); // Stop further execution to avoid duplicate registration
+        }
 
-    if ($result->num_rows > 0) {
-        echo "<script>alert('Email already exists!'); window.history.back();</script>";
-        exit;
+        $stmt->close();
+    } else {
+        // Error preparing the statement
+        echo "Error preparing email check: " . $conn->error;
     }
 
     // Insert the data into the database
-    $sql = "INSERT INTO user (lastName, firstName, email, password, phone, occupation) VALUES 
-    ('$lastName', '$firstName', '$email', '$hashed_password', '$phone', '$occupation')";
-    echo $sql; // Debug line
+    $sql = "INSERT INTO user (lastName, firstName, email, password, contactNumber, occupation) VALUES (?, ?, ?, ?, ?, ?)";
 
-    if ($conn->query($sql) === TRUE) {
-        echo "<script>alert('Registration successful!'); window.location.href='login.php';</script>";
+    // Prepare the SQL statement to avoid SQL injection
+    if ($stmt = $conn->prepare($sql)) {
+        $stmt->bind_param("ssssss", $lastName, $firstName, $email, $password, $contactNumber, $occupation);
+
+        // Execute the statement
+        if ($stmt->execute()) {
+            // Redirect to index.php after successful registration
+            header("Location: ../index.php?registered=success");
+            exit(); // Ensure the script stops after the redirect
+        } else {
+            // Debug message for insertion errors
+            echo "Error inserting data: " . $stmt->error;
+        }
+
+        // Close the statement
+        $stmt->close();
     } else {
-        echo "Error inserting user: " . $conn->error; // Debug line
+        // Debug message for statement preparation errors
+        echo "Error preparing statement: " . $conn->error;
     }
 
     // Close the connection
@@ -69,7 +90,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <input type="password" id="password" name="password" placeholder="Password" required>
             </div>
             <div class="input-container">
-                <input type="tel" id="phone" name="phone" placeholder="Phone Number" required>
+                <input type="tel" id="contactNumber" name="contactNumber" placeholder="Contact Number" required>
             </div>
             <div class="input-container">
                 <select id="occupation" name="occupation" required>
@@ -85,6 +106,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <button type="submit" class="signup-btn">Sign Up</button>
         </form>
     </div>
+    <div id="popupMessage" class="popup-message"></div>
     <script src="register.js"></script>
 </body>
 </html>
