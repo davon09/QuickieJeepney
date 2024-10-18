@@ -4,34 +4,35 @@ include '../dbConnection/dbConnection.php';  // Make sure this points to the cor
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get form data
-    $fullname = $_POST['fullname'];
-    $email = $_POST['email'];
-    $password = password_hash($_POST['password'], PASSWORD_BCRYPT); // Hash the password for security
-    $phone = $_POST['phone'];
-    $occupation = $_POST['occupation'];
+    $lastName = $conn->real_escape_string($_POST['lastName']);
+    $firstName = $conn->real_escape_string($_POST['firstName']);
+    $email = $conn->real_escape_string($_POST['email']);
+    $password = $conn->real_escape_string($_POST['password']);
+    $phone = $conn->real_escape_string($_POST['phone']);
+    $occupation = $conn->real_escape_string($_POST['occupation']);
+
+    // Hash the password for security
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+    echo "Hashed Password: " . $hashed_password; // Debug line
+
+    // Check if the email already exists
+    $check_email_query = "SELECT * FROM user WHERE email = '$email'";
+    $result = $conn->query($check_email_query);
+
+    if ($result->num_rows > 0) {
+        echo "<script>alert('Email already exists!'); window.history.back();</script>";
+        exit;
+    }
 
     // Insert the data into the database
-    $sql = "INSERT INTO users (fullname, email, password, phone, occupation) VALUES (?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO user (lastName, firstName, email, password, phone, occupation) VALUES 
+    ('$lastName', '$firstName', '$email', '$hashed_password', '$phone', '$occupation')";
+    echo $sql; // Debug line
 
-    // Prepare the SQL statement to avoid SQL injection
-    if ($stmt = $conn->prepare($sql)) {
-        $stmt->bind_param("sssss", $fullname, $email, $password, $phone, $occupation);
-
-        // Execute the statement
-        if ($stmt->execute()) {
-            // Redirect to index.php after successful registration
-            header("Location: index.php?registered=success");
-            exit(); // Ensure the script stops after the redirect
-        } else {
-            // Debug message
-            echo "Error inserting data: " . $stmt->error;  // For debugging SQL errors
-        }
-
-        // Close the statement
-        $stmt->close();
+    if ($conn->query($sql) === TRUE) {
+        echo "<script>alert('Registration successful!'); window.location.href='login.php';</script>";
     } else {
-        // Debug message
-        echo "Error preparing statement: " . $conn->error;  // For debugging statement preparation issues
+        echo "Error inserting user: " . $conn->error; // Debug line
     }
 
     // Close the connection
@@ -52,11 +53,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="container">
         <div class="form-header">
             <h1>Let’s Create Your Account</h1>
-            <span class="close-btn">&times;</span>
+            <span class="close-btn" onclick="window.location.href='../index.php';">&times;</span>
         </div>
         <form action="register.php" method="POST" id="signupForm" class="signup-form">
             <div class="input-container">
-                <input type="text" id="fullname" name="fullname" placeholder="Full Name" required>
+                <input type="text" id="lastName" name="lastName" placeholder="Last Name" required>
+            </div>
+            <div class="input-container">
+                <input type="text" id="firstName" name="firstName" placeholder="First Name" required>
             </div>
             <div class="input-container">
                 <input type="email" id="email" name="email" placeholder="Email Address" required>

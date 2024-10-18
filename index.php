@@ -1,71 +1,36 @@
 <?php
 include 'dbConnection/dbConnection.php';
 
-// Hardcoded users array
-$users = [
-    ['username' => 'student', 'password' => 'pass123'],
-    ['username' => 'faculty', 'password' => 'pass456'],
-    ['username' => 'employee', 'password' => 'pass789'],
-];
-
-// Check if form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $_POST['username'];  // Username field from the form
-    $password = $_POST['password'];  // Password field from the form
+    $email = $conn->real_escape_string($_POST['email']);
+    $password = $conn->real_escape_string($_POST['password']);
 
-    // 1. Check against hardcoded users array
-    $valid = false;
-    foreach ($users as $user) {
-        if ($user['username'] == $username && $user['password'] == $password) {
-            $valid = true;
-            break;
-        }
-    }
+    // Query to find the user by email
+    $query = "SELECT * FROM user WHERE email='$email'";
+    $result = $conn->query($query);
 
-    if ($valid) {
-        // If user is found in the hardcoded list
-        $_SESSION['username'] = $username;
-        header('Location: menu.html');
-    } else {
-        // 2. Check against the database if not found in hardcoded users
-        $sql = "SELECT * FROM users WHERE email = ?";
-        
-        // Prepare the statement to avoid SQL injection
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("s", $username);  // Assuming username is the email in the database
-        $stmt->execute();
-        
-        $result = $stmt->get_result();
-        
-        if ($result->num_rows > 0) {
-            // Fetch the user data
-            $user = $result->fetch_assoc();
-            
-            // Verify the password (assuming it's hashed in the database)
-            if (password_verify($password, $user['password'])) {
-                // Password is correct, start the session and redirect
-                $_SESSION['email'] = $user['email'];
-                $_SESSION['name'] = $user['firstname'];  // Or any other user data
-                
-                // Redirect to the dashboard or homepage
-                header("Location: menu.html");
-            } else {
-                echo "Invalid password.";
-            }
+    if ($result->num_rows > 0) {
+        $user = $result->fetch_assoc();
+        // Verify password
+        if (password_verify($password, $user['password']) || $password === $user['password']) {
+            // Successful login
+            // Store user information in session
+            $_SESSION['userID'] = $user['userID']; // Store user ID
+            $_SESSION['lastName'] = $user['lastName']; // Store user's name
+            $_SESSION['firstName'] = $user['firstName']; // Store user's name
+            $_SESSION['email'] = $user['email']; // Store user's email
+
+            header("Location: menu.html");
+            exit();
         } else {
-            // No user found with the given username/email in either array or database
-            header('Location: index.php?error=1');
+            echo "<script>alert('Invalid password!'); window.history.back();</script>";
         }
-
-        // Close the statement and connection
-        $stmt->close();
-        $conn->close();
+    } else {
+        echo "<script>alert('Email not found!'); window.history.back();</script>";
     }
-}
 
-// Display error message if login fails
-if (isset($_GET['error'])) {
-    echo '<p style="color: red; text-align: center;">Invalid login credentials, please try again.</p>';
+    // Close the database connection
+    $conn->close();
 }
 ?>
 
@@ -79,11 +44,6 @@ if (isset($_GET['error'])) {
 </head>
 
 <body>
-    <!-- Display registration success message here -->
-    <?php if (isset($_GET['registered']) && $_GET['registered'] == 'success'): ?>
-        <p style="color: green; text-align: center;">Registration successful! You can now log in.</p>
-    <?php endif; ?>
-
     <div class="background-overlay"></div>
     <div class="login-container">
         <div class="login-card">
@@ -94,7 +54,7 @@ if (isset($_GET['error'])) {
             <!-- Update form action to point to the current PHP script -->
             <form action="index.php" method="POST" id="bookingForm">
                 <div class="information">
-                    <input type="text" id="username" name="username" placeholder="Email or Phone" required>
+                    <input type="email" name="email" placeholder="Email or Phone" required>
                 </div>
                 <div class="information">
                     <input type="password" id="password" name="password" placeholder="Password" required>

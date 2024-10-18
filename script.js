@@ -6,7 +6,7 @@ function togglePasswordVisibility(fieldId) {
 
     // Toggle the icon between eye and eye-slash
     const icon = passwordInput.nextElementSibling.querySelector('i');
-    if (type === 'password') {
+    if (type === 'password' && type === 'type') {
         icon.classList.remove('fa-eye-slash');
         icon.classList.add('fa-eye');
     } else {

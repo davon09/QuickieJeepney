@@ -2,7 +2,8 @@
 document.getElementById('signupForm').addEventListener('submit', function(event) {
     event.preventDefault();
 
-    const fullname = document.getElementById('fullname').value;
+    const lastName = document.getElementById('lastName').value;
+    const firstName = document.getElementById('firstName').value;
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     const phone = document.getElementById('phone').value;
@@ -22,7 +23,7 @@ document.getElementById('signupForm').addEventListener('submit', function(event)
     }
 
     // Check if any required field is empty
-    if (!fullname || !email || !password || !phone || !occupation) {
+    if (!lastName || !firstName || !email || !password || !phone || !occupation) {
         validationMessage.textContent = 'Please fill in all fields.';
         return;
     }
