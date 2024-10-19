@@ -31,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['firstName'] = $user['firstName'];
                 $_SESSION['email'] = $user['email'];
 
-                header("Location: menu.html");
+                header("Location: user/menu.php");
                 exit();
             } else {
                 echo "<script>alert('Invalid password!'); window.history.back();</script>";

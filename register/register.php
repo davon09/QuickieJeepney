@@ -42,7 +42,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Execute the statement
         if ($stmt->execute()) {
             // Redirect to index.php after successful registration
-            header("Location: ../index.php?registered=success");
+            header("Location: ../../index.php?registered=success");
             exit(); // Ensure the script stops after the redirect
         } else {
             // Debug message for insertion errors
