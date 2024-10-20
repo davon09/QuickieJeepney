@@ -46,8 +46,95 @@
             </div>
         </div>
     </nav>  
-    <section>
-        
+
+    <section class="main-content">
+        <div class="welcome">
+            <h2>Hi, Maria!</h2>
+            <p>Ready to reserve a jeepney?</p>
+        </div>
+
+        <div class="announcements">
+            <h3>Announcements</h3>
+            <p>The Jeepney Terminal will be moved in front of Shakey's Legarda.</p>
+        </div>
+
+        <div class="available-jeepney">
+            <h3>Available Jeepney</h3>
+            <div class="filters">
+                <label for="vehicle-type">Filter by Vehicle Type:</label>
+                <select id="vehicle-type">
+                    <option value="all">All</option>
+                    <option value="all">Jeepney</option>
+                    <option value="all">Bus</option>
+
+                </select>
+                <label for="sort-by">Sort by:</label>
+                <select id="sort-by">
+                    <option value="departure">Departure</option>
+                    <option value="departure">Time</option>
+                    <option value="departure">Available Seats</option>
+                    <!-- Add more sorting options here -->
+                </select>
+            </div>
+
+            <div class="jeepney-cards">
+                <!-- Each card structure -->
+                <div class="jeepney-card" data-type="jeep" data-departure="11:00">
+                    <img src="jeep1.jpg" alt="Jeepney Image">
+                    <h3>Seats Available:10</h3>
+                    <p>Route: Marcos Highway to Burnham Park</p>
+                    
+                    <p>Departure: 11:00 AM</p>
+                    
+                    <button class="book-now">BOOK NOW</button>
+                </div>
+                <div class="jeepney-card" data-type="jeep" data-departure="11:00">
+                    <img src="jeep1.jpg" alt="Jeepney Image">
+                    <h3>Seats Available:10</h3>
+                    <p>Route: Marcos Highway to Burnham Park</p>
+                    
+                    <p>Departure: 11:00 AM</p>
+                   
+                    <button class="book-now">BOOK NOW</button>
+                </div>
+                <div class="jeepney-card" data-type="jeep" data-departure="11:00">
+                    <img src="jeep1.jpg" alt="Jeepney Image">
+                    <h3>Seats Available:6</h3>
+                    <p>Route: Marcos Highway to Burnham Park</p>
+                    
+                    <p>Departure: 11:00 AM</p>
+                    
+                    <button class="book-now">BOOK NOW</button>
+                </div>
+                
+                <div class="jeepney-card" data-type="bus" data-departure="13:30">
+                    <img src="bus1.jpg" alt="Bus Image">
+                    <h3>Seats Available:12</h3>
+                    <p>Route: Happy Homes to Burnham Park</p>
+                    
+                    <p>Departure: 1:30 PM</p>
+                    
+                    <button class="book-now">BOOK NOW</button>
+                </div>
+                <div class="jeepney-card" data-type="bus" data-departure="13:30">
+                    <img src="bus1.jpg" alt="Bus Image">
+                    <h3>Seats Available:69</h3>
+                    <p>Route: Happy Homes to Burnham Park</p>
+                    
+                    <p>Departure: 1:30 PM</p>
+                    
+                    <button class="book-now">BOOK NOW</button>
+                </div>
+                <div class="jeepney-card" data-type="bus" data-departure="13:30">
+                    <img src="bus1.jpg" alt="Bus Image">
+                    <h3>Seats Available:30 </h3>
+                    <p>Route: Happy Homes to Burnham Park</p>            
+                    <p>Departure: 1:30 PM</p>
+                    <button class="book-now">BOOK NOW</button>
+                </div>
+                
+        </div>
     </section>   
+
     </body>  
 </html>
