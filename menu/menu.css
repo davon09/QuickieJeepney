@@ -1,0 +1,74 @@
+
+body{
+    height: 100vh;
+    background: #e5bca4;
+}
+.sidebar{
+    position:fixed;
+    top:0;
+    left:0;
+    height:100%;
+    width:350px;
+    padding: 10px 14px;
+    background: #934e26;
+}
+.sidebar .text{
+        font-size: 20px;
+        margin-left: 10px;
+        color:white;
+}
+.sidebar .image{
+       display: flex;
+       align-items: center;
+}
+.sidebar .header{
+    position: relative;
+}
+
+.sidebar .image-text img{
+    width:150px; 
+    border-radius: 6px;
+    
+}
+.sidebar header .image-text{
+    display: flex;
+    align-items: center;
+}
+/*==============================================*/
+.header-text .name{
+    font-weight: 600;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+.header-text .occupation{
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+/*==============================================*/
+a:link {
+    color: white;
+    background-color: transparent;
+    text-decoration: none;
+  }
+  
+  a:visited {
+    color: white;
+    background-color: transparent;
+    text-decoration: none;
+  }
+  
+  a:hover {
+    color: #e5bca4;
+    background-color: transparent;
+    text-decoration: underline;
+  }
+  
+  a:active {
+    color: #e48249;
+    background-color: transparent;
+    text-decoration: underline;
+  }
+
+
+    
+
+
+
