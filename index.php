@@ -56,6 +56,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Passenger Ride Booking</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="background-overlay"></div>
@@ -74,7 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="information">
                     <input type="password" id="password" name="password" placeholder="Password" required>
                     <span class="toggle-password" onclick="togglePasswordVisibility('password')">
-                        <i class="fa fa-eye-slash"></i> <!-- Initial icon is eye-slash -->
+                        <i class="fa fa-eye-slash" id="toggleIcon"></i>
                     </span>
                 </div>
                 <div class="forgot-password">
@@ -84,7 +86,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="or-section">
                     <span>or</span>
                 </div>
-                <a href="register/register.php" class="create-account-btn">Create an account</a>
+                <button type="button" class="create-account-btn" onclick="window.location.href='register/register.php';">
+                    Create an account
+                </button>
             </form>
         </div>
     </div>

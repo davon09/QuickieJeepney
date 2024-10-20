@@ -1,9 +1,8 @@
 <?php
-// Include the database connection file
-include '../dbConnection/dbConnection.php';  // Make sure this points to the correct location
+include '../dbConnection/dbConnection.php';  // Adjust path as necessary
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Get form data
+    // Get form data from POST request
     $lastName = $_POST['lastName'];
     $firstName = $_POST['firstName'];
     $email = $_POST['email'];
@@ -13,52 +12,60 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Check if email already exists in the database
     $checkEmailQuery = "SELECT * FROM user WHERE email = ?";
-    if ($stmt = $conn->prepare($checkEmailQuery)) {
+    $stmt = $conn->prepare($checkEmailQuery);
+    
+    if ($stmt) {
         $stmt->bind_param("s", $email);
         $stmt->execute();
         $result = $stmt->get_result();
 
         if ($result->num_rows > 0) {
-            // Email already exists, redirect to register.html with an error message
-            header("Location: register.php?error=email_exists");
-            $stmt->close();
-            $conn->close();
-            exit(); // Stop further execution to avoid duplicate registration
+            echo 'email_exists';  // Send 'email_exists' if email is already in use
+            $stmt->close();  // Close the statement after checking email
+            $conn->close();  // Close the connection
+            exit();  // Stop further execution
         }
 
+        // Close the statement after the check is done
         $stmt->close();
     } else {
         // Error preparing the statement
-        echo "Error preparing email check: " . $conn->error;
+        echo 'error';
+        $conn->close();  // Close connection if there was an error
+        exit();
     }
 
     // Insert the data into the database
     $sql = "INSERT INTO user (lastName, firstName, email, password, contactNumber, occupation) VALUES (?, ?, ?, ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
 
-    // Prepare the SQL statement to avoid SQL injection
-    if ($stmt = $conn->prepare($sql)) {
+    if ($stmt) {
         $stmt->bind_param("ssssss", $lastName, $firstName, $email, $password, $contactNumber, $occupation);
 
-        // Execute the statement
         if ($stmt->execute()) {
-            // Redirect to index.php after successful registration
-            header("Location: ../../index.php?registered=success");
-            exit(); // Ensure the script stops after the redirect
+            // Registration successful, send 'success'
+            echo 'success';
         } else {
-            // Debug message for insertion errors
-            echo "Error inserting data: " . $stmt->error;
+            // Error inserting data
+            echo 'error';
         }
 
-        // Close the statement
+        // Close the statement after insertion
         $stmt->close();
     } else {
-        // Debug message for statement preparation errors
-        echo "Error preparing statement: " . $conn->error;
+        // Error preparing the statement
+        echo 'error';
     }
 
-    // Close the connection
+    // Close the database connection
     $conn->close();
+    exit();  // Stop further execution to prevent HTML from being sent
 }
+?>
+
+<?php
+// The HTML form should only be rendered if the request is NOT a POST request
+if ($_SERVER["REQUEST_METHOD"] != "POST"): 
 ?>
 
 <!-- HTML for the form -->
@@ -69,6 +76,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Account</title>
     <link rel="stylesheet" href="register.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
@@ -86,8 +95,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="input-container">
                 <input type="email" id="email" name="email" placeholder="Email Address" required>
             </div>
-            <div class="input-container">
+            <div class="input-container" style="position: relative;">
                 <input type="password" id="password" name="password" placeholder="Password" required>
+                <span class="toggle-password" onclick="togglePasswordVisibility('password')" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+                    <i class="fa fa-eye-slash"></i>
+                </span>
+            </div>
+            <div class="input-container" style="position: relative;">
+                <input type="password" id="retypePassword" name="retypePassword" placeholder="Retype Password" required>
+                <span class="toggle-password" onclick="togglePasswordVisibility('retypePassword')" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+                    <i class="fa fa-eye-slash"></i>
+                </span>
             </div>
             <div class="input-container">
                 <input type="tel" id="contactNumber" name="contactNumber" placeholder="Contact Number" required>
@@ -110,3 +128,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="register.js"></script>
 </body>
 </html>
+<?php endif; // End of HTML section ?>
