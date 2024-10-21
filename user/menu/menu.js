@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // If user confirms logout
     confirmYes.addEventListener('click', function () {
-        window.location.href = '../index.php'; // Redirect to logout page
+        window.location.href = '../../index.php'; // Redirect to logout page
     });
 
     // If user cancels logout
@@ -76,25 +76,26 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
- 
 
-// Logout modal elements
-const logoutButton = document.getElementById('logoutButton');
-const logoutModal = document.getElementById('logoutModal');
-const confirmLogout = document.getElementById('confirmLogout');
-const cancelLogout = document.getElementById('cancelLogout');
+// Handle Logout Modal Logic
+document.addEventListener('DOMContentLoaded', function () {
+    const logoutButton = document.getElementById('logoutButton');
+    const logoutModal = document.getElementById('logoutModal');
+    const confirmLogout = document.getElementById('confirmLogout');
+    const cancelLogout = document.getElementById('cancelLogout');
 
-// Show the modal when logout button is clicked
-logoutButton.addEventListener('click', () => {
-    logoutModal.style.display = 'flex';
-});
+    // Show the modal when logout button is clicked
+    logoutButton.addEventListener('click', () => {
+        logoutModal.style.display = 'flex';
+    });
 
-// Hide the modal when cancel button is clicked
-cancelLogout.addEventListener('click', () => {
-    logoutModal.style.display = 'none';
-});
+    // Hide the modal when cancel button is clicked
+    cancelLogout.addEventListener('click', () => {
+        logoutModal.style.display = 'none';
+    });
 
-// Perform the logout when confirm button is clicked
-confirmLogout.addEventListener('click', () => {
-    window.location.href = '../index.php'; // Redirect to the logout.php page
+    // Perform the logout when confirm button is clicked
+    confirmLogout.addEventListener('click', () => {
+        window.location.href = '../index.php'; // Redirect to the logout page
+    });
 });

@@ -1,5 +1,28 @@
 <?php
+session_start();
 include '../../dbConnection/dbConnection.php';  
+
+// Check if user is logged in (ensure the userID is in the session)
+if (!isset($_SESSION['userID'])) {
+    header("Location: login.php"); // Redirect to login page if not logged in
+    exit();
+}
+
+// Fetch logged-in user's details including the occupation
+$userID = $_SESSION['userID'];
+$sqlUser = "SELECT firstName, lastName, occupation FROM user WHERE userID = ?";
+$stmtUser = $conn->prepare($sqlUser);
+$stmtUser->bind_param("i", $userID);
+$stmtUser->execute();
+$resultUser = $stmtUser->get_result();
+if ($resultUser->num_rows > 0) {
+    $user = $resultUser->fetch_assoc();
+    $fullName = $user['firstName'] . ' ' . $user['lastName'];
+    $occupation = $user['occupation'];
+} else {
+    $fullName = "Guest";
+    $occupation = "N/A";
+}
 
 // Fetch jeepney details including the image path
 $sql = "SELECT * FROM jeepney";
@@ -20,8 +43,15 @@ while ($row = mysqli_fetch_assoc($result)) {
     $htmlOutput .= '<button class="book-now">BOOK NOW</button>';
     $htmlOutput .= '</div>';
 }
-?>
 
+// Prepare the dynamic HTML snippets for the user details
+$userDetailsHTML = '
+    <span class="name">' . $fullName . '</span>
+    <br>
+    <span class="occupation">' . $occupation . '</span>
+    <br>
+';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,10 +69,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                     <img src="../../images/profile.png" alt="Profile Image">
                 </span>
                 <div class="text header-text">
-                    <span class="name">Maria Dela Cruz</span>
-                    <br>
-                    <span class="occupation">Student</span>
-                    <br>
+                    <?= $userDetailsHTML; ?>
                     <button class="logout-btn" id="logoutBtn">Logout</button>
                     <!-- Popup Modal for Logout Confirmation -->
                     <div id="confirmLogout" class="modal">
@@ -81,7 +108,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 
     <section class="main-content">
         <div class="welcome">
-            <h2>Hi, Maria!</h2>
+            <h2>Hi, <?= explode(' ', $fullName)[0]; ?>!</h2>
             <p>Ready to reserve a jeepney?</p>
         </div>
 
@@ -107,7 +134,9 @@ while ($row = mysqli_fetch_assoc($result)) {
             </div>
 
             <!-- Output the generated HTML for the jeepney cards -->
-            <?php echo $htmlOutput; ?>
+            <div class="jeepney-cards">
+                <?= $htmlOutput; ?>
+            </div>
         </div>
     </section>
 </body>
