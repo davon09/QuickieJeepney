@@ -41,8 +41,15 @@ while ($row = mysqli_fetch_assoc($result)) {
                 <div class="text header-text">
                     <span class="name">Maria Dela Cruz</span>
                     <span class="occupation">Student</span>
-                    <br>
-                    <a href="index.html">Logout</a>
+                    <button class="logout-btn" id="logoutBtn">Logout</button>
+                    <!-- Popup Modal for Logout Confirmation -->
+                    <div id="confirmLogout" class="modal">
+                        <div class="modal-content">
+                            <p>Are you sure you want to log out?</p>
+                            <button id="confirmYes" class="confirm-btn">Yes</button>
+                            <button id="confirmNo" class="confirm-btn">No</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </header>

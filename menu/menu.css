@@ -125,7 +125,7 @@ body{
 }
 
 .modal-content {
-    background-color: #934e26;
+    background-color: white;
     margin: 15% auto;
     padding: 20px;
     border-radius: 5px;
@@ -135,8 +135,8 @@ body{
 }
 
 .confirm-btn {
-    background-color: #ffcccc;
-    color: black;
+    background-color: #8B4513;
+    color: white;
     padding: 10px 20px;
     margin: 5px;
     border: none;
@@ -145,7 +145,7 @@ body{
 }
 
 .confirm-btn:hover {
-    background-color: #ff9999;
+    background-color: #A0522D;
 }
 
 /*==============================================*/
