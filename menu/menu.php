@@ -36,7 +36,7 @@ include '../dbConnection/dbConnection.php';
                             <img src="/images/home.png" alt="home" class="sidebar-icon">Home</a>
                             </li>
                      <li class="nav-link">
-                        <a href="#profile" class="sidebar-link">
+                        <a href="../user/profile/profile.php" class="sidebar-link">
                             <img src="/images/profile_menu.png" alt="home" class="sidebar-icon">Profile</a>
                             </li>
                      <li class="nav-link">

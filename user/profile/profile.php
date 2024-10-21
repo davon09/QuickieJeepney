@@ -3,14 +3,46 @@ include '../../dbConnection/dbConnection.php';
 
 // Fetch user data based on session user ID
 $userID = $_SESSION['userID'];  // Assuming userID was stored in session during login
-$query = "SELECT * FROM user WHERE userID = ?";
+$sql = "SELECT firstName, lastName, email, contactNumber FROM user WHERE userID = '$userID'";
+$result = $conn->query($sql);
+
+/*$query = "SELECT * FROM user WHERE userID = ?";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $userID);
 $stmt->execute();
 $result = $stmt->get_result();
-$user = $result->fetch_assoc();
+$user = $result->fetch_assoc();*/
 
+if ($result->num_rows > 0) {
+    $user = $result->fetch_assoc();
+} else {
+    echo "No user found";
+    exit();
+}
+
+// Handle form submission for updating contact number and password
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $contactNumber = $_POST['contactNumber'];
+    $password = $_POST['password'];
+
+    if (!empty($contactNumber)) {
+        // Update contact number
+        $updateContactSQL = "UPDATE users SET ContactNumber = '$contactNumber' WHERE UserID = '$UserID'";
+        $conn->query($updateContactSQL);
+    }
+
+    if (!empty($password)) {
+        // Hash the new password and update
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        $updatePasswordSQL = "UPDATE users SET Password = '$hashedPassword' WHERE UserID = '$UserID'";
+        $conn->query($updatePasswordSQL);
+    }
+
+    header("Location: profile.php?update=success");
+    exit();
+}
+
+/*if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Update user data if form is submitted
     $name = $_POST['name'];
     $email = $_POST['email'];
@@ -37,10 +69,46 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         echo "Failed to update profile.";
     }
-}
+}*/
 
 $conn->close();
 ?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="profile.css">
+    <title>User Profile</title>
+</head>
+<body>
+    <div class="profile-container">
+        <div class="profile-card">
+            <div class="profile-header">
+                <img src="profile-pic.png" alt="Profile Picture" class="profile-pic">
+                <h1><?= $user['FirstName'] . ' ' . $user['LastName']; ?></h1>
+                <p><?= $user['Email']; ?></p>
+            </div>
+            <form method="POST" action="profile.php">
+                <div class="form-group">
+                    <label for="contactNumber">Contact Number</label>
+                    <input type="text" name="contactNumber" id="contactNumber" value="<?= $user['ContactNumber']; ?>">
+                </div>
+                <div class="form-group">
+                    <label for="password">New Password</label>
+                    <input type="password" name="password" id="password" placeholder="Enter new password">
+                </div>
+                <button type="submit" class="save-btn">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="profile.js"></script>
+</body>
+</html>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
