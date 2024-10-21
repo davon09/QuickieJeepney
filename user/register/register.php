@@ -1,5 +1,5 @@
 <?php
-include '../dbConnection/dbConnection.php';  // Adjust path as necessary
+include '../../dbConnection/dbConnection.php';  // Adjust path as necessary
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get form data from POST request
@@ -83,7 +83,7 @@ if ($_SERVER["REQUEST_METHOD"] != "POST"):
     <div class="container">
         <div class="form-header">
             <h1>Let’s Create Your Account</h1>
-            <span class="close-btn" onclick="window.location.href='../index.php';">&times;</span>
+            <span class="close-btn" onclick="window.location.href='../../index.php';">&times;</span>
         </div>
         <form action="register.php" method="POST" id="signupForm" class="signup-form">
             <div class="input-container">

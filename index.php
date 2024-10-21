@@ -31,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['firstName'] = $user['firstName'];
                 $_SESSION['email'] = $user['email'];
 
-                header("Location: menu/menu.php");
+                header("Location: user/menu/menu.php");
                 exit();
             } else {
                 echo "<script>alert('Invalid password!'); window.history.back();</script>";
@@ -86,7 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="or-section">
                     <span>or</span>
                 </div>
-                <button type="button" class="create-account-btn" onclick="window.location.href='register/register.php';">
+                <button type="button" class="create-account-btn" onclick="window.location.href='user/register/register.php';">
                     Create an account
                 </button>
             </form>

@@ -1,5 +1,5 @@
 <?php
-include '../dbConnection/dbConnection.php';  
+include '../../dbConnection/dbConnection.php';  
 
 // Check if jeepney ID is passed in the query string
 if (isset($_GET['id'])) {

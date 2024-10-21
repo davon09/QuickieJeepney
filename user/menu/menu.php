@@ -1,5 +1,5 @@
 <?php
-include '../dbConnection/dbConnection.php';  
+include '../../dbConnection/dbConnection.php';  
 
 // Fetch jeepney details including the image path
 $sql = "SELECT * FROM jeepney";
@@ -36,11 +36,13 @@ while ($row = mysqli_fetch_assoc($result)) {
         <header>
             <div class="image-text">
                 <span class="image">
-                    <img src="/images/profile.png" alt="Profile Image">
+                    <img src="../../images/profile.png" alt="Profile Image">
                 </span>
                 <div class="text header-text">
                     <span class="name">Maria Dela Cruz</span>
+                    <br>
                     <span class="occupation">Student</span>
+                    <br>
                     <button class="logout-btn" id="logoutBtn">Logout</button>
                     <!-- Popup Modal for Logout Confirmation -->
                     <div id="confirmLogout" class="modal">
@@ -57,20 +59,20 @@ while ($row = mysqli_fetch_assoc($result)) {
             <div class="menu">
                 <ul class="menu-links">
                     <li class="nav-link">
-                        <a href="#home" class="sidebar-link">
-                            <img src="/images/home.png" alt="Home" class="sidebar-icon">Home</a>
+                        <a href="menu.php" class="sidebar-link">
+                            <img src="../../images/home.png" alt="Home" class="sidebar-icon">Home</a>
                     </li>
                     <li class="nav-link">
-                        <a href="#profile" class="sidebar-link">
-                            <img src="/images/profile_menu.png" alt="Profile" class="sidebar-icon">Profile</a>
+                        <a href="../profile/profile.php" class="sidebar-link">
+                            <img src="../../images/profile_menu.png" alt="Profile" class="sidebar-icon">Profile</a>
                     </li>
                     <li class="nav-link">
-                        <a href="#booking" class="sidebar-link">
-                            <img src="/images/booking.png" alt="Booking" class="sidebar-icon">Booking</a>
+                        <a href="../booking/booking.php" class="sidebar-link">
+                            <img src="../../images/booking.png" alt="Booking" class="sidebar-icon">Booking</a>
                     </li>
                     <li class="nav-link">
-                        <a href="#payment" class="sidebar-link">
-                            <img src="/images/payment.png" alt="Payment" class="sidebar-icon">Payment</a>
+                        <a href="../payment/payment.php" class="sidebar-link">
+                            <img src="../../images/payment.png" alt="Payment" class="sidebar-icon">Payment</a>
                     </li>
                 </ul>
             </div>
