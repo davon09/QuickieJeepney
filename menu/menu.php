@@ -2,7 +2,6 @@
 include '../dbConnection/dbConnection.php';
 ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,12 +18,19 @@ include '../dbConnection/dbConnection.php';
                 <span class="image">
                     <img src="/images/profile.png" alt="logo">
                 </span>
-
                 <div class="text header-text">
                     <span class="name">Maria Dela Cruz</span>
                     <span class="occupation">Student</span>
                     <br>
-                    <a href="index.html">Logout</a>
+                    <button class="logout-btn" id="logoutBtn">Logout</button>
+                    <!-- Popup Modal for Logout Confirmation -->
+                    <div id="confirmLogout" class="modal">
+                        <div class="modal-content">
+                            <p>Are you sure you want to log out?</p>
+                            <button id="confirmYes" class="confirm-btn">Yes</button>
+                            <button id="confirmNo" class="confirm-btn">No</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </header>
@@ -137,9 +143,15 @@ include '../dbConnection/dbConnection.php';
                     <p>Departure: 1:30 PM</p>
                     <button class="book-now">BOOK NOW</button>
                 </div>
-                
+        </div>
+        <!-- Logout Confirmation Modal -->
+        <div id="logoutModal" class="modal">
+            <div class="modal-content">
+                <p>Are you sure you want to Logout?</p>
+                <button id="confirmLogout">Logout</button>
+                <button id="cancelLogout">Cancel</button>
+            </div>
         </div>
     </section>   
-
     </body>  
 </html>

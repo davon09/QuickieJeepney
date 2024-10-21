@@ -47,3 +47,54 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial sorting on page load
     sortVehicles();
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+    const logoutBtn = document.getElementById('logoutBtn');
+    const modal = document.getElementById('confirmLogout');
+    const confirmYes = document.getElementById('confirmYes');
+    const confirmNo = document.getElementById('confirmNo');
+
+    // Show modal when clicking on logout button
+    logoutBtn.addEventListener('click', function () {
+        modal.style.display = 'block';
+    });
+
+    // If user confirms logout
+    confirmYes.addEventListener('click', function () {
+        window.location.href = '../index.php'; // Redirect to logout page
+    });
+
+    // If user cancels logout
+    confirmNo.addEventListener('click', function () {
+        modal.style.display = 'none'; // Close the modal
+    });
+
+    // Close the modal if user clicks outside of it
+    window.addEventListener('click', function (event) {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+});
+
+
+// Logout modal elements
+const logoutButton = document.getElementById('logoutButton');
+const logoutModal = document.getElementById('logoutModal');
+const confirmLogout = document.getElementById('confirmLogout');
+const cancelLogout = document.getElementById('cancelLogout');
+
+// Show the modal when logout button is clicked
+logoutButton.addEventListener('click', () => {
+    logoutModal.style.display = 'flex';
+});
+
+// Hide the modal when cancel button is clicked
+cancelLogout.addEventListener('click', () => {
+    logoutModal.style.display = 'none';
+});
+
+// Perform the logout when confirm button is clicked
+confirmLogout.addEventListener('click', () => {
+    window.location.href = '../index.php'; // Redirect to the logout.php page
+});
