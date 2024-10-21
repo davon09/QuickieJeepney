@@ -79,74 +79,65 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="profile.css">
-    <title>User Profile</title>
-</head>
-<body>
-    <div class="profile-container">
-        <div class="profile-card">
-            <div class="profile-header">
-                <img src="profile-pic.png" alt="Profile Picture" class="profile-pic">
-                <h1><?= $user['FirstName'] . ' ' . $user['LastName']; ?></h1>
-                <p><?= $user['Email']; ?></p>
-            </div>
-            <form method="POST" action="profile.php">
-                <div class="form-group">
-                    <label for="contactNumber">Contact Number</label>
-                    <input type="text" name="contactNumber" id="contactNumber" value="<?= $user['ContactNumber']; ?>">
-                </div>
-                <div class="form-group">
-                    <label for="password">New Password</label>
-                    <input type="password" name="password" id="password" placeholder="Enter new password">
-                </div>
-                <button type="submit" class="save-btn">Save Changes</button>
-            </form>
-        </div>
-    </div>
-
-    <script src="profile.js"></script>
-</body>
-</html>
-
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Profile</title>
     <link rel="stylesheet" href="profile.css">
 </head>
 <body>
-    <div class="profile-container">
-        <div class="profile-card">
-            <form method="POST" action="profile.php">
-                <div class="profile-header">
-                    <img src="user-placeholder.png" alt="Profile" class="profile-pic">
-                    <h1><?php echo htmlspecialchars($user['name']); ?></h1>
-                    <p>Student</p>
-                </div>
-                <div class="form-group">
-                    <label for="name"><i class="fa fa-user"></i></label>
-                    <input type="text" name="name" id="name" value="<?php echo htmlspecialchars($user['name']); ?>" required>
-                </div>
-                <div class="form-group">
-                    <label for="email"><i class="fa fa-envelope"></i></label>
-                    <input type="email" name="email" id="email" value="<?php echo htmlspecialchars($user['email']); ?>" required>
-                </div>
-                <div class="form-group">
-                    <label for="password"><i class="fa fa-lock"></i></label>
-                    <input type="password" name="password" id="password" placeholder="New password (leave blank if not changing)">
-                </div>
-                <div class="form-group">
-                    <label for="contact"><i class="fa fa-phone"></i></label>
-                    <input type="text" name="contact" id="contact" value="<?php echo htmlspecialchars($user['contact']); ?>" required>
-                </div>
-                <button type="submit" class="save-btn">Save Changes</button>
-            </form>
+    <div class="header">
+        <a href="#" class="back-button">
+            <img src="/images/backarrow.png" alt="Back" width="30" height="30">
+        </a>
+        <h2>Edit Profile</h2>
+    </div>
+
+    <div class="profile-details">
+        <div class="profile-image">
+            <img src="/images/profile.png" alt="Profile Picture">
+            <span class="edit-icon">
+                    <img src="/images/camera.png" alt="Edit Profile">
+                </span>
+        </div>
+        <div class="profile-info">
+            <h3>Maria Dela Cruz</h3>
+            <p>Student</p>
         </div>
     </div>
-    <script src="profile.js"></script>
+
+    <form action="#" method="POST" class="edit-form">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="fullname">Fullname</label>
+                <input type="text" id="fullname" name="fullname" value="Maria Dela Cruz">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" value="password">
+                <span class="password-toggle">
+                        <img src="/images/eye.png" alt="Toggle Password" width="24" height="24">
+                    </span>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" value="delacruzmaria@gmail.com">
+            </div>
+            <div class="form-group">
+                <label for="confirm-password">Confirm Password</label>
+                <input type="password" id="confirm-password" name="confirm-password" value="password">
+                <span class="password-toggle">
+                        <img src="/images/eye.png" alt="Toggle Password" width="24" height="24">
+                    </span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="mobile">Mobile</label>
+            <input type="text" id="mobile" name="mobile" value="09881234567">
+        </div>
+
+        <button type="submit" class="save-button">Save Changes</button>
+    </form>
 </body>
 </html>
