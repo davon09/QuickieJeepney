@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
-
+ 
 
 // Logout modal elements
 const logoutButton = document.getElementById('logoutButton');
