@@ -112,7 +112,7 @@ document.getElementById('signupForm').addEventListener('submit', function(event)
                 showPopup('Registration successful!', true);
 
                 setTimeout(function() {
-                    window.location.href = '../index.php';  
+                    window.location.href = '../../index.php';  
                 }, 2000); 
             } else {
                 showPopup('An error occurred. Please try again.');
