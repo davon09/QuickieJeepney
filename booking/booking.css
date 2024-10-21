@@ -1,0 +1,189 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-color: #e4d1c4;
+}
+
+.booking-container {
+    max-width: 1000px;
+    margin: 50px auto;
+    background-color: #e4d1c4;
+    padding: 100px;
+    position: relative;
+}
+
+.back-button {
+    position: absolute;
+    top: -15px;
+    left: -160px;
+}
+
+.back-button a {
+    font-size: 30px;
+    color: #866C4D;
+    text-decoration: none;
+}
+
+.content {
+    display: flex;
+    justify-content: space-between;
+}
+
+.jeepney-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 45%;
+}
+
+.jeepney-container {
+    position: relative;
+    width: 100%;
+}
+
+.jeepney-img {
+    width: 100%;
+    height: auto;
+    border-radius: 15px;
+    position: relative;
+}
+
+.overlay {
+    position: absolute;
+    top: -10px;
+    left: 0;
+    width: 100%;
+    height: calc(100% + 5px);
+    background-color: rgba(134, 93, 54, 0.7);
+    z-index: 1;
+    border-radius: 15px;
+}
+
+.driver-info {
+    position: absolute;
+    bottom: -50px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 2;
+}
+
+.driver-photo {
+    width: 85px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #f7f1f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 30px;
+    position: relative;
+    z-index: 2;
+    margin-left: 25px;
+    top: 50px;
+}
+
+.driver-avatar {
+    width: 90px;
+    height: 90px;
+    margin-top: 15px;
+}
+
+.driver-label {
+    font-size: 16px;
+    color: #935A38;
+    position: relative;
+    top: 45px;
+    font-weight: normal;
+}
+
+.driver-name {
+    font-size: 20px;
+    color: #A36E48;
+    position: relative;
+    top: 50px;
+    font-weight: bold;
+}
+
+.details {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.details p {
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: #60636d;
+    font-weight: normal;
+}
+
+.details p .highlight {
+    color: #a15c38;
+    font-weight: bold;
+}
+
+.dropdown-wrapper {
+    position: relative;
+    width: 100%;
+    margin-bottom: 20px;
+    border: 2px solid #a6825b;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+}
+
+.payment-method label {
+    text-align: center;
+    font-size: 25px;
+    color: #a15c38;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: block;
+}
+
+#payment-method {
+    width: 100%;
+    font-size: 16px;
+    border: none;
+    background-color: transparent;
+    color: #6e3d1e;
+    appearance: none;
+    outline: none;
+    padding-right: 30px;
+}
+
+
+
+.arrow-icon {
+    position: absolute;
+    right: 15px;
+    color: #6e3d1e;
+    pointer-events: none;
+    font-size: 18px;
+}
+
+.book-btn {
+    background-color: #A36E48;
+    color: white;
+    padding: 15px 0;
+    border: none;
+    border-radius: 5px;
+    font-size: 18px;
+    cursor: pointer;
+    margin-top: 30px;
+    width: 100%;
+}
+
+.book-btn:hover {
+    background-color: #935A38;
+}
