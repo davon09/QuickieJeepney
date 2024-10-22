@@ -33,18 +33,22 @@ $htmlOutput = '';
 
 // Loop through the result and build the HTML structure inside PHP
 while ($row = mysqli_fetch_assoc($result)) {
-    $jeepneyId = $row['jeepneyID']; // Assuming 'jeepneyID' is the primary key of the jeepney table
-    $vehicleType = strtolower($row['type']); 
-    $departureTimeFormatted = date('h:i A', strtotime($row['departure_time']));
-    $htmlOutput .= '<div class="jeepney-card" data-type="' . $row['type'] . '" data-departure="' . date('h:i A', strtotime($row['departure_time'])) . '">';
-    $htmlOutput .= '<img src="serve_image.php?id=' . $jeepneyId . '" alt="Jeepney Image">';
-    $htmlOutput .= '<h2>Seats Available: ' . $row['occupied'] . '</h2>';
-    $htmlOutput .= '<p>Route: ' . $row['route'] . '</p>';
-    $htmlOutput .= '<p class = "departure_time">Departure: ' . date('h:i A', strtotime($row['departure_time'])) . '</p>';
-    $htmlOutput .= '<button class="book-now">BOOK NOW</button>';
+    $jeepneyId = $row['jeepneyID']; // Primary key of the jeepney table
+    $vehicleType = strtolower($row['type']); // Type of vehicle (e.g., 'Traditional', 'Modern')
+    
+    // Format departure time properly
+    $departureTime = $row['departure']; // From your database
+    $departureTimeFormatted = date('h:i A', strtotime($departureTime)); 
+
+    // Construct the HTML output dynamically
+    $htmlOutput .= '<div class="jeepney-card" data-type="' . $vehicleType . '" data-departure="' . $departureTimeFormatted . '">';
+    $htmlOutput .= '<img src="serve_image.php?id=' . $jeepneyId . '" alt="Jeepney Image" class="jeepney-image">';
+    $htmlOutput .= '<h2>Seats Available: ' . ($row['capacity'] - $row['occupied']) . '</h2>';
+    $htmlOutput .= '<p>Route: ' . htmlspecialchars($row['route']) . '</p>';
+    $htmlOutput .= '<p class="departure">Departure: ' . $departureTimeFormatted . '</p>';
+    $htmlOutput .= '<button class="book-now" data-id="' . $jeepneyId . '">BOOK NOW</button>';
     $htmlOutput .= '</div>';
 }
-
 // Prepare the dynamic HTML snippets for the user details
 $userDetailsHTML = '
     <span class="name">' . $fullName . '</span>
