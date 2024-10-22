@@ -2,10 +2,11 @@
 include 'dbConnection/dbConnection.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Get the login input (either email or contact number) and password
     $loginInput = $conn->real_escape_string($_POST['loginInput']);
-    $password = $_POST['password'];
+    $password = $_POST['password'];  // Plain text password entered by the user
 
-    // Check if input is email or contact number
+    // Check if the input is an email or contact number
     if (filter_var($loginInput, FILTER_VALIDATE_EMAIL)) {
         $query = "SELECT * FROM user WHERE email=?";
     } else {
@@ -48,8 +49,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $conn->close();
 }
-
-
 ?>
 
 <!DOCTYPE html>

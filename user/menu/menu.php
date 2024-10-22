@@ -31,6 +31,7 @@ $result = mysqli_query($conn, $sql);
 // Initialize an empty string to store the generated HTML
 $htmlOutput = '';
 
+// Loop through the result and build the HTML structure inside PHP
 while ($row = mysqli_fetch_assoc($result)) {
     $jeepneyId = $row['jeepneyID']; // Assuming 'jeepneyID' is the primary key of the jeepney table
     $vehicleType = strtolower($row['type']); 
@@ -157,18 +158,17 @@ $userDetailsHTML = '
             </li>
         </ul>
     </nav>
+
     <section class="main-content">
         <div class="welcome">
             <h2>Hi, <?= explode(' ', $fullName)[0]; ?>!</h2>
             <p>Ready to reserve a jeepney?</p>
         </div>
 
-        <div class="cards-container">
-
-            <div class="announcement-card">
-                <h3>Announcements</h3>
-                <p>The Jeepney Terminal will be moved in front of Shakey's Legarda.</p>
-            </div>
+        <div class="announcements">
+            <h3>Announcements</h3>
+            <p>The Jeepney Terminal will be moved in front of Shakey's Legarda.</p>
+        </div>
 
         <div class="available-jeepney">
             <h1>Available Jeepney</h1>
@@ -191,9 +191,9 @@ $userDetailsHTML = '
                 </div>
             </div>
 
-                <div class="jeepney-cards" id="jeepney-cards">
-                    <?= $htmlOutput; ?>
-                </div>
+            <!-- Output the generated HTML for the jeepney cards -->
+            <div class="jeepney-cards">
+                <?= $htmlOutput; ?>
             </div>
         </div>
     </section>
