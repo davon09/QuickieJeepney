@@ -87,10 +87,11 @@ hr {
     transform: scale(1.1); 
 }
 
-.logout-icon {
+.logout-btn i{
     width: 24px;
     height: 24px;
-    color: white;
+    color: #5d4037;
+    margin-right: 6px;
 }
 
 .header-text {
