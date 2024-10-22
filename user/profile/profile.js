@@ -1,16 +1,17 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const passwordInput = document.getElementById('password');
-    const togglePassword = document.createElement('span');
-    togglePassword.innerHTML = `<i class="fa fa-eye-slash"></i>`;
-    passwordInput.parentNode.insertBefore(togglePassword, passwordInput.nextSibling);
+    const passwordFields = document.querySelectorAll('.password-toggle'); // Select all password toggle icons
     
-    togglePassword.addEventListener('click', function() {
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-            togglePassword.innerHTML = `<i class="fa fa-eye"></i>`;
-        } else {
-            passwordInput.type = 'password';
-            togglePassword.innerHTML = `<i class="fa fa-eye-slash"></i>`;
-        }
+    passwordFields.forEach(toggle => {
+        const passwordInput = toggle.previousElementSibling; // The password input field right before the toggle icon
+        
+        toggle.addEventListener('click', function() {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggle.innerHTML = `<i class="fa fa-eye"></i>`; 
+            } else {
+                passwordInput.type = 'password';
+                toggle.innerHTML = `<i class="fa fa-eye-slash"></i>`; 
+            }
+        });
     });
 });
