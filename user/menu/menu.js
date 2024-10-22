@@ -1,109 +1,69 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const vehicleTypeSelect = document.getElementById('vehicle-type');
-    const sortBySelect = document.getElementById('sort-by');
-    const jeepneyCardsContainer = document.getElementById('jeepney-cards');
-    let vehicleCards = Array.from(document.querySelectorAll('.jeepney-card'));
+    const typeFilter = document.getElementById('type');
+    const sortBy = document.getElementById('sort-by');
+    const jeepneyCards = document.querySelectorAll('.jeepney-card');
 
-    // Function to render the filtered and sorted cards
-    function renderCards(cards) {
-        jeepneyCardsContainer.innerHTML = ''; // Clear the container
-        cards.forEach(card => jeepneyCardsContainer.appendChild(card)); // Append cards
-    }
+    // Function to filter and sort jeepneys
+    function filterAndSortJeepneys() {
+        const selectedType = typeFilter.value.toLowerCase();
+        const selectedSort = sortBy.value;
 
-    // Function to filter the cards based on the selected vehicle type
-    function filterVehicles() {
-        const selectedType = vehicleTypeSelect.value;
+        // Convert NodeList to an array for sorting
+        const jeepneyArray = Array.from(jeepneyCards);
 
-        return vehicleCards.filter(card => {
-            const vehicleType = card.getAttribute('data-type');
-            return selectedType === 'all' || vehicleType === selectedType;
-        });
-    }
-
-    // Function to sort the cards based on the selected option
-    function sortVehicles(cards) {
-        const sortBy = sortBySelect.value;
-
-        return cards.sort((a, b) => {
-            if (sortBy === 'departure') {
-                const timeA = new Date(`1970/01/01 ${a.getAttribute('data-departure')}`);
-                const timeB = new Date(`1970/01/01 ${b.getAttribute('data-departure')}`);
-                return timeA - timeB; // Ascending order by departure
-            } else if (sortBy === 'seats') {
-                const seatsA = parseInt(a.getAttribute('data-seats'), 10);
-                const seatsB = parseInt(b.getAttribute('data-seats'), 10);
-                return seatsB - seatsA; // Descending order by seats
+        // Filter jeepneys by selected vehicle type
+        jeepneyArray.forEach(jeepney => {
+            const vehicleType = jeepney.getAttribute('data-type').toLowerCase();
+            if (selectedType === 'all' || selectedType === vehicleType) {
+                jeepney.style.display = 'block';
+            } else {
+                jeepney.style.display = 'none';
             }
         });
+
+        // Sort jeepneys based on selected criteria (either by seats or departure time)
+        const sortedJeepneys = jeepneyArray
+        .filter(jeepney => jeepney.style.display === 'block')
+        .sort((a, b) => {
+            if (selectedSort === 'seats') {
+                const seatsA = parseInt(a.querySelector('h3').textContent.replace('Seats Available: ', ''));
+                const seatsB = parseInt(b.querySelector('h3').textContent.replace('Seats Available: ', ''));
+                return seatsB - seatsA; // Sort in descending order
+            } else if (selectedSort === 'departure') {
+                const timeA = convertToComparableTime(a.getAttribute('data-departure'));
+                const timeB = convertToComparableTime(b.getAttribute('data-departure'));
+                return timeA - timeB; // Sort by time, ascending
+            }
+        });
+
+        // Clear the container and append the sorted jeepneys
+        const jeepneyContainer = document.querySelector('.jeepney-cards');
+        jeepneyContainer.innerHTML = '';
+        sortedJeepneys.forEach(jeepney => jeepneyContainer.appendChild(jeepney));
     }
 
-    // Function to refresh the cards based on the filter and sort options
-    function refreshCards() {
-        const filteredCards = filterVehicles(); // Filter the cards
-        const sortedCards = sortVehicles(filteredCards); // Sort the filtered cards
-        renderCards(sortedCards); // Render the sorted and filtered cards
-    }
-
-    // Event listeners for filter and sort dropdowns
-    vehicleTypeSelect.addEventListener('change', refreshCards);
-    sortBySelect.addEventListener('change', refreshCards);
-
-    // Initial render on page load
-    refreshCards();
-});
-
-
-
-document.addEventListener('DOMContentLoaded', function () {
-    const logoutBtn = document.getElementById('logoutBtn');
-    const modal = document.getElementById('confirmLogout');
-    const confirmYes = document.getElementById('confirmYes');
-    const confirmNo = document.getElementById('confirmNo');
-
-    // Show modal when clicking on logout button
-    logoutBtn.addEventListener('click', function () {
-        modal.style.display = 'block';
-    });
-
-    // If user confirms logout
-    confirmYes.addEventListener('click', function () {
-        window.location.href = '../../index.php'; // Redirect to logout page
-    });
-
-    // If user cancels logout
-    confirmNo.addEventListener('click', function () {
-        modal.style.display = 'none'; // Close the modal
-    });
-
-    // Close the modal if user clicks outside of it
-    window.addEventListener('click', function (event) {
-        if (event.target === modal) {
-            modal.style.display = 'none';
+    // Helper function to convert AM/PM time to total minutes for sorting
+    function convertToComparableTime(timeStr) {
+        // Example: "2:30 PM" => "14:30", or convert it to minutes since midnight
+        const [time, modifier] = timeStr.split(' '); // Split time and AM/PM
+        let [hours, minutes] = time.split(':').map(Number);
+    
+        if (modifier === 'PM' && hours < 12) {
+            hours += 12;
+        } else if (modifier === 'AM' && hours === 12) {
+            hours = 0; // Midnight case
         }
-    });
-});
+    
+        // Convert hours and minutes to total minutes since midnight
+        return hours * 60 + minutes;
+    }
 
-// Handle Logout Modal Logic
-document.addEventListener('DOMContentLoaded', function () {
-    const logoutButton = document.getElementById('logoutButton');
-    const logoutModal = document.getElementById('logoutModal');
-    const confirmLogout = document.getElementById('confirmLogout');
-    const cancelLogout = document.getElementById('cancelLogout');
+    // Add event listeners for filtering and sorting
+    typeFilter.addEventListener('change', filterAndSortJeepneys);
+    sortBy.addEventListener('change', filterAndSortJeepneys);
 
-    // Show the modal when logout button is clicked
-    logoutButton.addEventListener('click', () => {
-        logoutModal.style.display = 'flex';
-    });
-
-    // Hide the modal when cancel button is clicked
-    cancelLogout.addEventListener('click', () => {
-        logoutModal.style.display = 'none';
-    });
-
-    // Perform the logout when confirm button is clicked
-    confirmLogout.addEventListener('click', () => {
-        window.location.href = '../index.php'; // Redirect to the logout page
-    });
+    // Initial call to apply filters and sorting
+    filterAndSortJeepneys();
 });
 
 document.addEventListener('DOMContentLoaded', () => {
