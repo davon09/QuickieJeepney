@@ -66,7 +66,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="login-container">
         <div class="login-card">
             <div class="login-header">
-                <h1>Quickie Jeepney</h1>
+                <img src="images/qj-logo.png" alt="Quickie Jeepney Logo" class="logo" style="width:300px;">
                 <p>BOOKING</p>
             </div>
             <!-- Update form action to point to the current PHP script -->
