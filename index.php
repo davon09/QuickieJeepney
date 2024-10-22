@@ -2,11 +2,10 @@
 include 'dbConnection/dbConnection.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Get the login input (either email or contact number) and password
     $loginInput = $conn->real_escape_string($_POST['loginInput']);
-    $password = $_POST['password'];  // Plain text password entered by the user
+    $password = $_POST['password'];
 
-    // Check if the input is an email or contact number
+    // Check if input is email or contact number
     if (filter_var($loginInput, FILTER_VALIDATE_EMAIL)) {
         $query = "SELECT * FROM user WHERE email=?";
     } else {
@@ -21,20 +20,44 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($result->num_rows > 0) {
             $user = $result->fetch_assoc();
-            
-            // Verify the hashed password using password_verify()
-            if (password_verify($password, $user['password'])) {
-                // Successful login
-                session_start();
-                $_SESSION['userID'] = $user['userID'];
-                $_SESSION['lastName'] = $user['lastName'];
-                $_SESSION['firstName'] = $user['firstName'];
-                $_SESSION['email'] = $user['email'];
 
-                header("Location: user/menu/menu.php");
-                exit();
+            // Check if the password is plain text
+            if ($user['password'] === $password) {
+                // Plain text password detected, rehash and update
+                $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+                $updateQuery = "UPDATE user SET password=? WHERE userID=?";
+                if ($stmtUpdate = $conn->prepare($updateQuery)) {
+                    $stmtUpdate->bind_param("si", $hashedPassword, $user['userID']);
+                    $stmtUpdate->execute();
+                    $stmtUpdate->close();
+                }
+
+                // Now use the newly hashed password for verification
+                if (password_verify($password, $hashedPassword)) {
+                    session_start();
+                    $_SESSION['userID'] = $user['userID'];
+                    $_SESSION['lastName'] = $user['lastName'];
+                    $_SESSION['firstName'] = $user['firstName'];
+                    $_SESSION['email'] = $user['email'];
+
+                    header("Location: user/menu/menu.php");
+                    exit();
+                }
             } else {
-                echo "<script>alert('Invalid password!'); window.history.back();</script>";
+                // If the password is already hashed, use password_verify
+                if (password_verify($password, $user['password'])) {
+                    session_start();
+                    $_SESSION['userID'] = $user['userID'];
+                    $_SESSION['lastName'] = $user['lastName'];
+                    $_SESSION['firstName'] = $user['firstName'];
+                    $_SESSION['email'] = $user['email'];
+
+                    header("Location: user/menu/menu.php");
+                    exit();
+                } else {
+                    echo "<script>alert('Invalid password!'); window.history.back();</script>";
+                }
             }
         } else {
             echo "<script>alert('Email or contact number not found!'); window.history.back();</script>";
@@ -47,6 +70,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $conn->close();
 }
+
+
 ?>
 
 <!DOCTYPE html>
