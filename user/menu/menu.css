@@ -1,362 +1,335 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-}
-
-body {
-    background-color:  #f4ede4;
-    display: flex;
-    min-height: 100vh;
-    overflow-x: hidden;
-}
-
-.top-header {
-    width: 100%;
-    height: 140px;
-    background-color: white;
-    display: flex;
-    align-items: center; 
-    justify-content: space-between;
-    padding: 0 30px; 
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); 
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1000;
-}
-
-.logo-section {
-    display: flex;
-    align-items: center;
-}
-
-.logo-image {
-    width: 70px;
-    height: 70px; 
-    width: auto;
-    object-fit: contain; 
-}
-
-/* User Card */
-.user-card {
-    display: flex;
-    align-items: center;
-    background-color: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(8px); 
-    border-radius: 12px;
-    padding: 10px 16px; 
-    gap: 12px; 
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
-}
-
-.user-card a {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    text-decoration: none;
-    margin-left: 10px;
-
-    
-}
-
-.image img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%; 
-    object-fit: cover;
-}
-
-.logout-btn {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    transition: transform 0.3s;
-}
-
-.logout-btn:hover {
-    transform: scale(1.1); 
-}
-
-.logout-icon {
-    width: 24px;
-    height: 24px;
-    color: white;
-}
-
-.header-text {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start; 
-    gap: 0; 
-    line-height: 1;
-    margin: 0; 
-}
-
-.header-text h3 {
-    font-size: 16px;
-    font-weight: 600;
-    margin: 0;
-    padding: 0; 
-    color: #4e342e;
-}
-
-.header-text p {
-    font-size: 14px;
-    font-weight: 400;
-    margin: 0px; 
-    padding: 0; 
-    color: #6d4c41;
-}
-
-
-.sidebar {
-    width: 250px;
-    background-color: #5d4037; 
-    height: calc(100vh - 140px); 
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-    position: fixed;
-    top: 140px;
-    left: 0;
-    overflow-y: auto;
-}
-
-.menu-title {
-    font-size: 14px;
-    color: #d7ccc8;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-}
-
-.menu-links {
-    list-style: none;
-    padding: 0;
+body{
+    height: 100vh;
+    background: #e0c4b3;
     margin: 0;
     display: flex;
-    flex-direction: column;
-    gap: 15px;
 }
 
-.nav-link {
-    display: flex;
-    align-items: center;
-    transition: background-color 0.3s, opacity 0.3s;
+.sidebar{
+    position:relative;
+    top:0;
+    left:0;
+    height:100%;
+    width:550px;
+    padding: 30px 14px;
+    background: #934e26;
+    z-index: 100;
 }
 
-.sidebar-link {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    text-decoration: none;
-    font-size: 16px;
-    font-weight: 500;
-    color: #d7ccc8;
-    padding: 10px 12px;
-    border-radius: 8px;
-    width: 100%;
-    transition: background-color 0.3s ease;
+.menu{
+    padding-top: 20px;
 }
 
-.sidebar-icon {
-    width: 20px;
-    height: 20px;
-    opacity: 0.6;
-    transition: opacity 0.3s;
+.menu-links{
+    list-style-type:none;
+    padding: 20px 0px;
+    margin:0;
 }
 
-.nav-link.active .sidebar-link {
-    background-color: #4e342e;
-    color: #fff;
-}
-
-.nav-link.active .sidebar-icon {
-    opacity: 1;
-}
-
-.nav-link:hover .sidebar-link {
-    background-color: #4e342e;
-    color: #fff;
-}
-
-.nav-link:hover .sidebar-icon {
-    opacity: 1;
-}
-
-.nav-link:hover .sidebar-link {
-    background-color: #4e342e;;
-    color: #fff;
-}
-
-.nav-link:hover .sidebar-icon {
-    opacity: 1;
-}
-
-.main-content {
-    margin-left: 250px;
-    padding: 160px 20px;
-    flex: 1;
-    min-height: calc(100vh - 140px);
-    background-color: #f4ede4;
-    overflow-y: auto;
-}
-
-/* Welcome Section */
-.welcome {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin: 20px 0px;
-    justify-content: center;
-}
-.welcome h2  {
-    text-align: center;
-    font-size: 28px;
-    font-weight: 700;
-    color: #4e342e;
-}
-
-.welcome p {
-    text-align: center;
-    font-size: 18px;
-    color: #5d4037;
-}
-
-/* Flex Container for Cards */
-.cards-container {
-    display: flex;
-    align-items: flex-start;
-    gap: 20px;
-}
-
-.announcements{
-    flex: 1; /* Takes available space */
-    background-color: white;
-    border: 2px solid #8d6e63;
-    border-radius: 15px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    padding: 20px;
+.nav-link{
     margin-bottom: 50px;
-    
 }
-.available-jeepney-card {
-    flex: 2; /* Takes more space */
-    background-color: white;
-    border: 2px solid #8d6e63;
-    border-radius: 15px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    padding: 20px;
+
+.sidebar .text{
+    font-size: 20px;
+    margin-left: 10px;
+    color:white;
+}
+
+.sidebar .image{
     display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-/* Card Titles */
-.announcement-card h3,
-.available-jeepney-card h3 {
-    font-size: 22px;
-    font-weight: 600;
-    color: #4e342e;
-    margin-bottom: 10px;
-}
-
-/* Card Text */
-
-.available-jeepney {
-    text-align: center;
-}
-
-.announcement-card p,
-.available-jeepney-card p {
-    font-size: 18px;
-    color: #616161;
-}
-
-/* Filters Section */
-.filters {
-    gap: 10px;
-    display: flex;
-    justify-content: center;
     align-items: center;
-    margin-top: 20px;
-    margin-bottom: 20px;
 }
 
-.filters label {
-    font-size: 16px;
-    font-weight: 500;
-    color: #4e342e;
+.sidebar .header{
+    position: relative;
 }
 
-.filters select {
-    padding: 8px 10px;
-   
-    border: 1px solid #8d6e63;
-    border-radius: 5px;
-    background-color: white;
-    color: #4e342e;
-    cursor: pointer;
+.sidebar-divider {
+    height: 1px; 
+    background-color: #fff; 
+    margin: 3px 0; 
+    width: 80%;
 }
 
-/* Jeepney Cards Container */
-.jeepney-cards {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); /* Two columns */
-    gap: 20px;
+.sidebar .image-text img{
+    width:150px; 
+    border-radius: 6px;
 }
 
-/* Individual Jeepney Card */
-.jeepney-card {
-    background-color: white;
-    border-radius: 15px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    padding: 20px;
+.sidebar header .image-text{
     display: flex;
-    flex-direction: column;
     align-items: center;
-    text-align: center;
 }
 
-/* Image Styling */
-.jeepney-card img {
+.sidebar-icon{
+    width: 50px;  
+    height: 50px; 
+    margin-right: 8px; 
+    vertical-align: middle; 
+    padding-left: 35px;
+    transition: all 0.5s ease;
+}
+
+.sidebar-link{
+    display: flex;
     width: 100%;
-    height: 300px;
-    margin-bottom: 20px;
-    object-fit: contain;
-    border-radius: 15px;
+    align-items: center;
+    text-decoration: none;
+    font-size: 20px;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    text-align: center;
+    padding: 10px;
+    transition: all 0.5s ease;
 }
 
-.book-now{
-    background: linear-gradient(45deg, #ffca28, #ff9800); /* Gradient background */
-    color: white;
+.sidebar li{
+    height: 50px;
+    margin-top:10px;
+    list-style: none;
+    display: flex;
+    align-items: center;
+}
+
+.sidebarli a{
+    height:100%;
+    width:100%;
+    outline:none;
+    border:none;
+    border-radius: 6px;
+}
+
+.sidebar li a:hover{
+    background:#8b4217
+}
+
+/* Logout button styling */
+.logout-btn {
+    background-color: #ffcccc;
     border: none;
-    border-radius: 8px;
-    padding: 10px 15px;
+    padding: 10px 20px;
     font-size: 16px;
-    font-weight: 600;
+    border-radius: 5px;
     cursor: pointer;
-    transition: background 0.3s ease, transform 0.2s ease;
-    width: 100%;
-    max-width: 200px;
+    color: #000000;
     margin-top: 10px;
 }
 
-/* Hover Effect */
-.book-now:hover {
-    background: linear-gradient(45deg, #ffb300, #ff5722); /* Darker gradient */
-    transform: scale(1.05); /* Slight zoom on hover */
+.logout-btn:hover {
+    background-color: #ff9999;
 }
 
-/* Active Effect */
-.book-now:active {
-    transform: scale(0.98); /* Slight shrink on click */
-    background: linear-gradient(45deg, #ff9800, #e65100); /* Darker gradient */
+/* Modal styling */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    background-color: #8B4513;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 5px;
+    width: 80%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.confirm-btn {
+    background-color: #ffffff;
+    color: rgb(0, 0, 0);
+    padding: 10px 20px;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.confirm-btn:hover {
+    background-color: #A0522D;
+}
+
+/* Sidebar Header Text Styles */
+.header-text .name{
+    font-size:25px;
+    font-weight: 600;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.header-text .occupation{
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+/* Links styles */
+a:link {
+    color: white;
+    background-color: transparent;
+    text-decoration: none;
+    font-size: 30px;
+}
+
+a:visited {
+    color: white;
+    background-color: transparent;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #e5bca4;
+    background-color: transparent;
+    text-decoration: underline;
+}
+
+a:active {
+    color: #e48249;
+    background-color: transparent;
+    text-decoration: underline;
+}
+
+/* Main content styles */
+.main-content {
+    padding: 20px;
+    width: calc(100% - 100px);
+    display: flex;
+    flex-direction: column;
+}
+
+.welcome {
+    background :linear-gradient(to right, #b86b4e, #e0b69d);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.welcome h2 {
+    margin: 0;
+    font-size: 45px;
+    font-display: sans-serif;
+}
+
+.welcome p {
+    font-size: 18px;
+}
+
+.announcements {
+    background-color: #f7e4d9;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.announcements h3 {
+    text-align: center;
+    margin-top: 0;
+    font-size: 30px;
+}
+
+.announcements p {
+    text-align: center;
+}
+
+.available-jeepney {
+    background-color: #f7e4d9;
+    padding: 10px;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.available-jeepney h3 {
+    text-align: center;
+    font-size: 30px;
+    color: #934e26;
+    margin-bottom: 20px;
+}
+
+.filters {
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: #f7e4d9; 
+    border-radius: 8px;
+}
+
+.filters label {
+    font-size: 18px;
+    margin-right: 10px;
+}
+
+.filters select {
+    padding: 5px 10px;
+    font-size: 16px;
+    background-color: white;
+    border: 1px solid #b84a29;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.filters label, .filters select {
+    display: flex;
+    align-items: center;
+}
+
+.filters > * {
+    margin-right: 20px; /* Adjust the margin for closer spacing */
+}
+
+.filters select {
+    min-width: 150px; /* Ensures dropdowns have consistent width */
+}
+
+/* Jeepney Card Styles */
+.jeepney-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.jeepney-card {
+    position: relative;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    width: 300px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer; /* Makes the whole card clickable */
+    transition: transform 0.3s ease;
+}
+
+.jeepney-card:hover {
+    transform: scale(1.05); 
+}
+
+.jeepney-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.book-now {
+    background-color: #b84a29;
+    color: white;
+    padding: 10px 0;
+    border: none;
+    width: 100%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.book-now:hover {
+    background-color: #8b4217;
 }
