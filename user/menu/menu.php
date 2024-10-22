@@ -31,16 +31,14 @@ $result = mysqli_query($conn, $sql);
 // Initialize an empty string to store the generated HTML
 $htmlOutput = '';
 
-// Loop through the result and build the HTML structure inside PHP
 while ($row = mysqli_fetch_assoc($result)) {
-    $jeepneyId = $row['jeepneyID']; // Assuming 'jeepneyID' is the primary key of the jeepney table
-    $htmlOutput .= '<div class="jeepney-card" data-type="jeep" data-departure="11:00AM">';
-    // Use the serve_image.php script to serve the image
+    $jeepneyId = $row['jeepneyID'];
+    $htmlOutput .= '<div class="jeepney-card" data-type="' . $row['type'] . '" data-departure="' . $row['departure'] . '" data-seats="' . ($row['capacity'] - $row['occupied']) . '">';
     $htmlOutput .= '<img src="serve_image.php?id=' . $jeepneyId . '" alt="Jeepney Image">';
-    $htmlOutput .= '<h3>Seats Available: ' . $row['occupied'] . '</h3>';
+    $htmlOutput .= '<h3>Seats Available: ' . ($row['capacity'] - $row['occupied']) . '</h3>';
     $htmlOutput .= '<p>Route: ' . $row['route'] . '</p>';
-    $htmlOutput .= '<p>Departure: 11:00 AM</p>';
-    $htmlOutput .= '<button class="book-now">BOOK NOW</button>';
+    $htmlOutput .= '<p>Departure: ' . $row['departure'] . '</p>';
+    $htmlOutput .= '<button class="book-now" data-id="' . $jeepneyId . '">BOOK NOW</button>';
     $htmlOutput .= '</div>';
 }
 
@@ -132,6 +130,7 @@ $userDetailsHTML = '
 
                     <label for="sort-by">Sort by:</label>
                     <select id="sort-by">
+                        <option value="none">None</option>
                         <option value="departure">Departure</option>
                         <option value="seats">Available Seats</option>
                     </select>

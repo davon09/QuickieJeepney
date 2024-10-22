@@ -1,0 +1,196 @@
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-color: #f4ede4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Booking Container */
+.booking-container {
+    max-width: 850px;
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    position: relative;
+}
+
+/* Back Button */
+.back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    cursor: pointer;
+}
+
+.back-button img {
+    width: 30px;
+    height: 30px;
+}
+
+/* Content Section */
+.content {
+    display: flex;
+    gap: 30px;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+}
+
+/* Jeepney Info Section */
+.jeepney-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 45%;
+    gap: 15px;
+}
+
+.jeepney-container {
+    position: relative;
+    width: 100%;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background-color: #4e342e;
+    margin-left: 70px;
+    padding-bottom: 10px;
+    margin-right: 20px;
+}
+
+/* Jeepney Image Styling */
+.jeepney-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    filter: brightness(75%);
+}
+
+/* Driver Info Section */
+.driver-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: -30px; /* Move it closer to the image */
+}
+
+.driver-photo {
+    width: 85px;
+    height: 85px;
+    background-color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-bottom: 10px;
+    z-index: 1;
+}
+
+.driver-avatar {
+    width: 75px;
+    height: 75px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.driver-label {
+    font-size: 16px;
+    color: white;
+    margin-bottom: 5px;
+}
+
+.driver-name {
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+}
+
+/* Details Section */
+.details {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-left: 20px;
+}
+
+.details p {
+    font-size: 18px;
+    color: #60636d;
+}
+
+.details .highlight {
+    color: #a15c38;
+    font-weight: bold;
+}
+
+/* Payment Method Section */
+.payment-method {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.payment-method label {
+    font-size: 18px;
+    color: #935A38;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.dropdown-wrapper {
+    position: relative;
+    width: 100%;
+    border: 2px solid #a6825b;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #fff;
+    margin-top: 10px;
+}
+
+#payment-method {
+    width: 100%;
+    font-size: 16px;
+    border: none;
+    background-color: transparent;
+    outline: none;
+    cursor: pointer;
+}
+
+.arrow-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6e3d1e;
+    font-size: 18px;
+}
+
+/* Confirm Booking Button */
+.book-btn {
+    background: linear-gradient(45deg, #ffca28, #ff9800);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-size: 18px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+    transition: background 0.3s ease;
+}
+
+.book-btn:hover {
+    background: linear-gradient(45deg, #ffb300, #ff5722);
+}

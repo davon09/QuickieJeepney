@@ -1,57 +1,57 @@
 document.addEventListener('DOMContentLoaded', () => {
     const vehicleTypeSelect = document.getElementById('vehicle-type');
     const sortBySelect = document.getElementById('sort-by');
-    const jeepneyCardsContainer = document.querySelector('.jeepney-cards'); // Container for the cards
-    let vehicleCards = Array.from(document.querySelectorAll('.jeepney-card')); // Store all cards initially
+    const jeepneyCardsContainer = document.getElementById('jeepney-cards');
+    let vehicleCards = Array.from(document.querySelectorAll('.jeepney-card'));
 
-    // Function to filter vehicle cards based on type
+    // Function to render the filtered and sorted cards
+    function renderCards(cards) {
+        jeepneyCardsContainer.innerHTML = ''; // Clear the container
+        cards.forEach(card => jeepneyCardsContainer.appendChild(card)); // Append cards
+    }
+
+    // Function to filter the cards based on the selected vehicle type
     function filterVehicles() {
         const selectedType = vehicleTypeSelect.value;
-        
-        // Filter and display cards based on the selected type
-        vehicleCards.forEach(card => {
+
+        return vehicleCards.filter(card => {
             const vehicleType = card.getAttribute('data-type');
-            if (selectedType === 'all' || vehicleType === selectedType) {
-                card.style.display = 'flex';
-            } else {
-                card.style.display = 'none';
+            return selectedType === 'all' || vehicleType === selectedType;
+        });
+    }
+
+    // Function to sort the cards based on the selected option
+    function sortVehicles(cards) {
+        const sortBy = sortBySelect.value;
+
+        return cards.sort((a, b) => {
+            if (sortBy === 'departure') {
+                const timeA = new Date(`1970/01/01 ${a.getAttribute('data-departure')}`);
+                const timeB = new Date(`1970/01/01 ${b.getAttribute('data-departure')}`);
+                return timeA - timeB; // Ascending order by departure
+            } else if (sortBy === 'seats') {
+                const seatsA = parseInt(a.getAttribute('data-seats'), 10);
+                const seatsB = parseInt(b.getAttribute('data-seats'), 10);
+                return seatsB - seatsA; // Descending order by seats
             }
         });
     }
 
-    // Function to sort vehicle cards by departure time or seats
-    function sortVehicles() {
-        const sortBy = sortBySelect.value;
-
-        const sortedCards = vehicleCards.slice().sort((a, b) => {
-            if (sortBy === 'departure') {
-                const timeA = a.getAttribute('data-departure');
-                const timeB = b.getAttribute('data-departure');
-                return new Date('1970/01/01 ' + timeA) - new Date('1970/01/01 ' + timeB);
-            } else if (sortBy === 'seats') {
-                const seatsA = parseInt(a.getAttribute('data-seats'));
-                const seatsB = parseInt(b.getAttribute('data-seats'));
-                return seatsB - seatsA; // Sort in descending order of seats
-            }
-        });
-
-        // Clear the container and re-append sorted cards
-        jeepneyCardsContainer.innerHTML = '';
-        sortedCards.forEach(card => jeepneyCardsContainer.appendChild(card));
+    // Function to refresh the cards based on the filter and sort options
+    function refreshCards() {
+        const filteredCards = filterVehicles(); // Filter the cards
+        const sortedCards = sortVehicles(filteredCards); // Sort the filtered cards
+        renderCards(sortedCards); // Render the sorted and filtered cards
     }
 
     // Event listeners for filter and sort dropdowns
-    vehicleTypeSelect.addEventListener('change', () => {
-        filterVehicles();
-        sortVehicles(); // Ensure cards are sorted after filtering
-    });
+    vehicleTypeSelect.addEventListener('change', refreshCards);
+    sortBySelect.addEventListener('change', refreshCards);
 
-    sortBySelect.addEventListener('change', sortVehicles);
-
-    // Initial render and sort on page load
-    filterVehicles(); // Ensure only relevant cards are displayed initially
-    sortVehicles();
+    // Initial render on page load
+    refreshCards();
 });
+
 
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -103,5 +103,14 @@ document.addEventListener('DOMContentLoaded', function () {
     // Perform the logout when confirm button is clicked
     confirmLogout.addEventListener('click', () => {
         window.location.href = '../index.php'; // Redirect to the logout page
+    });
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.book-now').forEach(button => {
+        button.addEventListener('click', () => {
+            const jeepneyId = button.getAttribute('data-id');
+            window.location.href = `../booking/book-now.php?id=${jeepneyId}`;
+        });
     });
 });
