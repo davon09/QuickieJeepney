@@ -28,19 +28,15 @@ if ($resultUser->num_rows > 0) {
 $sql = "SELECT * FROM jeepney";
 $result = mysqli_query($conn, $sql);
 
-// Initialize an empty string to store the generated HTML
-$htmlOutput = '';
 
-// Loop through the result and build the HTML structure inside PHP
+$htmlOutput = '';
 while ($row = mysqli_fetch_assoc($result)) {
-    $jeepneyId = $row['jeepneyID']; // Primary key of the jeepney table
-    $vehicleType = strtolower($row['type']); // Type of vehicle (e.g., 'Traditional', 'Modern')
+    $jeepneyId = $row['jeepneyID']; 
+    $vehicleType = strtolower($row['type']); 
     
-    // Format departure time properly
-    $departureTime = $row['departure']; // From your database
+    $departureTime = $row['departure_time']; 
     $departureTimeFormatted = date('h:i A', strtotime($departureTime)); 
 
-    // Construct the HTML output dynamically
     $htmlOutput .= '<div class="jeepney-card" data-type="' . $vehicleType . '" data-departure="' . $departureTimeFormatted . '">';
     $htmlOutput .= '<img src="serve_image.php?id=' . $jeepneyId . '" alt="Jeepney Image" class="jeepney-image">';
     $htmlOutput .= '<h2>Seats Available: ' . ($row['capacity'] - $row['occupied']) . '</h2>';
@@ -49,7 +45,7 @@ while ($row = mysqli_fetch_assoc($result)) {
     $htmlOutput .= '<button class="book-now" data-id="' . $jeepneyId . '">BOOK NOW</button>';
     $htmlOutput .= '</div>';
 }
-// Prepare the dynamic HTML snippets for the user details
+
 $userDetailsHTML = '
     <span class="name">' . $fullName . '</span>
     <br>
