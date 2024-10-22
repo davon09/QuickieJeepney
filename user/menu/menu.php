@@ -60,6 +60,8 @@ $userDetailsHTML = '
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome to Quickie Jeepney</title>
     <link rel="stylesheet" href="menu.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="menu.js"></script>
 </head>
 
@@ -134,6 +136,7 @@ $userDetailsHTML = '
     </nav> -->
     <nav class="sidebar">
         <div class="menu-title">Menu</div> 
+        <hr>
         <ul class="menu-links">
             <li class="nav-link">
                 <a href="menu.php" class="sidebar-link">
@@ -159,40 +162,47 @@ $userDetailsHTML = '
     </nav>
 
     <section class="main-content">
-        <div class="welcome">
-            <h2>Hi, <?= explode(' ', $fullName)[0]; ?>!</h2>
-            <p>Ready to reserve a jeepney?</p>
-        </div>
 
-        <div class="announcements">
-            <h3>Announcements</h3>
-            <p>The Jeepney Terminal will be moved in front of Shakey's Legarda.</p>
-        </div>
-
-        <div class="available-jeepney">
-            <h1>Available Jeepney</h1>
-            <div class="filters">
-                <div>
-                    <label for="type">Filter by Vehicle Type:</label>
-                    <select id="type">
-                        <option value="all">All</option>
-                        <option value="traditional">Traditional</option>
-                        <option value="modern">Modern</option>
-                    </select>
+        <div class="cards-container">
+            <div class="left-column">
+                <div class="welcome-card">
+                    <h2>Hi, <?= explode(' ', $fullName)[0]; ?>!</h2>
+                    <p>Ready to reserve a jeepney?</p>
                 </div>
-
-                <div>
-                    <label for="sort-by">Sort by:</label>
-                    <select id="sort-by">
-                        <option value="none">None</option>
-                        <option value="departure">Departure</option>
-                        <option value="seats">Available Seats</option>
-                    </select>
+                <div class="announcement-card">
+                    <h3><i class="fas fa-bullhorn"></i>Announcements</h3>
+                    <p>The Jeepney Terminal will be moved in front of Shakey's Legarda.</p>
+                    <br><p>Session Road is closed for the Baguio Festival.</p>
+                    <br><p>Expect heavy hairnfall due to Bagyong Katrina.</p>
                 </div>
             </div>
+            <div class="right-column">
+                <div class="available-jeepney-card">
+                    <h3>Available Jeepney</h3>
+                    <div class="filters">
+                        <div>
+                            <label for="type">Filter by Vehicle Type:</label>
+                            <select id="type">
+                                <option value="all">All</option>
+                                <option value="traditional">Traditional</option>
+                                <option value="modern">Modern</option>
+                            </select>
+                        </div>
 
-            <div class="jeepney-cards">
-                <?= $htmlOutput; ?>
+                        <div>
+                            <label for="sort-by">Sort by:</label>
+                            <select id="sort-by">
+                                <option value="none">None</option>
+                                <option value="departure">Departure</option>
+                                <option value="seats">Available Seats</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="jeepney-cards" id="jeepney-cards">
+                        <?= $htmlOutput; ?>
+                    </div>
+                </div>
             </div>
         </div>
     </section>

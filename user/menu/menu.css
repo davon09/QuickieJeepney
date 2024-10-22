@@ -12,6 +12,10 @@ body {
     overflow-x: hidden;
 }
 
+hr {
+    border: 1px solid #f4ede4; 
+}
+
 .top-header {
     width: 100%;
     height: 140px;
@@ -130,11 +134,12 @@ body {
 }
 
 .menu-title {
-    font-size: 14px;
+    font-size: 18px;
     color: #d7ccc8;
     letter-spacing: 1px;
     text-transform: uppercase;
-    margin-bottom: 10px;
+    margin-top: 20px;
+    margin-left: 14px;
 }
 
 .menu-links {
@@ -209,47 +214,38 @@ body {
     overflow-y: auto;
 }
 
-/* Welcome Section */
-.welcome {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin: 20px 0px;
-    justify-content: center;
-}
-.welcome h2  {
-    text-align: center;
-    font-size: 28px;
-    font-weight: 700;
-    color: #4e342e;
-}
-
-.welcome p {
-    text-align: center;
-    font-size: 18px;
-    color: #5d4037;
-}
-
-/* Flex Container for Cards */
 .cards-container {
     display: flex;
     align-items: flex-start;
-    gap: 20px;
+    gap: 20px; 
 }
 
-.announcements{
-    flex: 1; /* Takes available space */
-    background-color: white;
+.left-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; 
+}
+
+.welcome-card,
+.announcement-card {
+    background-color: rgba(255, 255, 255, 0.5);
     border: 2px solid #8d6e63;
     border-radius: 15px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    margin-bottom: 50px;
-    
+    max-width: 400px;
 }
+.announcement-card h3 i {
+    margin-right: 10px; 
+    color: #4e342e; 
+    font-size: 24px; 
+    vertical-align: middle; 
+}
+
 .available-jeepney-card {
-    flex: 2; /* Takes more space */
-    background-color: white;
+    flex: 1; 
+    min-width: 1200px;
+    background-color: rgba(255, 255, 255, 0.5);
     border: 2px solid #8d6e63;
     border-radius: 15px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
@@ -259,28 +255,30 @@ body {
     gap: 20px;
 }
 
-/* Card Titles */
-.announcement-card h3,
-.available-jeepney-card h3 {
-    font-size: 22px;
+.welcome-card h2,
+.announcement-card h3 {
+    font-size: 26px;
     font-weight: 600;
     color: #4e342e;
     margin-bottom: 10px;
 }
 
-/* Card Text */
-
-.available-jeepney {
+.available-jeepney-card h3 {
+    font-size: 28px;
+    font-weight: 600;
+    color: #4e342e;
+    margin-bottom: 10px;
+    margin-top: 20px;
     text-align: center;
 }
 
+.welcome-card p,
 .announcement-card p,
 .available-jeepney-card p {
     font-size: 18px;
     color: #616161;
 }
 
-/* Filters Section */
 .filters {
     gap: 10px;
     display: flex;
@@ -306,14 +304,12 @@ body {
     cursor: pointer;
 }
 
-/* Jeepney Cards Container */
 .jeepney-cards {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* Two columns */
-    gap: 20px;
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 40px;
 }
 
-/* Individual Jeepney Card */
 .jeepney-card {
     background-color: white;
     border-radius: 15px;
@@ -325,13 +321,12 @@ body {
     text-align: center;
 }
 
-/* Image Styling */
 .jeepney-card img {
     width: 100%;
-    height: 300px;
-    margin-bottom: 20px;
-    object-fit: contain;
+    height: 220px;
+    object-fit: cover;
     border-radius: 15px;
+    margin-bottom: 20px;
 }
 
 .book-now{
@@ -349,13 +344,11 @@ body {
     margin-top: 10px;
 }
 
-/* Hover Effect */
 .book-now:hover {
     background: linear-gradient(45deg, #ffb300, #ff5722); /* Darker gradient */
     transform: scale(1.05); /* Slight zoom on hover */
 }
 
-/* Active Effect */
 .book-now:active {
     transform: scale(0.98); /* Slight shrink on click */
     background: linear-gradient(45deg, #ff9800, #e65100); /* Darker gradient */

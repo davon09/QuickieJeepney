@@ -3,7 +3,7 @@ session_start(); // Assuming session-based login
 include '../../dbConnection/dbConnection.php'; // Include the database connection
 
 // Fetch booking and driver details from the database
-$sql = "SELECT driverName, jeepPlate, departureTime, seatCapacity, seatsAvailable, vehicleType FROM bookings WHERE bookingID = 1"; // Example bookingID
+$sql = "SELECT driverName, jeepPlate, departure_time, capacity, seatsAvailable, vehicleType FROM bookings WHERE bookingID = 1"; // Example bookingID
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
