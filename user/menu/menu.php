@@ -62,48 +62,49 @@ $userDetailsHTML = '
     <script src="menu.js"></script>
 </head>
 <body>
-    <nav class="sidebar">
-        <header>
-            <div class="image-text">
-                <span class="image">
-                    <img src="../../images/profile.png" alt="Profile Image">
-                </span>
-                <div class="text header-text">
-                    <?= $userDetailsHTML; ?>
-                    <button class="logout-btn" id="logoutBtn">Logout</button>
-                    <!-- Popup Modal for Logout Confirmation -->
-                    <div id="confirmLogout" class="modal">
-                        <div class="modal-content">
-                            <p>Are you sure you want to log out?</p>
-                            <button id="confirmYes" class="confirm-btn">Yes</button>
-                            <button id="confirmNo" class="confirm-btn">No</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>
-        <div class="menu-bar">
-            <div class="menu">
-                <ul class="menu-links">
-                    <li class="nav-link">
-                        <a href="menu.php" class="sidebar-link">
-                            <img src="../../images/home.png" alt="Home" class="sidebar-icon">Home</a>
-                    </li>
-                    <li class="nav-link">
-                        <a href="../profile/profile.php" class="sidebar-link">
-                            <img src="../../images/profile_menu.png" alt="Profile" class="sidebar-icon">Profile</a>
-                    </li>
-                    <li class="nav-link">
-                        <a href="../booking/booking.php" class="sidebar-link">
-                            <img src="../../images/booking.png" alt="Booking" class="sidebar-icon">Booking</a>
-                    </li>
-                    <li class="nav-link">
-                        <a href="../payment/payment.php" class="sidebar-link">
-                            <img src="../../images/payment.png" alt="Payment" class="sidebar-icon">Payment</a>
-                    </li>
-                </ul>
-            </div>
+    <header class="top-header">
+        <div class="logo-section">
+            <img src="../../images/qj-logo.png" alt="Quickie Jeepney Logo" class="logo-image">
         </div>
+
+        <div class="user-card">
+            <span class="image">
+                <img src="../../images/profile.png" alt="Profile Image">
+            </span>
+            <div class="text header-text">
+                <h3>Danyel Rosario</h3>
+                <p>Student</p>
+            </div>
+            <button class="logout-btn" id="logoutBtn">
+                <img src="../../images/logout.png" alt="Logout Icon" class="logout-icon">
+            </button>
+        </div>
+    </header>
+
+    <nav class="sidebar">
+        <div class="menu-title">Menu</div> 
+        <ul class="menu-links">
+            <li class="nav-link">
+                <a href="menu.php" class="sidebar-link">
+                    <img src="../../images/home.png" alt="Home" class="sidebar-icon">Home
+                </a>
+            </li>
+            <li class="nav-link">
+                <a href="../profile/profile.php" class="sidebar-link">
+                    <img src="../../images/profile_menu.png" alt="Profile" class="sidebar-icon">Profile
+                </a>
+            </li>
+            <li class="nav-link">
+                <a href="../booking/booking.php" class="sidebar-link">
+                    <img src="../../images/booking.png" alt="Booking" class="sidebar-icon">Booking
+                </a>
+            </li>
+            <li class="nav-link">
+                <a href="../payment/payment.php" class="sidebar-link">
+                    <img src="../../images/payment.png" alt="Payment" class="sidebar-icon">Payment
+                </a>
+            </li>
+        </ul>
     </nav>
 
     <section class="main-content">
@@ -112,13 +113,16 @@ $userDetailsHTML = '
             <p>Ready to reserve a jeepney?</p>
         </div>
 
-        <div class="announcements">
+        <div class="announcement-card">
             <h3>Announcements</h3>
             <p>The Jeepney Terminal will be moved in front of Shakey's Legarda.</p>
         </div>
 
-        <div class="available-jeepney">
+
+        <div class="available-jeepney-card">
             <h3>Available Jeepney</h3>
+
+
             <div class="filters">
                 <label for="vehicle-type">Filter by Vehicle Type:</label>
                 <select id="vehicle-type">
@@ -126,6 +130,7 @@ $userDetailsHTML = '
                     <option value="jeepney">Jeepney</option>
                     <option value="bus">Bus</option>
                 </select>
+
                 <label for="sort-by">Sort by:</label>
                 <select id="sort-by">
                     <option value="departure">Departure</option>
@@ -133,9 +138,8 @@ $userDetailsHTML = '
                 </select>
             </div>
 
-            <!-- Output the generated HTML for the jeepney cards -->
-            <div class="jeepney-cards">
-                <?= $htmlOutput; ?>
+            <div class="jeepney-cards" id="jeepney-cards">
+                <?= $htmlOutput; ?> 
             </div>
         </div>
     </section>

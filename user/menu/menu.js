@@ -1,12 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
     const vehicleTypeSelect = document.getElementById('vehicle-type');
     const sortBySelect = document.getElementById('sort-by');
-    const vehicleCards = document.querySelectorAll('.jeepney-card');
+    const jeepneyCardsContainer = document.querySelector('.jeepney-cards'); // Container for the cards
+    let vehicleCards = Array.from(document.querySelectorAll('.jeepney-card')); // Store all cards initially
 
     // Function to filter vehicle cards based on type
     function filterVehicles() {
         const selectedType = vehicleTypeSelect.value;
-
+        
+        // Filter and display cards based on the selected type
         vehicleCards.forEach(card => {
             const vehicleType = card.getAttribute('data-type');
             if (selectedType === 'all' || vehicleType === selectedType) {
@@ -17,36 +19,40 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Function to sort vehicle cards by departure time
+    // Function to sort vehicle cards by departure time or seats
     function sortVehicles() {
-        const sortedCards = Array.from(vehicleCards).sort((a, b) => {
-            const timeA = a.getAttribute('data-departure');
-            const timeB = b.getAttribute('data-departure');
+        const sortBy = sortBySelect.value;
 
-            return timeA.localeCompare(timeB); // Sorts times in ascending order
+        const sortedCards = vehicleCards.slice().sort((a, b) => {
+            if (sortBy === 'departure') {
+                const timeA = a.getAttribute('data-departure');
+                const timeB = b.getAttribute('data-departure');
+                return new Date('1970/01/01 ' + timeA) - new Date('1970/01/01 ' + timeB);
+            } else if (sortBy === 'seats') {
+                const seatsA = parseInt(a.getAttribute('data-seats'));
+                const seatsB = parseInt(b.getAttribute('data-seats'));
+                return seatsB - seatsA; // Sort in descending order of seats
+            }
         });
 
-        const jeepneyList = document.querySelector('.jeepney-cards');
-        jeepneyList.innerHTML = ''; // Clear the list
-
-        sortedCards.forEach(card => {
-            jeepneyList.appendChild(card); // Re-append in sorted order
-        });
+        // Clear the container and re-append sorted cards
+        jeepneyCardsContainer.innerHTML = '';
+        sortedCards.forEach(card => jeepneyCardsContainer.appendChild(card));
     }
 
-    // Event listeners for filter and sort
+    // Event listeners for filter and sort dropdowns
     vehicleTypeSelect.addEventListener('change', () => {
         filterVehicles();
-        sortVehicles(); // Ensure it's sorted after filtering
+        sortVehicles(); // Ensure cards are sorted after filtering
     });
 
-    sortBySelect.addEventListener('change', () => {
-        sortVehicles(); // Sort whenever the sort option is changed
-    });
+    sortBySelect.addEventListener('change', sortVehicles);
 
-    // Initial sorting on page load
+    // Initial render and sort on page load
+    filterVehicles(); // Ensure only relevant cards are displayed initially
     sortVehicles();
 });
+
 
 document.addEventListener('DOMContentLoaded', function () {
     const logoutBtn = document.getElementById('logoutBtn');
