@@ -1,101 +1,67 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const vehicleTypeSelect = document.getElementById('vehicle-type');
-    const sortBySelect = document.getElementById('sort-by');
-    const vehicleCards = document.querySelectorAll('.jeepney-card');
+    const typeFilter = document.getElementById('type');
+    const sortBy = document.getElementById('sort-by');
+    const jeepneyCards = document.querySelectorAll('.jeepney-card');
 
-    // Function to filter vehicle cards based on type
-    function filterVehicles() {
-        const selectedType = vehicleTypeSelect.value;
+    // Function to filter and sort jeepneys
+    function filterAndSortJeepneys() {
+        const selectedType = typeFilter.value.toLowerCase();
+        const selectedSort = sortBy.value;
 
-        vehicleCards.forEach(card => {
-            const vehicleType = card.getAttribute('data-type');
-            if (selectedType === 'all' || vehicleType === selectedType) {
-                card.style.display = 'flex';
+        // Convert NodeList to an array for sorting
+        const jeepneyArray = Array.from(jeepneyCards);
+
+        // Filter jeepneys by selected vehicle type
+        jeepneyArray.forEach(jeepney => {
+            const vehicleType = jeepney.getAttribute('data-type').toLowerCase();
+            if (selectedType === 'all' || selectedType === vehicleType) {
+                jeepney.style.display = 'block';
             } else {
-                card.style.display = 'none';
+                jeepney.style.display = 'none';
             }
         });
-    }
 
-    // Function to sort vehicle cards by departure time
-    function sortVehicles() {
-        const sortedCards = Array.from(vehicleCards).sort((a, b) => {
-            const timeA = a.getAttribute('data-departure');
-            const timeB = b.getAttribute('data-departure');
-
-            return timeA.localeCompare(timeB); // Sorts times in ascending order
+        // Sort jeepneys based on selected criteria (either by seats or departure time)
+        const sortedJeepneys = jeepneyArray
+        .filter(jeepney => jeepney.style.display === 'block')
+        .sort((a, b) => {
+            if (selectedSort === 'seats') {
+                const seatsA = parseInt(a.querySelector('h3').textContent.replace('Seats Available: ', ''));
+                const seatsB = parseInt(b.querySelector('h3').textContent.replace('Seats Available: ', ''));
+                return seatsB - seatsA; // Sort in descending order
+            } else if (selectedSort === 'departure') {
+                const timeA = convertToComparableTime(a.getAttribute('data-departure'));
+                const timeB = convertToComparableTime(b.getAttribute('data-departure'));
+                return timeA - timeB; // Sort by time, ascending
+            }
         });
 
-        const jeepneyList = document.querySelector('.jeepney-cards');
-        jeepneyList.innerHTML = ''; // Clear the list
-
-        sortedCards.forEach(card => {
-            jeepneyList.appendChild(card); // Re-append in sorted order
-        });
+        // Clear the container and append the sorted jeepneys
+        const jeepneyContainer = document.querySelector('.jeepney-cards');
+        jeepneyContainer.innerHTML = '';
+        sortedJeepneys.forEach(jeepney => jeepneyContainer.appendChild(jeepney));
     }
 
-    // Event listeners for filter and sort
-    vehicleTypeSelect.addEventListener('change', () => {
-        filterVehicles();
-        sortVehicles(); // Ensure it's sorted after filtering
-    });
-
-    sortBySelect.addEventListener('change', () => {
-        sortVehicles(); // Sort whenever the sort option is changed
-    });
-
-    // Initial sorting on page load
-    sortVehicles();
-});
-
-document.addEventListener('DOMContentLoaded', function () {
-    const logoutBtn = document.getElementById('logoutBtn');
-    const modal = document.getElementById('confirmLogout');
-    const confirmYes = document.getElementById('confirmYes');
-    const confirmNo = document.getElementById('confirmNo');
-
-    // Show modal when clicking on logout button
-    logoutBtn.addEventListener('click', function () {
-        modal.style.display = 'block';
-    });
-
-    // If user confirms logout
-    confirmYes.addEventListener('click', function () {
-        window.location.href = '../../index.php'; // Redirect to logout page
-    });
-
-    // If user cancels logout
-    confirmNo.addEventListener('click', function () {
-        modal.style.display = 'none'; // Close the modal
-    });
-
-    // Close the modal if user clicks outside of it
-    window.addEventListener('click', function (event) {
-        if (event.target === modal) {
-            modal.style.display = 'none';
+    // Helper function to convert AM/PM time to total minutes for sorting
+    function convertToComparableTime(timeStr) {
+        // Example: "2:30 PM" => "14:30", or convert it to minutes since midnight
+        const [time, modifier] = timeStr.split(' '); // Split time and AM/PM
+        let [hours, minutes] = time.split(':').map(Number);
+    
+        if (modifier === 'PM' && hours < 12) {
+            hours += 12;
+        } else if (modifier === 'AM' && hours === 12) {
+            hours = 0; // Midnight case
         }
-    });
-});
+    
+        // Convert hours and minutes to total minutes since midnight
+        return hours * 60 + minutes;
+    }
 
-// Handle Logout Modal Logic
-document.addEventListener('DOMContentLoaded', function () {
-    const logoutButton = document.getElementById('logoutButton');
-    const logoutModal = document.getElementById('logoutModal');
-    const confirmLogout = document.getElementById('confirmLogout');
-    const cancelLogout = document.getElementById('cancelLogout');
+    // Add event listeners for filtering and sorting
+    typeFilter.addEventListener('change', filterAndSortJeepneys);
+    sortBy.addEventListener('change', filterAndSortJeepneys);
 
-    // Show the modal when logout button is clicked
-    logoutButton.addEventListener('click', () => {
-        logoutModal.style.display = 'flex';
-    });
-
-    // Hide the modal when cancel button is clicked
-    cancelLogout.addEventListener('click', () => {
-        logoutModal.style.display = 'none';
-    });
-
-    // Perform the logout when confirm button is clicked
-    confirmLogout.addEventListener('click', () => {
-        window.location.href = '../index.php'; // Redirect to the logout page
-    });
+    // Initial call to apply filters and sorting
+    filterAndSortJeepneys();
 });
