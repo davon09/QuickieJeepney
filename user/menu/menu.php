@@ -106,40 +106,40 @@ $userDetailsHTML = '
             </li>
         </ul>
     </nav>
-
     <section class="main-content">
         <div class="welcome">
             <h2>Hi, <?= explode(' ', $fullName)[0]; ?>!</h2>
             <p>Ready to reserve a jeepney?</p>
         </div>
 
-        <div class="announcement-card">
-            <h3>Announcements</h3>
-            <p>The Jeepney Terminal will be moved in front of Shakey's Legarda.</p>
-        </div>
+        <div class="cards-container">
 
-
-        <div class="available-jeepney-card">
-            <h3>Available Jeepney</h3>
-
-
-            <div class="filters">
-                <label for="vehicle-type">Filter by Vehicle Type:</label>
-                <select id="vehicle-type">
-                    <option value="all">All</option>
-                    <option value="jeepney">Jeepney</option>
-                    <option value="bus">Bus</option>
-                </select>
-
-                <label for="sort-by">Sort by:</label>
-                <select id="sort-by">
-                    <option value="departure">Departure</option>
-                    <option value="seats">Available Seats</option>
-                </select>
+            <div class="announcement-card">
+                <h3>Announcements</h3>
+                <p>The Jeepney Terminal will be moved in front of Shakey's Legarda.</p>
             </div>
 
-            <div class="jeepney-cards" id="jeepney-cards">
-                <?= $htmlOutput; ?> 
+            <div class="available-jeepney-card">
+                <h3>Available Jeepney</h3>
+
+                <div class="filters">
+                    <label for="vehicle-type">Filter by Vehicle Type:</label>
+                    <select id="vehicle-type">
+                        <option value="all">All</option>
+                        <option value="jeepney">Jeepney</option>
+                        <option value="bus">Bus</option>
+                    </select>
+
+                    <label for="sort-by">Sort by:</label>
+                    <select id="sort-by">
+                        <option value="departure">Departure</option>
+                        <option value="seats">Available Seats</option>
+                    </select>
+                </div>
+
+                <div class="jeepney-cards" id="jeepney-cards">
+                    <?= $htmlOutput; ?>
+                </div>
             </div>
         </div>
     </section>
