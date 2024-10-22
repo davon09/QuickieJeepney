@@ -188,13 +188,13 @@ $userDetailsHTML = '
                 <div>
                     <label for="sort-by">Sort by:</label>
                     <select id="sort-by">
+                        <option value="none">None</option>
                         <option value="departure">Departure</option>
                         <option value="seats">Available Seats</option>
                     </select>
                 </div>
             </div>
 
-            <!-- Output the generated HTML for the jeepney cards -->
             <div class="jeepney-cards">
                 <?= $htmlOutput; ?>
             </div>
