@@ -70,20 +70,19 @@ $userDetailsHTML = '
         </div>
 
         
-
         <div class="user-card">
+
             <button class="logout-btn" id="logoutBtn">
                 <img src="../../images/logout.png" alt="Logout Icon" class="logout-icon">
                 <h3>Logout</h3>
-             </button>
-             
+            </button>
             <a href="#" id="profileBtn">
                 <span class="image">
                     <img src="../../images/profile.png" alt="Profile Image">
                 </span>
                 <div class="text header-text">
-                    <h3>Danyel John Erwin Rosario</h3>
-                    <p>Student</p>
+                    <h3><?= $fullName; ?></h3>
+                    <p><?= $occupation; ?></p>
                 </div>
             </a>
         </div>

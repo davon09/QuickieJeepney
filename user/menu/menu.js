@@ -74,3 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+document.getElementById('logoutBtn').addEventListener('click', () => {
+    window.location.href = '../logout/logout.php'; // Adjust path to logout page
+});
