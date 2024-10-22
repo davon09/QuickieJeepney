@@ -9,7 +9,7 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     // Prepare the SQL statement to fetch jeepney and driver details
     $stmt = $conn->prepare(
         "SELECT j.jeepneyID, j.driverID, j.plateNumber, j.capacity, j.occupied, 
-                j.route, j.type, j.departure, j.jeep_image, 
+                j.route, j.type, j.departure_time, j.jeep_image, 
                 d.firstName, d.lastName 
          FROM jeepney j
          INNER JOIN driver d ON j.driverID = d.driverID
@@ -77,7 +77,7 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
                <span class="highlight"><?= htmlspecialchars($jeepney['plateNumber']); ?></span>
             </p>
             <p><strong>Time of Departure:</strong> 
-               <span class="highlight"><?= htmlspecialchars($jeepney['departure']); ?></span>
+               <span class="highlight"><?= htmlspecialchars($jeepney['departure_time']); ?></span>
             </p>
             <p><strong>Seat Capacity:</strong> 
                <span class="highlight"><?= htmlspecialchars($jeepney['capacity']); ?></span>
