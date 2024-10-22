@@ -4,7 +4,7 @@ include '../../dbConnection/dbConnection.php';
 
 // Check if user is logged in (ensure the userID is in the session)
 if (!isset($_SESSION['userID'])) {
-    header("Location: login.php"); // Redirect to login page if not logged in
+    header("Location: /QuickieJeepney/index.php"); // Redirect to login page if not logged in
     exit();
 }
 
@@ -34,12 +34,13 @@ $htmlOutput = '';
 // Loop through the result and build the HTML structure inside PHP
 while ($row = mysqli_fetch_assoc($result)) {
     $jeepneyId = $row['jeepneyID']; // Assuming 'jeepneyID' is the primary key of the jeepney table
-    $htmlOutput .= '<div class="jeepney-card" data-type="jeep" data-departure="11:00AM">';
-    // Use the serve_image.php script to serve the image
+    $vehicleType = strtolower($row['type']); 
+    $departureTimeFormatted = date('h:i A', strtotime($row['departure_time']));
+    $htmlOutput .= '<div class="jeepney-card" data-type="' . $row['type'] . '" data-departure="' . date('h:i A', strtotime($row['departure_time'])) . '">';
     $htmlOutput .= '<img src="serve_image.php?id=' . $jeepneyId . '" alt="Jeepney Image">';
-    $htmlOutput .= '<h3>Seats Available: ' . $row['occupied'] . '</h3>';
+    $htmlOutput .= '<h2>Seats Available: ' . $row['occupied'] . '</h2>';
     $htmlOutput .= '<p>Route: ' . $row['route'] . '</p>';
-    $htmlOutput .= '<p>Departure: 11:00 AM</p>';
+    $htmlOutput .= '<p class = "departure_time">Departure: ' . date('h:i A', strtotime($row['departure_time'])) . '</p>';
     $htmlOutput .= '<button class="book-now">BOOK NOW</button>';
     $htmlOutput .= '</div>';
 }
@@ -61,8 +62,35 @@ $userDetailsHTML = '
     <link rel="stylesheet" href="menu.css">
     <script src="menu.js"></script>
 </head>
+
 <body>
-    <nav class="sidebar">
+    <header class="top-header">
+        <div class="logo-section">
+            <img src="../../images/qj-logo.png" alt="Quickie Jeepney Logo" class="logo-image">
+        </div>
+
+        
+
+        <div class="user-card">
+            <button class="logout-btn" id="logoutBtn">
+                <img src="../../images/logout.png" alt="Logout Icon" class="logout-icon">
+                <h3>Logout</h3>
+             </button>
+             
+            <a href="#" id="profileBtn">
+                <span class="image">
+                    <img src="../../images/profile.png" alt="Profile Image">
+                </span>
+                <div class="text header-text">
+                    <h3>Danyel John Erwin Rosario</h3>
+                    <p>Student</p>
+                </div>
+            </a>
+        </div>
+    </header>
+    
+    <!-- THIS IS OLD NAVBAR -->
+    <!-- <nav class="sidebar">
         <header>
             <div class="image-text">
                 <span class="image">
@@ -70,9 +98,9 @@ $userDetailsHTML = '
                 </span>
                 <div class="text header-text">
                     <?= $userDetailsHTML; ?>
-                    <button class="logout-btn" id="logoutBtn">Logout</button>
+                    <button class="logout-btn" id="logoutBtn">Logout</button> -->
                     <!-- Popup Modal for Logout Confirmation -->
-                    <div id="confirmLogout" class="modal">
+                    <!-- <div id="confirmLogout" class="modal">
                         <div class="modal-content">
                             <p>Are you sure you want to log out?</p>
                             <button id="confirmYes" class="confirm-btn">Yes</button>
@@ -94,7 +122,7 @@ $userDetailsHTML = '
                             <img src="../../images/profile_menu.png" alt="Profile" class="sidebar-icon">Profile</a>
                     </li>
                     <li class="nav-link">
-                        <a href="../booking/booking.php" class="sidebar-link">
+                        <a href="../booking/booking.html" class="sidebar-link">
                             <img src="../../images/booking.png" alt="Booking" class="sidebar-icon">Booking</a>
                     </li>
                     <li class="nav-link">
@@ -104,6 +132,31 @@ $userDetailsHTML = '
                 </ul>
             </div>
         </div>
+    </nav> -->
+    <nav class="sidebar">
+        <div class="menu-title">Menu</div> 
+        <ul class="menu-links">
+            <li class="nav-link">
+                <a href="menu.php" class="sidebar-link">
+                    <img src="../../images/home.png" alt="Home" class="sidebar-icon">Home
+                </a>
+            </li>
+            <li class="nav-link">
+                <a href="../profile/profile.php" class="sidebar-link">
+                    <img src="../../images/profile_menu.png" alt="Profile" class="sidebar-icon">Profile
+                </a>
+            </li>
+            <li class="nav-link">
+                <a href="../booking/booking.php" class="sidebar-link">
+                    <img src="../../images/booking.png" alt="Booking" class="sidebar-icon">Booking
+                </a>
+            </li>
+            <li class="nav-link">
+                <a href="../payment/payment.php" class="sidebar-link">
+                    <img src="../../images/payment.png" alt="Payment" class="sidebar-icon">Payment
+                </a>
+            </li>
+        </ul>
     </nav>
 
     <section class="main-content">
@@ -118,19 +171,24 @@ $userDetailsHTML = '
         </div>
 
         <div class="available-jeepney">
-            <h3>Available Jeepney</h3>
+            <h1>Available Jeepney</h1>
             <div class="filters">
-                <label for="vehicle-type">Filter by Vehicle Type:</label>
-                <select id="vehicle-type">
-                    <option value="all">All</option>
-                    <option value="jeepney">Jeepney</option>
-                    <option value="bus">Bus</option>
-                </select>
-                <label for="sort-by">Sort by:</label>
-                <select id="sort-by">
-                    <option value="departure">Departure</option>
-                    <option value="seats">Available Seats</option>
-                </select>
+                <div>
+                    <label for="type">Filter by Vehicle Type:</label>
+                    <select id="type">
+                        <option value="all">All</option>
+                        <option value="traditional">Traditional</option>
+                        <option value="modern">Modern</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="sort-by">Sort by:</label>
+                    <select id="sort-by">
+                        <option value="departure">Departure</option>
+                        <option value="seats">Available Seats</option>
+                    </select>
+                </div>
             </div>
 
             <!-- Output the generated HTML for the jeepney cards -->

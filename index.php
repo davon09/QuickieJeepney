@@ -24,6 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             
             // Verify the hashed password using password_verify()
             if (password_verify($password, $user['password'])) {
+                
                 // Successful login
                 session_start();
                 $_SESSION['userID'] = $user['userID'];
@@ -34,6 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 header("Location: user/menu/menu.php");
                 exit();
             } else {
+                // echo "$password - " . $user['password'];
                 echo "<script>alert('Invalid password!'); window.history.back();</script>";
             }
         } else {
