@@ -75,7 +75,7 @@ $userDetailsHTML = '
             <button class="logout-btn" id="logoutBtn">
                 <h3><i class="fas fa-sign-out-alt"></i>Logout</h3>
             </button>
-            <a href="#" id="profileBtn">
+            <a href="../profile/profile.php" id="profileBtn">
                 <span class="image">
                     <img src="../../images/profile.png" alt="Profile Image">
                 </span>
