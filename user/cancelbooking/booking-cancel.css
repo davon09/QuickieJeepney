@@ -1,0 +1,142 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  background-color: #FFFFFF;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  flex-grow: 1;
+  min-height: 100vh;
+  background-color: #FFFFFF;
+}
+
+.header {
+  width: 100%;
+  background-color: #A05C39;
+  padding: 30px;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  align-items: center;
+}
+
+.back-button {
+  position: absolute;
+  left: 15px;
+}
+
+.back-button img {
+  width: 30px;
+  cursor: pointer;
+}
+
+.header-title h1 {
+  color: white;
+  text-align: center;
+  font-size: 30px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.booking-section {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  padding: 50px;
+}
+
+.booking-section h2 {
+  font-size: 25px;
+  color: #6E491D;
+  margin-bottom: 20px;
+}
+
+.booking-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #E7D5C4;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  height: auto;
+}
+
+.image-container {
+  width: 200px;
+  height: 150px;
+  border-radius: 10px;
+  background-color: #865d36;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.booking-details {
+  flex-grow: 1;
+  padding-left: 20px;
+  color: #865d36;
+  font-size: 18px;
+}
+
+.highlight {
+  color: #ac462e;
+  font-weight: bold;
+}
+
+.view-more {
+  text-decoration: underline;
+  color: #ac462e;
+  font-weight: bold;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  font-size: 18px;
+}
+
+.view-more:hover {
+  color: #6E491D;
+}
+
+/* Cancel Button */
+.cancel-button {
+  background-color: #d60000; /* Green background */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 100px;
+  transition: background-color 0.3s ease;
+}
+
+.cancel-button:hover {
+  background-color: #720404; /* Darker green on hover */
+}
+
+.cancel-button:disabled {
+  background-color: #f35454; /* Disabled button color */
+  cursor: not-allowed;
+}
