@@ -1,10 +1,12 @@
 <?php
 include '../../dbConnection/dbConnection.php'; 
 
+session_start();
+
 // Fetch booking data from the database
 $sql = "SELECT bookingID, userID, jeepneyID, status FROM booking WHERE userID = ?"; 
 $stmt = $conn->prepare($sql);
-$userId = 1; // Replace with actual user ID if needed
+$userId = $_SESSION['userID'];
 $stmt->bind_param("i", $userId);
 $stmt->execute();
 $result = $stmt->get_result();
