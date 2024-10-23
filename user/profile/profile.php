@@ -67,7 +67,7 @@ $conn->close();
 <body>
     <div class="header">
         <a href="../menu/menu.php" class="back-button">
-            <img src="/images/backarrow.png" alt="Back" width="30" height="30">
+            <img src="../../images/backarrow.png" alt="Back" width="30" height="30">
         </a>
         <h2>Edit Profile</h2>
     </div>

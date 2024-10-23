@@ -14,8 +14,8 @@ body {
     align-items: center;
 }
 .image_check {
-    height:250px;
-    width: 250px;
+    height:150px;
+    width:150px;
         
 }
 .image-container{
@@ -32,3 +32,43 @@ body {
     color:black;
     font-family:Verdana, Geneva, Tahoma, sans-serif
 }
+.text-below{
+    margin-top: 10px;
+    font-size:15px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+.text-container{
+    margin:0 auto;
+    width: 50%;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 3px solid #4e342e; 
+    border-radius: 8px; 
+    padding: 10px; 
+    margin-top: 5px; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+
+}
+.text-info{
+    font-size:15px;
+    color:black;
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+    text-align: center;
+}
+.button-back {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 20px;
+    color: white;
+    background-color: #a15c38;
+    border: none;
+    border-radius: 8px;
+    text-decoration: none; 
+    cursor: pointer; 
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
+}
+.button-back:hover {
+    background-color: #d99069; 
+    transform: scale(1.05);
+}
+
