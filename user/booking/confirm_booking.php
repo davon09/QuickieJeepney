@@ -40,7 +40,6 @@ if ($result->num_rows > 0) {
     <p class="text-info">Mode of Payment: <?php echo $paymentMethod; ?> </p>
     <p class="text-info">Amount Paid: <?php echo $amountPaid; ?> </p>
 </div>
-<a href="../menu/menu.php" class="button">Back to Menu</a>
-</div>
+<a href="../menu/menu.php" class="button-back">Back to Menu</a>
 </body>
 </html>

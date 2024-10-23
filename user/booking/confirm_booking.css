@@ -54,16 +54,21 @@ body {
     font-family:Verdana, Geneva, Tahoma, sans-serif;
     text-align: center;
 }
-.button{
+.button-back {
     display: inline-block;
-            padding: 10px 20px;
-            font-size: 16px;
-            color: white;
-            background-color: #007BFF; 
-            border: none;
-            border-radius: 5px;
-            text-decoration: none; 
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 20px;
+    color: white;
+    background-color: #a15c38;
+    border: none;
+    border-radius: 8px;
+    text-decoration: none; 
+    cursor: pointer; 
+    font-family:Verdana, Geneva, Tahoma, sans-serif;
 }
-.button:hover {
-    background-color: #0056b3; 
+.button-back:hover {
+    background-color: #d99069; 
+    transform: scale(1.05);
 }
+
