@@ -146,7 +146,7 @@ $userDetailsHTML = '
                 </a>
             </li>
             <li class="nav-link">
-                <a href="../booking/booking.html" class="sidebar-link">
+                <a href="../../user/booktransaction/booking-history.html" class="sidebar-link">
                     <img src="../../images/booking.png" alt="Booking" class="sidebar-icon">Booking
                 </a>
             </li>

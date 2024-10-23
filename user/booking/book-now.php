@@ -93,8 +93,8 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
             <div class="payment-method">
                 <label for="payment-method">SELECT PAYMENT METHOD</label>
                 <div class="dropdown-wrapper">
-                    <select id="payment-method" name="payment_method" required>
-                        <option value="">Select payment method...</option>
+                    <select id="payment-method" name="payment_method" required> 
+                        <option value="" disabled selected>Select payment method...</option>
                         <option value="cash">Cash</option>
                         <option value="gcash">GCash</option>
                     </select>
@@ -105,10 +105,37 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
             <!-- Booking Confirmation Form -->
             <form action="confirm_booking.php" method="POST">
                 <input type="hidden" name="jeepneyID" value="<?= $jeepney['jeepneyID']; ?>">
-                <button type="submit" class="book-btn">Confirm Booking</button>
+                <button type="submit" class="book-btn" id="book-btn" disabled>Confirm Booking</button>
             </form>
         </div>
     </div>
 </div>
+
+
+<script>
+
+let paymentMethodSelect = document.getElementById('payment-method');
+
+paymentMethodSelect.addEventListener('change', function() {
+    validatePaymentMethod(); //
+});
+
+function validatePaymentMethod() {
+    const paymentMethod = document.getElementById('payment-method').value;
+    
+    if (paymentMethod === "cash" || paymentMethod === "gcash") {
+        bookBtn =document.getElementById('book-btn');
+        bookBtn.disabled = false;
+
+        return true; // Allow form submission
+    } else {
+        alert("Please select a valid payment method.");
+        return false; // Prevent form submission
+    }
+}
+</script>
+
+
+
 </body>
 </html>
