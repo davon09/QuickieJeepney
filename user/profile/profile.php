@@ -66,17 +66,17 @@ $conn->close();
 </head>
 <body>
     <div class="header">
-        <a href="menu.php" class="back-button">
-            <img src="/images/backarrow.png" alt="Back" width="30" height="30">
+        <a href="../menu/menu.php" class="back-button">
+            <img src="../../images/backarrow.png" alt="Back" width="30" height="30">
         </a>
         <h2>Edit Profile</h2>
     </div>
 
     <div class="profile-details">
         <div class="profile-image">
-            <img src="/images/profile.png" alt="Profile Picture">
+            <img src="../../images/profile.png" alt="Profile Picture">
             <span class="edit-icon">
-                <img src="/images/camera.png" alt="Edit Profile">
+                <img src="../../images/camera.png" alt="Edit Profile">
             </span>
         </div>
         <div class="profile-info">
