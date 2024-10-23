@@ -1,0 +1,34 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4ede4;
+}
+
+.header-bar {
+    background-color: #4e342e;
+    color: white;
+    padding: 10px 20px;
+    height:50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.image_check {
+    height:250px;
+    width: 250px;
+        
+}
+.image-container{
+    margin-top: 40px;
+    justify-content: center; 
+    align-items: center;     
+    text-align: center;
+    height: 350px;
+}
+.text-success{
+    font-weight:bold;
+    margin-top: 10px;
+    font-size:20px;
+    color:black;
+    font-family:Verdana, Geneva, Tahoma, sans-serif
+}
