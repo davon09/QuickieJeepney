@@ -3,17 +3,17 @@ session_start(); // Assuming session-based login
 include '../../dbConnection/dbConnection.php'; // Include the database connection
 
 // Fetch booking and driver details from the database
-$sql = "SELECT driverName, jeepPlate, departure_time, capacity, seatsAvailable, vehicleType FROM bookings WHERE bookingID = 1"; // Example bookingID
+$sql = "SELECT driverID, plateNumber, departure_time, capacity, occupied, type FROM booking,jeepney  WHERE bookingID = 1"; // Example bookingID
 $result = $conn->query($sql);
 
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
-    $driverName = $row['driverName'];
-    $jeepPlate = $row['jeepPlate'];
+    $driverID = $row['driverID'];
+    $plateNumber = $row['plateNumber'];
     $departureTime = $row['departureTime'];
-    $seatCapacity = $row['seatCapacity'];
-    $seatsAvailable = $row['seatsAvailable'];
-    $vehicleType = $row['vehicleType'];
+    $capacity = $row['seatCapacity'];
+    $occupied = $row['seatsAvailable'];
+    $type = $row['vehicleType'];
 } else {
     echo "No booking details found";
     exit();
@@ -32,12 +32,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 // Create all the content variables at the top for use in the HTML below
 $driverDetails = "
-    <p class='driver-name'>Driver: $driverName</p>
-    <p>Jeep Plate Number: <strong>$jeepPlate</strong></p>
+    <p class='driver-name'>Driver: $driverID</p>
+    <p>Jeep Plate Number: <strong>$plateNumber</strong></p>
     <p>Time of Departure: <strong>$departureTime</strong></p>
-    <p>Seat Capacity: $seatCapacity</p>
-    <p>Seats Available: $seatsAvailable</p>
-    <p>Vehicle Type: $vehicleType</p>
+    <p>Seat Capacity: $capacity</p>
+    <p>Seats Occupied: $occupied</p>
+    <p>Vehicle Type: $type</p>
 ";
 ?>
 

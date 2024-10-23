@@ -1,12 +1,9 @@
 <?php
-// Include your database connection file
 include '../../dbConnection/dbConnection.php';
 
-// Check if 'id' is passed in the URL and is valid
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $jeepneyId = $_GET['id'];
 
-    // Prepare the SQL statement to fetch jeepney and driver details
     $stmt = $conn->prepare(
         "SELECT j.jeepneyID, j.driverID, j.plateNumber, j.capacity, j.occupied, 
                 j.route, j.type, j.departure_time, j.jeep_image, 
@@ -16,26 +13,23 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
          WHERE j.jeepneyID = ?"
     );
 
-    // Bind the jeepney ID parameter
     $stmt->bind_param("i", $jeepneyId);
     $stmt->execute();
     $result = $stmt->get_result();
 
-    // Check if a matching record was found
     if ($result->num_rows > 0) {
-        $jeepney = $result->fetch_assoc();  // Fetch the result
-        $driverName = $jeepney['firstName'] . ' ' . $jeepney['lastName']; // Combine driver name
+        $jeepney = $result->fetch_assoc(); 
+        $driverName = $jeepney['firstName'] . ' ' . $jeepney['lastName']; 
     } else {
         echo '<p>No details found for this jeepney.</p>';
-        exit();  // Stop further processing if no data found
+        exit();  
     }
 
-    // Close the statement and connection
+    
     $stmt->close();
-    $conn->close();
 } else {
     echo '<p>Invalid Jeepney ID.</p>';
-    exit();  // Stop processing if ID is not valid
+    exit(); 
 }
 ?>
 
@@ -105,15 +99,14 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
             <!-- Booking Confirmation Form -->
             <form action="confirm_booking.php" method="POST">
                 <input type="hidden" name="jeepneyID" value="<?= $jeepney['jeepneyID']; ?>">
+                <input type="hidden" name="userID" value="1"> <!-- Replace with actual user ID from session or context -->
                 <button type="submit" class="book-btn" id="book-btn" disabled>Confirm Booking</button>
             </form>
         </div>
     </div>
 </div>
 
-
 <script>
-
 let paymentMethodSelect = document.getElementById('payment-method');
 
 paymentMethodSelect.addEventListener('change', function() {
@@ -124,18 +117,16 @@ function validatePaymentMethod() {
     const paymentMethod = document.getElementById('payment-method').value;
     
     if (paymentMethod === "cash" || paymentMethod === "gcash") {
-        bookBtn =document.getElementById('book-btn');
+        bookBtn = document.getElementById('book-btn');
         bookBtn.disabled = false;
 
-        return true; // Allow form submission
+        return true; 
     } else {
         alert("Please select a valid payment method.");
-        return false; // Prevent form submission
+        return false;
     }
 }
 </script>
-
-
 
 </body>
 </html>
