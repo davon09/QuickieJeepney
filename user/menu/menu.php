@@ -70,10 +70,8 @@ $userDetailsHTML = '
         <div class="logo-section">
             <img src="../../images/qj-logo.png" alt="Quickie Jeepney Logo" class="logo-image">
         </div>
-
         
         <div class="user-card">
-
             <button class="logout-btn" id="logoutBtn">
                 <h3><i class="fas fa-sign-out-alt"></i>Logout</h3>
             </button>
@@ -148,7 +146,7 @@ $userDetailsHTML = '
                 </a>
             </li>
             <li class="nav-link">
-                <a href="../booking/booking.php" class="sidebar-link">
+                <a href="../booking/booking.html" class="sidebar-link">
                     <img src="../../images/booking.png" alt="Booking" class="sidebar-icon">Booking
                 </a>
             </li>
