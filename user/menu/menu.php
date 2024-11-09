@@ -86,51 +86,7 @@ $userDetailsHTML = '
             </a>
         </div>
     </header>
-    
-    <!-- THIS IS OLD NAVBAR -->
-    <!-- <nav class="sidebar">
-        <header>
-            <div class="image-text">
-                <span class="image">
-                    <img src="../../images/profile.png" alt="Profile Image">
-                </span>
-                <div class="text header-text">
-                    <?= $userDetailsHTML; ?>
-                    <button class="logout-btn" id="logoutBtn">Logout</button> -->
-                    <!-- Popup Modal for Logout Confirmation -->
-                    <!-- <div id="confirmLogout" class="modal">
-                        <div class="modal-content">
-                            <p>Are you sure you want to log out?</p>
-                            <button id="confirmYes" class="confirm-btn">Yes</button>
-                            <button id="confirmNo" class="confirm-btn">No</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>
-        <div class="menu-bar">
-            <div class="menu">
-                <ul class="menu-links">
-                    <li class="nav-link">
-                        <a href="menu.php" class="sidebar-link">
-                            <img src="../../images/home.png" alt="Home" class="sidebar-icon">Home</a>
-                    </li>
-                    <li class="nav-link">
-                        <a href="../profile/profile.php" class="sidebar-link">
-                            <img src="../../images/profile_menu.png" alt="Profile" class="sidebar-icon">Profile</a>
-                    </li>
-                    <li class="nav-link">
-                        <a href="../booking/booking.html" class="sidebar-link">
-                            <img src="../../images/booking.png" alt="Booking" class="sidebar-icon">Booking</a>
-                    </li>
-                    <li class="nav-link">
-                        <a href="../payment/payment.php" class="sidebar-link">
-                            <img src="../../images/payment.png" alt="Payment" class="sidebar-icon">Payment</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav> -->
+
     <nav class="sidebar">
         <div class="menu-title">Menu</div> 
         <hr>
@@ -148,11 +104,6 @@ $userDetailsHTML = '
             <li class="nav-link">
                 <a href="../../user/booktransaction/booking-history.php" class="sidebar-link">
                     <img src="../../images/booking.png" alt="Booking" class="sidebar-icon">Booking
-                </a>
-            </li>
-            <li class="nav-link">
-                <a href="../payment/payment.php" class="sidebar-link">
-                    <img src="../../images/payment.png" alt="Payment" class="sidebar-icon">Payment
                 </a>
             </li>
         </ul>
