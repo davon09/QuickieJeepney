@@ -8,6 +8,11 @@ if (!isset($_SESSION['userID'])) {
     exit();
 }
 
+date_default_timezone_set('Asia/Manila');
+$currentDate = date('Y-m-d'); // Get today's date in 'YYYY-MM-DD' format
+error_log("Current Date: " . $currentDate);
+echo date('Y-m-d');
+
 // Fetch logged-in user's details including the occupation
 $userID = $_SESSION['userID'];
 $sqlUser = "SELECT firstName, lastName, occupation FROM user WHERE userID = ?";
@@ -35,17 +40,46 @@ $userDetailsHTML = '
 $sqlRoutes = "SELECT routeName, startPoint, endPoint, startLat, startLng, endLat, endLng FROM transportation_routes";
 $resultRoutes = $conn->query($sqlRoutes);
 
+// Fetch announcements that are still valid (validUntil >= today's date)
+$sql = "SELECT announcementName, description, 
+               DATE_FORMAT(date, '%d/%m/%Y') AS formattedDate, 
+               DATE_FORMAT(validUntil, '%d/%m/%Y') AS formattedValidUntil 
+        FROM announcements 
+        WHERE validUntil >= ? 
+        ORDER BY date DESC";
+
+$stmtAnnouncements = $conn->prepare($sql);
+if ($stmtAnnouncements === false) {
+    die("Error preparing statement: " . $conn->error);
+}
+
+$stmtAnnouncements->bind_param("s", $currentDate);
+$stmtAnnouncements->execute();
+$result = $stmtAnnouncements->get_result();
+
+$announcementsHTML = "";
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $announcementsHTML .= "
+        <li class='announcement-item'>
+            <strong>{$row['announcementName']}</strong><br>
+            {$row['description']}<br>
+            <small><em>Date: {$row['formattedDate']}, Valid Until: {$row['formattedValidUntil']}</em></small>
+        </li>";
+    }
+} else {
+    $announcementsHTML = "<li class='announcement-item'>No announcements available.</li>";
+}
 
 // Fetch available jeepneys
 $jeepneysHTML = '';
-$sqlJeepneys = "SELECT jeepneyID, plateNumber, capacity, occupied, route, type, departure_time FROM jeepney";
+$sqlJeepneys = "SELECT plateNumber, capacity, occupied, route, type, departure_time FROM jeepney"; 
 $resultJeepneys = $conn->query($sqlJeepneys);
 
 if ($resultJeepneys->num_rows > 0) {
     while ($jeepney = $resultJeepneys->fetch_assoc()) {
         $jeepneysHTML .= '
             <tr>
-                <td>' . $jeepney['jeepneyID'] . '</td>
                 <td>' . $jeepney['plateNumber'] . '</td>
                 <td>' . $jeepney['capacity'] . '</td>
                 <td>' . $jeepney['occupied'] . '</td>
@@ -58,11 +92,12 @@ if ($resultJeepneys->num_rows > 0) {
 } else {
     $jeepneysHTML = '
         <tr>
-            <td colspan="7">No available jeepneys.</td>
+            <td colspan="6">No available jeepneys.</td>
         </tr>
     ';
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -144,7 +179,7 @@ if ($resultJeepneys->num_rows > 0) {
         <!-- Greeting Section -->
         <div class="greeting">
             <h1>Hi, Manager!</h1>
-            <p>Today is Wednesday, 20 November 2024</p>
+            <p>Today is <?php echo date('l, d F Y'); ?></p>
         </div>
 
         <div class="dashboard-content">
@@ -186,12 +221,12 @@ if ($resultJeepneys->num_rows > 0) {
             <!-- Announcements and Jeepney Section -->
             <div class="bottom-container">
                 <div class="announcements">
-                    <h2>Announcements</h2>
-                    <button class="add-btn">Add</button>
+                    <div class="announcements-header">
+                        <h2>Announcements</h2>
+                        <button class="add-btn add-announcement-btn">Add</button>
+                    </div>
                     <ul class="announcement-list">
-                        <li class="announcement-item">Sample Announcement 1</li>
-                        <li class="announcement-item">Sample Announcement 2</li>
-                        <li class="announcement-item">Sample Announcement 3</li>
+                        <?php echo $announcementsHTML; ?>
                     </ul>
                 </div>
                 <div class="available-jeepney">
@@ -199,7 +234,6 @@ if ($resultJeepneys->num_rows > 0) {
                     <table>
                         <thead>
                             <tr>
-                                <th>JeepneyID</th>
                                 <th>Plate Number</th>
                                 <th>Capacity</th>
                                 <th>Occupied</th>
@@ -282,7 +316,7 @@ if ($resultJeepneys->num_rows > 0) {
                 </div>
                 <div class="form-group">
                     <label for="description">Description:</label>
-                    <textarea id="description" name="description" placeholder="Enter Description" rows="4" required></textarea>
+                    <textarea id="description" name="description" placeholder="Enter Description" required></textarea>
                 </div>
                 <div class="form-group">
                     <label for="date">Date:</label>
@@ -466,11 +500,15 @@ if ($resultJeepneys->num_rows > 0) {
         // Variables to store markers
         let startMarker, endMarker;
     });
+   
     document.addEventListener("DOMContentLoaded", () => {
+        // Modal elements
         const modalAnnouncement = document.querySelector(".modal-announcement");
         const modalOverlayAnnouncement = document.querySelector(".modal-overlay-announcement");
-        const addAnnouncementButton = document.querySelector(".add-btn"); // Add button for announcements
-        const closeAnnouncementButton = document.querySelector(".close-btn-announcement");
+        const addAnnouncementButton = document.querySelector(".add-btn"); // Button to open the modal
+        const closeAnnouncementButton = document.querySelector(".close-btn-announcement"); // Close button inside the modal
+        const formAnnouncement = document.getElementById("add-announcement-form");
+        const announcementList = document.querySelector(".announcement-list"); // Announcement list container
 
         // Function to open the modal
         function openAnnouncementModal() {
@@ -484,12 +522,88 @@ if ($resultJeepneys->num_rows > 0) {
             modalOverlayAnnouncement.classList.remove("active");
         }
 
-        // Event listeners for opening and closing the modal
+        // Function to fetch and update the announcement list
+        function refreshAnnouncements() {
+            // Assuming the valid announcements are already filtered in the manager_menu.php page
+            fetch("manager_menu.php") // Fetch the page and process only the valid announcements
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch announcements");
+                    }
+                    return response.text();  // Get the raw HTML response
+                })
+                .then((data) => {
+                    // Now parse the response to get the announcement list
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(data, "text/html");
+
+                    // Assuming the announcements are inside a container with class `.announcement-list`
+                    const updatedAnnouncements = doc.querySelector(".announcement-list");
+
+                    // If there are no announcements, show a message
+                    if (!updatedAnnouncements || updatedAnnouncements.innerHTML === "") {
+                        announcementList.innerHTML = "<li>No announcements available.</li>";
+                    } else {
+                        // Otherwise, update the announcements
+                        announcementList.innerHTML = updatedAnnouncements.innerHTML;
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error fetching announcements:", error);
+                    announcementList.innerHTML = "<li>Error loading announcements.</li>";
+                });
+        }
+
+        // Event listener to open the modal when the "Add" button is clicked
         addAnnouncementButton.addEventListener("click", openAnnouncementModal);
+
+        // Event listener to close the modal when the close button is clicked
         closeAnnouncementButton.addEventListener("click", closeAnnouncementModal);
+
+        // Event listener to close the modal when clicking outside of it
         modalOverlayAnnouncement.addEventListener("click", closeAnnouncementModal);
+
+        // Handle form submission
+        formAnnouncement.addEventListener("submit", (e) => {
+            e.preventDefault(); // Prevent default form submission
+
+            const formData = new FormData(formAnnouncement);
+
+            const submitButton = formAnnouncement.querySelector(".submit-announcement-btn");
+            submitButton.disabled = true;
+            submitButton.textContent = "Submitting...";
+
+            fetch("add_announcement.php", {
+                method: "POST",
+                body: formData,
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    console.log(data); // Log the response for debugging
+                    if (data.status === "success") {
+                        alert(data.message);
+                        formAnnouncement.reset();
+                        closeAnnouncementModal();
+
+                        // Refresh the announcement list
+                        refreshAnnouncements();
+                    } else {
+                        alert(data.message || "Failed to add announcement");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error adding announcement:", error);
+                    alert("Error adding announcement: " + error.message);
+                })
+                .finally(() => {
+                    submitButton.disabled = false;
+                    submitButton.textContent = "Add Announcement";
+                });
+        });
+
+        // Fetch announcements on page load
+        refreshAnnouncements();
     });
-   
 </script>
 
 </html>

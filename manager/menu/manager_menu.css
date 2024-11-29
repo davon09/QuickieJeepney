@@ -208,7 +208,7 @@ hr {
 }
 
 .main-content {
-    margin-left: 250px;
+    margin-left: 160px;
     padding: 160px 20px;
     flex: 1;
     min-height: calc(100vh - 140px);
@@ -530,7 +530,6 @@ input[readonly] {
     gap: 20px; 
     margin-top: 10px;
     padding: 20px;
-
     background-color: #d7ccc8;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -538,20 +537,27 @@ input[readonly] {
 
 /* Announcements Section */
 .announcements {
-    flex: 1; 
+    flex: 1;
     background-color: #ffffff;
     border-radius: 8px;
     padding: 15px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     overflow-y: auto;
-    max-height: 400px; 
+    max-height: 400px;
 }
 
-.announcements h2 {
+.announcements-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Pushes the button to the right */
+    margin-bottom: 15px;
+}
+
+.announcements-header h2 {
     font-size: 20px;
     font-weight: bold;
     color: #5d4037;
-    margin-bottom: 15px;
+    margin: 0;
 }
 
 .add-btn {
@@ -561,7 +567,6 @@ input[readonly] {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin-bottom: 15px;
 }
 
 .add-btn:hover {
@@ -594,63 +599,71 @@ input[readonly] {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     display: none;
-    z-index: 99;
+    z-index: 1100;
 }
 
-/* Modal Styling */
+/* Modal Container */
 .modal-announcement {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: #ffffff;
-    padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     display: none;
-    z-index: 1000;
-    width: 400px;
-    max-width: 90%;
+    z-index: 1150;
+    width: 500px; /* Adjust width to keep elements aligned */
+    max-width: 95%;
+    overflow-y: auto;
+    max-height: 90vh;
+    box-sizing: border-box; /* Ensure consistent box sizing */
 }
 
+/* Activate Modal */
 .modal-announcement.active,
 .modal-overlay-announcement.active {
     display: block;
 }
 
+/* Modal Header */
 .modal-announcement .modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 10px;
+    background-color: #5d4037; /* Add a consistent background color */
+    padding: 15px; /* Ensure even spacing */
+    color: white;
+    border-radius: 8px 8px 0 0;
+    margin-bottom: 15px;
 }
 
 .modal-announcement .modal-header h2 {
     font-size: 18px;
-    color: #5d4037;
+    color: white;
     margin: 0;
 }
 
 .modal-announcement .modal-header .close-btn-announcement {
     cursor: pointer;
     font-size: 20px;
-    color: #888;
+    color: white;
+    border: none;
+    background: none;
 }
 
-.modal-announcement .modal-body {
-    padding: 15px 0;
-}
-
+/* Form Styling */
 .modal-announcement .form-group {
     margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px; /* Add spacing between label and input */
 }
 
 .modal-announcement .form-group label {
     font-size: 14px;
     font-weight: bold;
     color: #5d4037;
-    display: block;
     margin-bottom: 5px;
 }
 
@@ -662,23 +675,40 @@ input[readonly] {
     border-radius: 5px;
     font-size: 14px;
     color: #333;
+    box-sizing: border-box;
 }
 
+.modal-announcement .form-group textarea {
+    resize: none;
+    height: 80px;
+}
+
+/* Button Styling */
 .modal-announcement .modal-footer {
-    text-align: right;
+    display: flex;
+    justify-content: center; /* Center-align the button */
+    margin-top: 15px;
 }
 
 .modal-announcement .submit-announcement-btn {
-    padding: 10px 15px;
+    padding: 10px 20px;
     background-color: #5d4037;
     color: #ffffff;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
 }
 
 .modal-announcement .submit-announcement-btn:hover {
     background-color: #4e342e;
+}
+
+/* Date Picker Inputs */
+.modal-announcement .form-group input[type="date"] {
+    font-size: 14px;
+    padding: 10px;
 }
 
 /* Available Jeepney Section */
