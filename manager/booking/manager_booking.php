@@ -56,6 +56,79 @@ $sql = "
         b.bookingID DESC;
 ";
 $result = $conn->query($sql);
+// Function to generate the pie chart and return it as a base64-encoded string
+function generatePieChart() {
+    // Include database connection
+    include '../../dbConnection/dbConnection.php';
+
+    // Query the database to get the counts of each status (on-the-way and departed)
+    $sql = "SELECT status, COUNT(*) as count FROM booking GROUP BY status";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        // Initialize the counts
+        $onTheWayCount = 0;
+        $departedCount = 0;
+
+        // Process the result set
+        while ($row = $result->fetch_assoc()) {
+            if ($row['status'] == 'on-the-way') {
+                $onTheWayCount = $row['count'];
+            } elseif ($row['status'] == 'departed') {
+                $departedCount = $row['count'];
+            }
+        }
+    } else {
+        // Default values if no records are found (or handle this case as needed)
+        $onTheWayCount = 0;
+        $departedCount = 0;
+    }
+
+    // Total count for the pie chart
+    $total = $onTheWayCount + $departedCount;
+
+    // Avoid division by zero if there is no data
+    if ($total == 0) {
+        $total = 1;  // Set a minimum total to avoid division by zero
+    }
+
+    // Calculate the angles for each pie slice
+    $onTheWayAngle = ($onTheWayCount / $total) * 360;
+    $departedAngle = ($departedCount / $total) * 360;
+
+    // Create a blank image
+    $image = imagecreatetruecolor(400, 400);
+
+    // Set the background color (white)
+    $bgColor = imagecolorallocate($image, 255, 255, 255);
+    imagefill($image, 0, 0, $bgColor);
+
+    // Set colors for the pie chart
+    $colorOnTheWay = imagecolorallocate($image, 255, 204, 0);  // Yellow
+    $colorDeparted = imagecolorallocate($image, 50, 205, 50);   // Green
+
+    // Draw the pie slices
+    imagefilledarc($image, 200, 200, 350, 350, 0, $onTheWayAngle, $colorOnTheWay, IMG_ARC_PIE);
+    imagefilledarc($image, 200, 200, 350, 350, $onTheWayAngle, 360, $colorDeparted, IMG_ARC_PIE);
+
+    // Draw the border around the pie chart
+    imagearc($image, 200, 200, 350, 350, 0, 360, imagecolorallocate($image, 0, 0, 0));
+
+    // Capture the image as a base64 string
+    ob_start();
+    imagepng($image);
+    $imageData = ob_get_contents();
+    ob_end_clean();
+
+    // Clean up the memory
+    imagedestroy($image);
+
+    // Close the database connection
+    $conn->close();
+
+    // Return the base64-encoded image string
+    return base64_encode($imageData);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -154,6 +227,12 @@ $result = $conn->query($sql);
             <button onclick="fetchData()">Apply Filters</button>
         </div>
 
+        <section class="statistics">
+            <h2>Booking Status Statistics</h2>
+            <!-- Image for booking pie chart -->
+            <img id="bookingPieChart" src="data:image/png;base64,<?php echo generatePieChart(); ?>" alt="Booking Status Pie Chart">
+        </section>
+
         <!-- Report Table -->
         <table id="reportTable">
             <thead>
@@ -196,6 +275,7 @@ $result = $conn->query($sql);
                 ?>
             </tbody>
         </table>
+
         <div id="pagination">
             <button id="prevPage" onclick="changePage('prev')" disabled></button>
             <span id="pageNumbers"></span>
@@ -208,7 +288,6 @@ $result = $conn->query($sql);
     const rowsPerPage = 5;  // Set the number of rows per page
     let tableData = [];  // All the rows in the table
     let filteredData = [];  // Filtered rows based on the filter criteria
-
     // Function to fetch all the rows from the table and store in the tableData array
     function getTableData() {
         tableData = [];
@@ -216,11 +295,9 @@ $result = $conn->query($sql);
         rows.forEach(row => {
             tableData.push(row);
         });
-
         filteredData = [...tableData];  // Initially, all data is filtered
         updateTable();
     }
-
     // Function to apply filters and update filteredData array
     function fetchData() {
         const dateFrom = document.getElementById('dateFrom').value;
@@ -234,9 +311,7 @@ $result = $conn->query($sql);
         filteredData = filteredData.filter(row => {
             const bookingDate = row.cells[2].textContent.trim();  // Booking Date in column 3 (index 2)
             const bookingStatus = row.cells[5].textContent.trim();  // Status in column 6 (index 5)
-
             let isValid = true;
-
             // Filter by date
             if (dateFrom && new Date(bookingDate) < new Date(dateFrom)) {
                 isValid = false;
@@ -244,19 +319,15 @@ $result = $conn->query($sql);
             if (dateTo && new Date(bookingDate) > new Date(dateTo)) {
                 isValid = false;
             }
-
             // Filter by status
             if (status && bookingStatus.toLowerCase() !== status.toLowerCase()) {
                 isValid = false;
             }
-
             return isValid;
         });
-
         currentPage = 1;  // Reset to the first page when applying a new filter
         updateTable();
     }
-
     // Function to update the table with the current page's rows
     function updateTable() {
         const tableBody = document.querySelector('#reportTable tbody');
@@ -264,16 +335,13 @@ $result = $conn->query($sql);
         
         const startIndex = (currentPage - 1) * rowsPerPage;
         const endIndex = Math.min(startIndex + rowsPerPage, filteredData.length);
-
         // Add rows to the table based on filtered data
         for (let i = startIndex; i < endIndex; i++) {
             tableBody.appendChild(filteredData[i]);
         }
-
         // Update the pagination numbers
         updatePageNumbers();
     }
-
     // Function to update page numbers (pagination buttons)
     function updatePageNumbers() {
         const pageNumbers = document.getElementById('pageNumbers');
@@ -299,7 +367,6 @@ $result = $conn->query($sql);
         document.getElementById('prevPage').disabled = currentPage === 1;
         document.getElementById('nextPage').disabled = currentPage === totalPages;
     }
-
     // Change page function (Previous/Next buttons)
     function changePage(direction) {
         const totalPages = Math.ceil(filteredData.length / rowsPerPage);
@@ -310,7 +377,6 @@ $result = $conn->query($sql);
         }
         updateTable();
     }
-
     // Export table data to Excel, CSV, and PDF
     function exportToExcel() {
         const table = document.getElementById("reportTable");
@@ -331,15 +397,14 @@ $result = $conn->query($sql);
         doc.autoTable({ html: table });
         doc.save('Booking_Report.pdf');
     }
-
     // Initialize table data when the page loads
     document.addEventListener('DOMContentLoaded', function() {
         getTableData();  // Fetch and load all table data initially
     });
-
     // Attach event listeners to filter inputs
     document.getElementById('dateFrom').addEventListener('change', fetchData);
     document.getElementById('dateTo').addEventListener('change', fetchData);
     document.getElementById('status').addEventListener('change', fetchData);
+
 </script>
 </html>

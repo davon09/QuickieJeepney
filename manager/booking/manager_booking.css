@@ -453,3 +453,44 @@ td[colspan="8"] {
     border-radius: 50%;
     font-weight: bold;
 }
+
+/* Container for the statistics section */
+.statistics {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Style the title */
+.statistics h2 {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Styling for the image */
+#bookingPieChart {
+    width: 400px;  /* Set the width of the chart */
+    height: 400px; /* Set the height of the chart */
+    margin: 0 auto;  /* Center the image */
+    border: 2px solid #ccc; /* Add a light border around the chart */
+    border-radius: 8px; /* Optional: rounded corners for the chart container */
+}
+
+/* Optional: Add styling for the filter inputs and button */
+.statistics select, .statistics input, .statistics button {
+    margin: 10px;
+    padding: 5px 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.statistics button {
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+}
+
+.statistics button:hover {
+    background-color: #45a049;
+}
