@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/styles.css">
+  <title>Admin Panel</title>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="/users">Users</a>
+      <a href="/register">Register</a>
+    </nav>
+  </header>
+  <main>
+    <% if (section === 'Users') { %>
+      <h1>Registered Users</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% data.forEach(user => { %>
+            <tr>
+              <td><%= user.id %></td>
+              <td><%= user.name %></td>
+              <td><%= user.email %></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    <% } else if (section === 'Register') { %>
+      <h1>Register Jeepney and Driver</h1>
+      <form action="/register" method="POST">
+        <label for="driverName">Driver Name:</label>
+        <input type="text" id="driverName" name="driverName" required>
+        <label for="jeepneyPlate">Jeepney Plate Number:</label>
+        <input type="text" id="jeepneyPlate" name="jeepneyPlate" required>
+        <button type="submit">Register</button>
+      </form>
+    <% } %>
+  </main>
+</body>
+</html>
