@@ -32,7 +32,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['firstName'] = $user['firstName'];
                 $_SESSION['email'] = $user['email'];
 
-                header("Location: user/menu/menu.php");
+                if ($user['occupation'] == 'Manager') {
+                    header("Location: manager/menu/manager_menu.php");
+                } else {
+                    header("Location: user/menu/menu.php");
+                }
                 exit();
             } else {
                 // echo "$password - " . $user['password'];
