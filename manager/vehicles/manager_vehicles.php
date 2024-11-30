@@ -92,11 +92,6 @@ $userDetailsHTML = '
                     <i class="fas fa-user sidebar-icon" class="sidebar-icon"></i>Profile
                 </a>
             </li>
-            <li class="nav-link">
-                <a href="../roles/manager_roles.php" class="sidebar-link">
-                    <i class="fas fa-user-shield sidebar-icon" class="sidebar-icon"></i>User Roles
-                </a>
-            </li>
             <li class="nav-link active">
                 <a href="../vehicles/manager_vehicles.php" class="sidebar-link">
                     <i class="fas fa-car sidebar-icon" class="sidebar-icon"></i>Vehicles
