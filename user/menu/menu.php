@@ -10,7 +10,7 @@ if (!isset($_SESSION['userID'])) {
 
 // Fetch logged-in user's details including the occupation
 $userID = $_SESSION['userID'];
-$sqlUser = "SELECT firstName, lastName, occupation FROM user WHERE userID = ?";
+$sqlUser = "SELECT firstName, lastName, occupation, email, profile_image FROM user WHERE userID = ?";
 $stmtUser = $conn->prepare($sqlUser);
 $stmtUser->bind_param("i", $userID);
 $stmtUser->execute();
@@ -19,9 +19,11 @@ if ($resultUser->num_rows > 0) {
     $user = $resultUser->fetch_assoc();
     $fullName = $user['firstName'] . ' ' . $user['lastName'];
     $occupation = $user['occupation'];
+    $profileImage = $user['profile_image'];
 } else {
     $fullName = "Guest";
     $occupation = "N/A";
+    $profileImage = null;
 }
 
 // Fetch jeepney details including the image path
@@ -77,7 +79,16 @@ $userDetailsHTML = '
             </button>
             <a href="../profile/profile.php" id="profileBtn">
                 <span class="image">
-                    <img src="../../images/profile.png" alt="Profile Image">
+                    <?php
+                    // Check if profile image exists and display it, otherwise show default
+                    if ($profileImage) {
+                        // Display the actual profile image from the database
+                        echo '<img src="' . htmlspecialchars($profileImage) . '" alt="Profile Image">';
+                    } else {
+                        // Display default profile image if no image is found
+                        echo '<img src="../../images/profile.png" alt="Profile Image">';
+                    }
+                    ?>
                 </span>
                 <div class="text header-text">
                     <h3><?= $fullName; ?></h3>

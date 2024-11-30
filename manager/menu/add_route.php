@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($stmt->execute()) {
             // Redirect back with success message
-            echo "<script>alert('Route added successfully!'); window.location.href = 'manage_routes.php';</script>";
+            echo "<script>alert('Route added successfully!'); window.location.href = 'manager_menu.php';</script>";
         } else {
             // Handle SQL error
             echo "<script>alert('Error adding route: " . $stmt->error . "'); window.history.back();</script>";

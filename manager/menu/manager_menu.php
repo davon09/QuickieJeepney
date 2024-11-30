@@ -15,7 +15,7 @@ echo date('Y-m-d');
 
 // Fetch logged-in user's details including the occupation
 $userID = $_SESSION['userID'];
-$sqlUser = "SELECT firstName, lastName, occupation FROM user WHERE userID = ?";
+$sqlUser = "SELECT firstName, lastName, occupation, email, profile_image FROM user WHERE userID = ?";
 $stmtUser = $conn->prepare($sqlUser);
 $stmtUser->bind_param("i", $userID);
 $stmtUser->execute();
@@ -24,9 +24,11 @@ if ($resultUser->num_rows > 0) {
     $user = $resultUser->fetch_assoc();
     $fullName = $user['firstName'] . ' ' . $user['lastName'];
     $occupation = $user['occupation'];
+    $profileImage = $user['profile_image'];
 } else {
     $fullName = "Guest";
     $occupation = "N/A";
+    $profileImage = null;
 }
 
 $userDetailsHTML = '
@@ -73,11 +75,14 @@ if ($result->num_rows > 0) {
 
 // Fetch available jeepneys
 $jeepneysHTML = '';
-$sqlJeepneys = "SELECT plateNumber, capacity, occupied, route, type, departure_time FROM jeepney"; 
+$sqlJeepneys = "SELECT jeepneyID, plateNumber, capacity, occupied, route, type, departure_time FROM jeepney";
 $resultJeepneys = $conn->query($sqlJeepneys);
 
 if ($resultJeepneys->num_rows > 0) {
     while ($jeepney = $resultJeepneys->fetch_assoc()) {
+        // Format the departure time into 12-hour AM/PM format
+        $formattedDepartureTime = date('h:i A', strtotime($jeepney['departure_time'])); // Convert and format to 12-hour format
+
         $jeepneysHTML .= '
             <tr>
                 <td>' . $jeepney['plateNumber'] . '</td>
@@ -85,14 +90,14 @@ if ($resultJeepneys->num_rows > 0) {
                 <td>' . $jeepney['occupied'] . '</td>
                 <td>' . $jeepney['route'] . '</td>
                 <td>' . $jeepney['type'] . '</td>
-                <td>' . $jeepney['departure_time'] . '</td>
+                <td>' . $formattedDepartureTime . '</td> <!-- Displaying 12-hour formatted time -->
             </tr>
         ';
     }
 } else {
     $jeepneysHTML = '
         <tr>
-            <td colspan="6">No available jeepneys.</td>
+            <td colspan="7">No available jeepneys.</td>
         </tr>
     ';
 }
@@ -128,7 +133,16 @@ if ($resultJeepneys->num_rows > 0) {
             </button>
             <a href="../profile/profile.php" id="profileBtn">
                 <span class="image">
-                    <img src="../../images/profile.png" alt="Profile Image">
+                    <?php
+                    // Check if profile image exists and display it, otherwise show default
+                    if ($profileImage) {
+                        // Display the actual profile image from the database
+                        echo '<img src="' . htmlspecialchars($profileImage) . '" alt="Profile Image">';
+                    } else {
+                        // Display default profile image if no image is found
+                        echo '<img src="../../images/profile.png" alt="Profile Image">';
+                    }
+                    ?>
                 </span>
                 <div class="text header-text">
                     <h3><?= $fullName; ?></h3>
@@ -150,11 +164,6 @@ if ($resultJeepneys->num_rows > 0) {
             <li class="nav-link">
                 <a href="../profile/manager_profile.php" class="sidebar-link">
                     <i class="fas fa-user sidebar-icon" class="sidebar-icon"></i>Profile
-                </a>
-            </li>
-            <li class="nav-link">
-                <a href="../users/manager_users.php" class="sidebar-link">
-                    <i class="fas fa-users sidebar-icon" class="sidebar-icon"></i>Users
                 </a>
             </li>
             <li class="nav-link">
