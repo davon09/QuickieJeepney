@@ -14,6 +14,31 @@
     </nav>
   </header>
   <main>
+    <% if (section === 'Dashboard') { %>
+      <h1>Admin Dashboard</h1>
+      <div class="stats-container">
+        <div class="stat-box">
+          <h2>Total Users</h2>
+          <p><%= stats.totalUsers %></p>
+        </div>
+        <div class="stat-box">
+          <h2>Total Jeepneys</h2>
+          <p><%= stats.totalJeepneys %></p>
+        </div>
+        <div class="stat-box">
+          <h2>Jeepneys Departed</h2>
+          <p><%= stats.jeepneysDeparted %></p>
+        </div>
+        <div class="stat-box">
+          <h2>Jeepneys About to Depart</h2>
+          <p><%= stats.jeepneysAboutToDepart %></p>
+        </div>
+        <div class="stat-box">
+          <h2>Jeepneys Left (Not Departing)</h2>
+          <p><%= stats.jeepneysLeft %></p>
+        </div>
+      </div>
+    <% } %>    
     <% if (section === 'Users') { %>
       <h1>Registered Users</h1>
       <table>
