@@ -7,36 +7,57 @@
     <link rel="stylesheet" href="admin-dashboard.css">
 </head>
 <body>
+
+    <!-- Sidebar -->
     <div class="sidebar">
-        <div class="logo">Admin Panel</div>
+        <div class="logo">
+            <h2>Admin</h2>
+        </div>
         <ul class="nav">
-            <li><a href="#dashboard">Dashboard</a></li>
-            <li><a href="#manage-users">Manage Users</a></li>
-            <li><a href="#manage-jeepneys">Manage Jeepneys</a></li>
+            <li><a href="#dashboard" onclick="showDashboard()">Dashboard</a></li>
         </ul>
     </div>
+
+    <!-- Main Content -->
     <div class="main-content">
-        <header>
-            <h1>Admin Dashboard</h1>
-            <a href="/logout">Logout</a>
-        </header>
-        <div class="stats stats-cards">
-            <div class="card">
-                <h2>Total Users</h2>
-                <p id="totalUsers">100</p>
+        <!-- Dashboard Section -->
+        <div id="dashboard" class="content-section">
+            <header>
+                <h1>Dashboard</h1>
+                <button id="logoutBtn" onclick="logout()">Logout</button>
+            </header>
+
+            <!-- User Table -->
+            <div class="user-table-container">
+                <h2>Registered Users</h2>
+                <div class="filter-container">
+                    <label for="filter">Filter By:</label>
+                    <select id="filter" onchange="filterUsers()">
+                        <option value="all">All</option>
+                        <option value="name">Name</option>
+                        <option value="role">Role</option>
+                    </select>
+                    <button onclick="sortUsers('asc')">Sort Ascending</button>
+                    <button onclick="sortUsers('desc')">Sort Descending</button>
+                </div>
+                <table id="userTable">
+                    <thead>
+                        <tr>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Contact Number</th>
+                            <th>Email</th>
+                            <th>Occupation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Users will be dynamically added here -->
+                    </tbody>
+                </table>
             </div>
-            <div class="card">
-                <h2>Total Reviews</h2>
-                <p id="totalReviews">200</p>
-            </div>
-        </div>
-        <div class="content">
-            <h2>User Management</h2>
-            <ul id="userList">
-                <!-- User list will be populated here -->
-            </ul>
         </div>
     </div>
+
     <script src="admin-dashboard.js"></script>
 </body>
 </html>

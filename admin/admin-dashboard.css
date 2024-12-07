@@ -39,6 +39,7 @@ body {
     text-decoration: none;
     font-size: 18px;
     display: block;
+    padding: 10px;
 }
 
 .sidebar .nav li a:hover {
@@ -48,7 +49,8 @@ body {
 .main-content {
     margin-left: 250px;
     padding: 20px;
-    flex-grow: 1;
+    width: 100%;
+    background-color: #f9f9f9;
 }
 
 header {
@@ -58,69 +60,91 @@ header {
     margin-bottom: 20px;
 }
 
-.stats-cards {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 30px;
+header h1 {
+    margin: 0;
 }
 
-.card {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 22%;
-    text-align: center;
-}
-
-.card h3 {
-    font-size: 20px;
-    margin-bottom: 10px;
-}
-
-.card p {
-    font-size: 24px;
-    font-weight: bold;
+header a {
+    text-decoration: none;
     color: #4CAF50;
+    font-size: 16px;
 }
 
-.content {
-    background-color: #fff;
+header a:hover {
+    text-decoration: underline;
+}
+
+/* Content Section */
+.content-section {
+    display: block;
+}
+
+.user-table-container {
+    background-color: white;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
 }
 
-.content h2 {
-    font-size: 24px;
-    margin-bottom: 20px;
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
 }
 
-ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-ul li {
-    padding: 10px;
+table th, table td {
+    padding: 12px;
+    text-align: left;
     border-bottom: 1px solid #ddd;
 }
 
-/* Dark Mode Styles */
-body.dark-mode {
-    background-color: #181818;
-    color: #fff;
+table th {
+    background-color: #f4f4f4;
 }
 
-body.dark-mode .sidebar {
-    background-color: #222;
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    margin-right: 10px;
 }
 
-body.dark-mode .card {
-    background-color: #333;
-    color: #fff;
+button:hover {
+    background-color: #45a049;
 }
 
-body.dark-mode .card p {
-    color: #4CAF50;
+/* Filter & Sort Container */
+.filter-container {
+    margin-bottom: 15px;
+}
+
+.filter-container select, .filter-container button {
+    padding: 5px;
+    margin-right: 10px;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px;
+    }
+
+    .main-content {
+        margin-left: 200px;
+    }
+
+    table th, table td {
+        padding: 8px;
+    }
+
+    button {
+        padding: 8px;
+    }
+
+    header a {
+        font-size: 14px;
+    }
 }

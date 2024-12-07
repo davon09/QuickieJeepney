@@ -19,9 +19,9 @@ app.use(session({
 // MySQL Database Connection
 const db = mysql.createConnection({
   host: 'localhost',
-  user: 'root',           // MySQL username (WAMP default)
-  password: '',           // MySQL password (WAMP default is empty)
-  database: 'quickiejeepney'  // Your database name
+  user: 'root',
+  password: '',
+  database: 'quickiejeepney'
 });
 
 // Connect to MySQL
@@ -38,6 +38,12 @@ app.use(express.static(path.join(__dirname, 'admin')));
 
 // Route to serve the login page
 app.get('/', (req, res) => {
+  if (req.session.admin) {
+    return res.redirect('/admin');  // Redirect logged-in users to the dashboard
+  }
+
+  // Set headers to prevent caching
+  res.setHeader('Cache-Control', 'no-store');
   res.sendFile(path.join(__dirname, 'admin', 'login.html'));
 });
 
@@ -55,7 +61,7 @@ app.post('/login', (req, res) => {
       const admin = result[0];
 
       if (password === admin.password) {
-        req.session.admin = admin;
+        req.session.admin = admin;  // Store admin data in session
         return res.json({ success: true });
       } else {
         return res.status(401).json({ success: false, message: 'Invalid credentials' });
@@ -71,11 +77,31 @@ app.get('/admin', (req, res) => {
   if (req.session.admin) {
     res.sendFile(path.join(__dirname, 'admin', 'admin-dashboard.html'));
   } else {
-    res.status(403).json({ success: false, message: 'Forbidden' });
+    res.status(403).json({ success: false, message: 'Forbidden - You must be logged in' });
   }
 });
 
-// Logout route
+// Route to fetch users from the database
+app.get('/api/users', (req, res) => {
+  db.query('SELECT firstName, lastName, contactNumber, email, occupation FROM user', (err, result) => {
+    if (err) {
+      console.error('MySQL query error:', err);
+      return res.status(500).json({ success: false, message: 'Database query error' });
+    }
+    res.json(result);  // Send the user data as JSON
+  });
+});
+
+// Check if the user is logged in
+app.get('/api/check-login', (req, res) => {
+  if (req.session.admin) {
+    res.json({ loggedIn: true });
+  } else {
+    res.json({ loggedIn: false });
+  }
+});
+
+// Logout route (POST request)
 app.post('/logout', (req, res) => {
   req.session.destroy((err) => {
     if (err) {

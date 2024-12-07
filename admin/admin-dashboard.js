@@ -1,28 +1,127 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const logoutButton = document.querySelector('a[href="/logout"]');
+// Handle Sidebar Navigation
+function showDashboard() {
+    document.getElementById("dashboard").style.display = "block";
+}
 
-    logoutButton.addEventListener('click', function(event) {
-        event.preventDefault();
+// Fetch Users Data from Server and Populate the Table
+function fetchUsers() {
+    fetch('/api/users')
+        .then(response => response.json())
+        .then(users => {
+            const tableBody = document.querySelector("#userTable tbody");
+            tableBody.innerHTML = ''; // Clear any existing rows
 
-        fetch('/logout', {
-            method: 'POST'
+            users.forEach(user => {
+                const row = document.createElement("tr");
+
+                const firstNameCell = document.createElement("td");
+                firstNameCell.textContent = user.firstName;
+                row.appendChild(firstNameCell);
+
+                const lastNameCell = document.createElement("td");
+                lastNameCell.textContent = user.lastName;
+                row.appendChild(lastNameCell);
+
+                const contactNumberCell = document.createElement("td");
+                contactNumberCell.textContent = user.contactNumber;
+                row.appendChild(contactNumberCell);
+
+                const emailCell = document.createElement("td");
+                emailCell.textContent = user.email;
+                row.appendChild(emailCell);
+
+                const occupationCell = document.createElement("td");
+                occupationCell.textContent = user.occupation;
+                row.appendChild(occupationCell);
+
+                tableBody.appendChild(row);
+            });
         })
-        .then(response => {
-            if (response.ok) {
-                window.location.href = '/';
-            } else {
-                alert('Failed to log out. Please try again.');
-            }
-        })
-        .catch(error => console.error('Error logging out:', error));
+        .catch(error => {
+            console.error('Error fetching users:', error);
+            alert('Error loading users data');
+        });
+}
+
+// Sorting Function (ascending/descending)
+function sortUsers(order) {
+    const table = document.getElementById("userTable");
+    const rows = Array.from(table.rows).slice(1);  // Skip the header row
+
+    rows.sort((a, b) => {
+        const aName = a.cells[0].textContent.toLowerCase();
+        const bName = b.cells[0].textContent.toLowerCase();
+        return (order === 'asc') ? aName.localeCompare(bName) : bName.localeCompare(aName);
     });
 
-    // Example of dynamically updating content (if applicable)
-    fetch('/api/stats')
+    rows.forEach(row => table.appendChild(row));  // Reorder rows in the table
+}
+
+// Filter Users Function
+function filterUsers() {
+    const filterValue = document.getElementById("filter").value;
+    const nameFilterValue = document.getElementById("nameFilter").value.toLowerCase();
+    const table = document.getElementById("userTable");
+    const rows = table.getElementsByTagName("tr");
+
+    // Loop through each row of the table
+    for (let i = 1; i < rows.length; i++) {
+        const firstName = rows[i].cells[0].textContent.toLowerCase();
+        const lastName = rows[i].cells[1].textContent.toLowerCase();
+        const fullName = firstName + " " + lastName;
+        const role = rows[i].cells[2].textContent.toLowerCase();
+
+        rows[i].style.display = '';  // Initially show all rows
+
+        if (filterValue === 'name' && !fullName.includes(nameFilterValue)) {
+            rows[i].style.display = 'none';
+        } else if (filterValue === 'role' && role !== 'admin') {
+            rows[i].style.display = 'none';
+        } else if (filterValue === 'all') {
+            rows[i].style.display = '';
+        }
+    }
+}
+
+// Logout function
+function logout() {
+    fetch('/logout', {
+        method: 'POST',  // Use POST to logout
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = '/';  // Redirect to the login page
+        } else {
+            alert('Error logging out');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error logging out');
+    });
+}
+
+// Prevent back navigation on admin page
+window.history.pushState(null, "", window.location.href);
+window.onpopstate = function() {
+    window.history.pushState(null, "", window.location.href);  // Keep user on the admin dashboard
+};
+
+// Fetch the users when the page loads
+document.addEventListener('DOMContentLoaded', fetchUsers);
+
+// Check if user is logged in and redirect if not
+window.onload = function() {
+    fetch('/api/check-login')
         .then(response => response.json())
         .then(data => {
-            document.getElementById('totalUsers').textContent = data.totalUsers;
-            document.getElementById('totalReviews').textContent = data.totalReviews;
+            if (!data.loggedIn) {
+                window.location.href = '/'; // Redirect to login if not logged in
+            }
         })
-        .catch(error => console.error('Error fetching stats:', error));
-});
+        .catch(error => {
+            console.error('Error checking login status:', error);
+            window.location.href = '/'; // Redirect to login on error
+        });
+};
