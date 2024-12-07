@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="admin-dashboard.css">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">Admin Panel</div>
+        <ul class="nav">
+            <li><a href="#dashboard">Dashboard</a></li>
+            <li><a href="#manage-users">Manage Users</a></li>
+            <li><a href="#manage-jeepneys">Manage Jeepneys</a></li>
+        </ul>
+    </div>
+    <div class="main-content">
+        <header>
+            <h1>Admin Dashboard</h1>
+            <a href="/logout">Logout</a>
+        </header>
+        <div class="stats stats-cards">
+            <div class="card">
+                <h2>Total Users</h2>
+                <p id="totalUsers">100</p>
+            </div>
+            <div class="card">
+                <h2>Total Reviews</h2>
+                <p id="totalReviews">200</p>
+            </div>
+        </div>
+        <div class="content">
+            <h2>User Management</h2>
+            <ul id="userList">
+                <!-- User list will be populated here -->
+            </ul>
+        </div>
+    </div>
+    <script src="admin-dashboard.js"></script>
+</body>
+</html>
