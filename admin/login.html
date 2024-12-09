@@ -8,14 +8,18 @@
 </head>
 <body>
     <div class="login-container">
-        <h2>Admin Login</h2>
-        <form id="loginForm" method="POST" action="/login">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required>
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required>
-            <button type="submit">Login</button>
-        </form>
+        <div class="login-box">
+            <h2>Admin Login</h2>
+            <form id="loginForm" method="POST" action="/login">
+                <div class="input-group">
+                    <input type="email" id="email" name="email" required placeholder="Enter your email">
+                </div>
+                <div class="input-group">
+                    <input type="password" id="password" name="password" required placeholder="Enter your password">
+                </div>
+                <button type="submit">Login</button>
+            </form>
+        </div>
     </div>
 
     <script src="login.js"></script>
