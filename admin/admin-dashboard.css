@@ -1,132 +1,176 @@
-/* Global Styles */
-body {
-    font-family: Arial, sans-serif;
+/* Reset some basic styles */
+* {
     margin: 0;
     padding: 0;
-    display: flex;
-    height: 100vh;
-    background-color: #f4f4f4;
+    box-sizing: border-box;
 }
 
+/* Body Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f6f9;
+    color: #333;
+    display: flex;
+    height: 100vh;
+}
+
+/* Sidebar Styles */
 .sidebar {
     width: 250px;
-    background-color: #333;
-    color: #fff;
+    background-color: #2c3e50;
+    height: 100vh;
     padding: 20px;
     position: fixed;
     top: 0;
-    bottom: 0;
     left: 0;
+    color: #fff;
 }
 
-.sidebar .logo {
+.sidebar .logo h2 {
     font-size: 24px;
-    font-weight: bold;
     margin-bottom: 30px;
+    text-align: center;
+    font-weight: bold;
+    letter-spacing: 1px;
 }
 
 .sidebar .nav {
-    list-style-type: none;
+    list-style: none;
     padding: 0;
 }
 
 .sidebar .nav li {
-    margin-bottom: 15px;
+    margin: 20px 0;
 }
 
 .sidebar .nav li a {
-    color: #fff;
     text-decoration: none;
+    color: #bdc3c7;
     font-size: 18px;
     display: block;
-    padding: 10px;
+    padding: 12px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, padding-left 0.3s ease;
 }
 
 .sidebar .nav li a:hover {
-    background-color: #575757;
+    background-color: #34495e;
+    color: #ecf0f1;
+    padding-left: 20px;
 }
 
+/* Main Content Styles */
 .main-content {
     margin-left: 250px;
-    padding: 20px;
     width: 100%;
-    background-color: #f9f9f9;
+    padding: 30px;
+    background-color: #ecf0f1;
 }
 
 header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
 }
 
 header h1 {
-    margin: 0;
+    font-size: 28px;
+    color: #34495e;
+    font-weight: bold;
 }
 
-header a {
-    text-decoration: none;
-    color: #4CAF50;
+#logoutBtn {
+    padding: 10px 20px;
+    background-color: #e74c3c;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
     font-size: 16px;
+    transition: background-color 0.3s ease;
 }
 
-header a:hover {
-    text-decoration: underline;
+#logoutBtn:hover {
+    background-color: #c0392b;
 }
 
-/* Content Section */
-.content-section {
-    display: block;
-}
-
+/* User Table Styles */
 .user-table-container {
-    background-color: white;
+    background-color: #fff;
+    border-radius: 10px;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin-top: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.user-table-container h2 {
+    font-size: 22px;
+    color: #34495e;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.filter-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.filter-container label {
+    font-size: 16px;
+    color: #34495e;
+    margin-right: 10px;
+}
+
+.filter-container select {
+    padding: 8px 12px;
+    margin-right: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.filter-container button {
+    padding: 8px 12px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-right: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.filter-container button:hover {
+    background-color: #2980b9;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 10px;
+    margin-top: 20px;
 }
 
 table th, table td {
     padding: 12px;
     text-align: left;
-    border-bottom: 1px solid #ddd;
+    font-size: 16px;
 }
 
 table th {
-    background-color: #f4f4f4;
+    background-color: #ecf0f1;
+    color: #34495e;
 }
 
-button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px;
-    border: none;
-    cursor: pointer;
-    margin-right: 10px;
+table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
 }
 
-button:hover {
-    background-color: #45a049;
+table tbody tr:hover {
+    background-color: #f1f1f1;
 }
 
-/* Filter & Sort Container */
-.filter-container {
-    margin-bottom: 15px;
-}
-
-.filter-container select, .filter-container button {
-    padding: 5px;
-    margin-right: 10px;
-}
-
-/* Mobile Responsiveness */
+/* Responsive Design */
 @media (max-width: 768px) {
     .sidebar {
         width: 200px;
@@ -134,17 +178,26 @@ button:hover {
 
     .main-content {
         margin-left: 200px;
+        padding: 20px;
+    }
+
+    header h1 {
+        font-size: 24px;
+    }
+
+    .user-table-container {
+        padding: 15px;
     }
 
     table th, table td {
-        padding: 8px;
-    }
-
-    button {
-        padding: 8px;
-    }
-
-    header a {
         font-size: 14px;
+    }
+
+    .filter-container {
+        flex-direction: column;
+    }
+
+    .filter-container button {
+        margin-top: 10px;
     }
 }
