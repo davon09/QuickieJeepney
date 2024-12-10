@@ -1,0 +1,257 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background-color: #f4ede4;
+    display: flex;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+hr {
+    border: 1px solid #f4ede4;
+}
+
+/* Header Section */
+.top-header {
+    width: 100%;
+    height: 140px;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1003;
+}
+
+.logo-section {
+    display: flex;
+    align-items: center;
+}
+
+.logo-image {
+    height: 70px;
+    object-fit: contain;
+}
+
+/* User Card */
+.user-card {
+    display: flex;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
+    padding: 10px 16px;
+    gap: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.image img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.logout-btn {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: transform 0.3s;
+}
+
+.logout-btn:hover {
+    transform: scale(1.1);
+}
+
+.logout-btn i {
+    width: 24px;
+    height: 24px;
+    color: #5d4037;
+    margin-right: 6px;
+}
+
+.header-text {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    line-height: 1;
+}
+
+.header-text h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    color: #4e342e;
+}
+
+.header-text p {
+    font-size: 14px;
+    color: #6d4c41;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background-color: #5d4037;
+    height: calc(100vh - 140px);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    position: fixed;
+    top: 140px;
+    left: 0;
+    overflow-y: auto;
+}
+
+.menu-title {
+    font-size: 18px;
+    color: #d7ccc8;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin: 20px 0 10px 14px;
+}
+
+.menu-links {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s, opacity 0.3s;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 500;
+    color: #d7ccc8;
+    padding: 10px 12px;
+    border-radius: 8px;
+    width: 100%;
+}
+
+.sidebar-link:hover {
+    background-color: #4e342e;
+    color: #fff;
+}
+
+.nav-link.active .sidebar-link {
+    background-color: #fd8c47;
+    color: #4e342e;
+    font-weight: bold;
+}
+
+/* Main Content */
+.main-content {
+    margin-left: 260px;
+    padding: 160px 20px;
+    flex: 1;
+    min-height: calc(100vh - 140px);
+    background-color: #f4ede4;
+    overflow-y: auto;
+}
+
+/* Payments Section */
+.payments {
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.payments h1 {
+    font-size: 24px;
+    color: #5d4037;
+    margin-bottom: 20px;
+}
+
+.payments-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.payments-table th,
+.payments-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.payments-table th {
+    background-color: #795548;
+    color: #fff;
+}
+
+.payments-table tr:nth-child(even) {
+    background-color: #f0f0f0;
+}
+
+.action-btn {
+    background-color: #795548;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.action-btn:hover {
+    background-color: #5d4037;
+}
+
+/* Dropdown Styling */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #ffffff;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    min-width: 150px;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.dropdown-content.show {
+    display: block;
+}
+
+.dropdown-content a {
+    text-decoration: none;
+    display: block;
+    padding: 8px 10px;
+    color: #333;
+    font-size: 14px;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+    color: #000;
+}
