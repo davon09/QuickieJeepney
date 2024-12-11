@@ -301,3 +301,91 @@ document.getElementById("addAdminForm").addEventListener("submit", function (e) 
         alert('An error occurred while adding the admin.');
     });
 });
+
+/*Jeepneys*/
+function fetchJeepneys() {
+    fetch('/api/jeepneys')  
+        .then(response => response.json())
+        .then(jeepneys => {
+            const tableBody = document.querySelector("#jeepneyTable tbody");
+            tableBody.innerHTML = ''; 
+
+            jeepneys.forEach(jeepney => {
+                const row = document.createElement("tr");
+
+                const jeepneyIDCell = document.createElement("td");
+                jeepneyIDCell.textContent = jeepney.jeepneyID;  
+                row.appendChild(jeepneyIDCell);
+
+                const plateNumberCell = document.createElement("td");
+                plateNumberCell.textContent = jeepney.plateNumber; 
+                row.appendChild(plateNumberCell);
+
+                const routeCell = document.createElement("td");
+                routeCell.textContent = jeepney.route;  
+                row.appendChild(routeCell);
+
+                const typeCell = document.createElement("td");
+                typeCell.textContent = jeepney.type; 
+                row.appendChild(typeCell);
+
+                const modifyButtonCell = document.createElement("td");
+                const modifyButton = document.createElement("button");
+                modifyButton.textContent = "Modify";
+                modifyButton.classList.add("modify-btn");
+                modifyButton.onclick = () => openJeepneyDetailsPopup(jeepney);  
+                modifyButtonCell.appendChild(modifyButton);
+                row.appendChild(modifyButtonCell);
+
+                tableBody.appendChild(row);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching jeepneys:', error);
+            alert('Error loading jeepneys data');
+        });
+    }
+
+function openJeepneyDetailsPopup(jeepney) {
+    // Populate the modal with jeepney details
+    document.getElementById("popupJeepneyID").textContent = jeepney.jeepneyID;
+    document.getElementById("popupDriverID").textContent = jeepney.driverID;
+    document.getElementById("popupPlateNumber").textContent = jeepney.plateNumber;
+    document.getElementById("popupCapacity").textContent = jeepney.capacity;
+    document.getElementById("popupOccupied").textContent = jeepney.occupied;
+    document.getElementById("popupRoute").textContent = jeepney.route;
+    document.getElementById("popupType").textContent = jeepney.type;
+    document.getElementById("popupDepartureTime").textContent = jeepney.departure_time;
+    document.getElementById("popupStatus").textContent = jeepney.status;
+    document.getElementById("popupJeepneyImage").src = `data:image/jpeg;base64,${jeepney.jeep_image}`;
+
+    // Display the modal
+    document.getElementById("jeepneyDetailsPopup").style.display = "block";
+}
+
+function closeJeepneyDetailsPopup() {
+    // Hide the modal
+    document.getElementById("jeepneyDetailsPopup").style.display = "none";
+}
+
+function deleteJeepney() {
+    const jeepneyID = document.getElementById("popupJeepneyID").textContent;
+
+    fetch(`/api/jeepney/${jeepneyID}`, {
+        method: 'DELETE',
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            alert('Jeepney deleted successfully');
+            closeJeepneyDetailsPopup();
+            fetchJeepneys(); // Refresh the list
+        } else {
+            alert('Failed to delete jeepney');
+        }
+    })
+    .catch(error => {
+        console.error('Error deleting jeepney:', error);
+        alert('Error deleting jeepney');
+    });
+}
