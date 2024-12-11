@@ -139,13 +139,44 @@ app.post('/api/add-admin', (req, res) => {
 
 // Route to fetch jeepneys from database
 app.get('/api/jeepneys', (req, res) => {
-  const query = 'SELECT jeepneyID, plateNumber, route, type FROM jeepney';
+  const query = 'SELECT jeepneyID, driverID, plateNumber, capacity, occupied, route, type, departure_time, jeep_image FROM jeepney';
   db.query(query, (err, results) => {
       if (err) {
           console.error('Error fetching jeepneys:', err);
           return res.status(500).json({ error: 'Failed to fetch jeepneys' });
       }
+      results = results.map(jeepney => {
+        if (jeepney.jeep_image) {
+            jeepney.jeep_image = jeepney.jeep_image.toString('base64'); // Convert BLOB to Base64
+        }
+        return jeepney;
+    });
+
       res.json(results);
+  });
+});
+
+// Delete a jeepney based on the jeepneyID
+app.delete('/api/jeepney/:jeepneyID', (req, res) => {
+  const jeepneyID = req.params.jeepneyID;  // Get the jeepneyID from the URL parameter
+
+  // Define your DELETE query
+  const query = 'DELETE FROM jeepney WHERE jeepneyID = ?';
+
+  // Execute the query
+  db.query(query, [jeepneyID], (err, results) => {
+      if (err) {
+          console.error('Error deleting jeepney:', err);
+          return res.status(500).json({ success: false, message: 'Failed to delete jeepney' });
+      }
+
+      if (results.affectedRows > 0) {
+          // If at least one row was deleted
+          res.json({ success: true, message: 'Jeepney deleted successfully' });
+      } else {
+          // If no jeepney with the given ID was found
+          res.status(404).json({ success: false, message: 'Jeepney not found' });
+      }
   });
 });
 

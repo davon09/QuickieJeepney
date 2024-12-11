@@ -53,32 +53,32 @@ function fetchUsers() {
             .then(response => response.json())
             .then(jeepneys => {
                 const tableBody = document.querySelector("#jeepneyTable tbody");
-                tableBody.innerHTML = ''; // Clear any existing rows
+                tableBody.innerHTML = ''; 
     
                 jeepneys.forEach(jeepney => {
                     const row = document.createElement("tr");
     
                     const jeepneyIDCell = document.createElement("td");
-                    jeepneyIDCell.textContent = jeepney.jeepneyID;  // Assuming 'jeepneyID' is part of the data
+                    jeepneyIDCell.textContent = jeepney.jeepneyID;  
                     row.appendChild(jeepneyIDCell);
     
                     const plateNumberCell = document.createElement("td");
-                    plateNumberCell.textContent = jeepney.plateNumber;  // Assuming 'plateNumber' is part of the data
+                    plateNumberCell.textContent = jeepney.plateNumber; 
                     row.appendChild(plateNumberCell);
     
                     const routeCell = document.createElement("td");
-                    routeCell.textContent = jeepney.route;  // Assuming 'route' is part of the data
+                    routeCell.textContent = jeepney.route;  
                     row.appendChild(routeCell);
     
                     const typeCell = document.createElement("td");
-                    typeCell.textContent = jeepney.type;  // Assuming 'type' is part of the data
+                    typeCell.textContent = jeepney.type; 
                     row.appendChild(typeCell);
 
                     const modifyButtonCell = document.createElement("td");
                     const modifyButton = document.createElement("button");
                     modifyButton.textContent = "Modify";
                     modifyButton.classList.add("modify-btn");
-                    modifyButton.onclick = () => openJeepneyDetailsPopup(jeepney);  // Open the modal with jeepney details
+                    modifyButton.onclick = () => openJeepneyDetailsPopup(jeepney);  
                     modifyButtonCell.appendChild(modifyButton);
                     row.appendChild(modifyButtonCell);
     
@@ -177,10 +177,14 @@ window.onload = function() {
 function openJeepneyDetailsPopup(jeepney) {
     // Populate the modal with jeepney details
     document.getElementById("popupJeepneyID").textContent = jeepney.jeepneyID;
+    document.getElementById("popupDriverID").textContent = jeepney.driverID;
     document.getElementById("popupPlateNumber").textContent = jeepney.plateNumber;
+    document.getElementById("popupCapacity").textContent = jeepney.capacity;
+    document.getElementById("popupOccupied").textContent = jeepney.occupied;
     document.getElementById("popupRoute").textContent = jeepney.route;
     document.getElementById("popupType").textContent = jeepney.type;
-    document.getElementById("popupJeepneyImage").src = `data:image/jpeg;base64,${jeepney.jeepney_image}`;
+    document.getElementById("popupDepartureTime").textContent = jeepney.departure_time;
+    document.getElementById("popupJeepneyImage").src = `data:image/jpeg;base64,${jeepney.jeep_image}`;
 
     // Display the modal
     document.getElementById("jeepneyDetailsPopup").style.display = "block";
