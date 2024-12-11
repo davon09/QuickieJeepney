@@ -109,6 +109,17 @@ $userDetailsHTML = '
                     <i class="fas fa-calendar-alt sidebar-icon" class="sidebar-icon"></i>Booking Logs
                 </a>
             </li>
+
+            <li class="nav-link">
+                <a href="../payment/manager_payment.php" class="sidebar-link">
+                    <i class="fas fa-calendar-alt sidebar-icon" class="sidebar-icon"></i>Payment
+                </a>
+            </li>
+            <li class="nav-link">
+                <a href="../booking/manager_booking.php" class="sidebar-link">
+                    <i class="fas fa-calendar-alt sidebar-icon" class="sidebar-icon"></i>Manage Passengers
+                </a>
+            </li>
         </ul>
     </nav>
     <section class="main-content">

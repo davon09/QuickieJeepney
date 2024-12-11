@@ -2,11 +2,11 @@
 session_start();
 include '../../dbConnection/dbConnection.php';  
 
-// Check if user is logged in (ensure the userID is in the session)
-if (!isset($_SESSION['userID'])) {
-    header("Location: /QuickieJeepney/index.php"); // Redirect to login page if not logged in
-    exit();
-}
+// // Check if user is logged in (ensure the userID is in the session)
+// if (!isset($_SESSION['userID'])) {
+//     header("Location: /quickieJeepney/index.php"); // Redirect to login page if not logged in
+//     exit();
+// }
 
 date_default_timezone_set('Asia/Manila');
 $currentDate = date('Y-m-d'); // Get today's date in 'YYYY-MM-DD' format
@@ -176,6 +176,17 @@ if ($resultJeepneys->num_rows > 0) {
                     <i class="fas fa-calendar-alt sidebar-icon" class="sidebar-icon"></i>Booking Logs
                 </a>
             </li>
+
+            <li class="nav-link">
+                <a href="../payment/manager_payment.php" class="sidebar-link">
+                    <i class="fas fa-calendar-alt sidebar-icon" class="sidebar-icon"></i>Payment
+                </a>
+            </li>
+            <li class="nav-link">
+                <a href="../booking/manager_booking.php" class="sidebar-link">
+                    <i class="fas fa-calendar-alt sidebar-icon" class="sidebar-icon"></i>Manage Passengers
+                </a>
+            </li>
         </ul>
     </nav>
 
@@ -234,23 +245,28 @@ if ($resultJeepneys->num_rows > 0) {
                     </ul>
                 </div>
                 <div class="available-jeepney">
-                    <h2>Available Jeepney</h2>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Plate Number</th>
-                                <th>Capacity</th>
-                                <th>Occupied</th>
-                                <th>Route</th>
-                                <th>Type</th>
-                                <th>Departure Time</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php echo $jeepneysHTML; ?>
-                        </tbody>
-                    </table>
-                </div>
+    <div class="section-header">
+        <h2>Available Jeepney</h2>
+        <a href="../vehicles/manager_vehicles.php" class="edit-btn">
+            <i class="fas fa-edit"></i>
+        </a>
+    </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Plate Number</th>
+                        <th>Capacity</th>
+                        <th>Occupied</th>
+                        <th>Route</th>
+                        <th>Type</th>
+                        <th>Departure Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php echo $jeepneysHTML; ?>
+                </tbody>
+            </table>
+        </div>
             </div>
         </div>
     </section>

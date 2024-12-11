@@ -722,11 +722,39 @@ input[readonly] {
     overflow-y: auto;
 }
 
+.available-jeepney .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
 .available-jeepney h2 {
     font-size: 20px;
     font-weight: bold;
     color: #5d4037;
-    margin-bottom: 15px;
+    margin: 0; /* Align header with button */
+}
+
+.available-jeepney .edit-btn {
+    background-color: #5d4037;
+    color: white;
+    padding: 8px 12px;
+    text-decoration: none;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.available-jeepney .edit-btn i {
+    margin-right: 5px;
+    font-size: 16px;
+}
+
+.available-jeepney .edit-btn:hover {
+    background-color: #99110a;
 }
 
 .available-jeepney table {
@@ -752,6 +780,21 @@ input[readonly] {
 .available-jeepney td {
     background-color: #ffffff;
 }
+
+/* Additional Styles for Scroll */
+.available-jeepney::-webkit-scrollbar {
+    width: 8px;
+}
+
+.available-jeepney::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 8px;
+}
+
+.available-jeepney::-webkit-scrollbar-thumb:hover {
+    background-color: #aaa;
+}
+
 
 /* Responsive Design */
 @media (max-width: 768px) {
