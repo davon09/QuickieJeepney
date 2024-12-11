@@ -15,6 +15,7 @@
         </div>
         <ul class="nav">
             <li><a href="#dashboard" onclick="showDashboard()">Dashboard</a></li>
+            <li><a href="#manage-vehicles" onclick="showManage()">Dashboard</a></li>
         </ul>
     </div>
 
@@ -52,6 +53,30 @@
                     </thead>
                     <tbody>
                         <!-- Users will be dynamically added here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!--Manage Vehicles Section-->
+        <div id="manage-vehicles" class="content-section" style="display:none;">
+            <header>
+                <h1>Manage Vehicles</h1>
+            </header>
+    
+            <!-- Jeepney Table -->
+            <div class="jeepney-table-container">
+                <h2>Jeepney List</h2>
+                <table id="jeepneyTable">
+                    <thead>
+                        <tr>
+                            <th>Jeepney ID</th>
+                            <th>Plate Number</th>
+                            <th>Route</th>
+                            <th>Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Jeepney data will be dynamically added here -->
                     </tbody>
                 </table>
             </div>
