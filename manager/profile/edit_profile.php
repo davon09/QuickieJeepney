@@ -8,32 +8,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $userID = $_SESSION['userID'];
 
     // Get form data
-    $firstName = $_POST['firstName']; // Matches the name attribute of the firstName input
-    $lastName = $_POST['lastName']; // Matches the name attribute of the lastName input
-    $email = $_POST['email']; // Matches the name attribute of the email input
+    $firstName = trim($_POST['firstName']);
+    $lastName = trim($_POST['lastName']);
+    $email = trim($_POST['email']);
     $password = $_POST['password'];
     $confirmPassword = $_POST['confirmPassword'];
 
+    // Validate required fields
+    if (empty($firstName) || empty($lastName) || empty($email)) {
+        $response['message'] = 'First name, last name, and email are required.';
+        echo json_encode($response);
+        exit();
+    }
+
     // Handle Profile Photo Upload
     $profilePhotoPath = null;
-
     if (isset($_FILES['profilePhoto']) && $_FILES['profilePhoto']['error'] === UPLOAD_ERR_OK) {
         $fileName = $_FILES['profilePhoto']['name'];
         $fileTmpName = $_FILES['profilePhoto']['tmp_name'];
         $fileType = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
         $allowedTypes = ['jpg', 'jpeg', 'png', 'gif'];
 
-        // Validate file type
         if (in_array($fileType, $allowedTypes)) {
+            // Create unique file name
+            $newFileName = uniqid('profile_', true) . '.' . $fileType;
+
             // Ensure the upload directory exists
             $uploadDir = '../../uploads/profile_photos/';
             if (!file_exists($uploadDir)) {
-                mkdir($uploadDir, 0777, true); // Create directory if it doesn't exist
+                mkdir($uploadDir, 0777, true);
             }
 
-            $uploadFile = $uploadDir . basename($fileName);
+            $uploadFile = $uploadDir . $newFileName;
 
-            // Move uploaded file to desired location
+            // Move uploaded file
             if (move_uploaded_file($fileTmpName, $uploadFile)) {
                 $profilePhotoPath = $uploadFile;
             } else {
@@ -48,34 +56,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // Update profile information in the database
-    $updateQuery = "UPDATE user SET firstName = ?, lastName = ?, email = ? WHERE userID = ?";
-    $stmt = $conn->prepare($updateQuery);
-    $stmt->bind_param("sssi", $firstName, $lastName, $email, $userID);
+    // Begin a database transaction
+    $conn->begin_transaction();
 
-    if ($stmt->execute()) {
-        // Update profile image if uploaded
+    try {
+        // Update basic profile information
+        $updateQuery = "UPDATE user SET firstName = ?, lastName = ?, email = ? WHERE userID = ?";
+        $stmt = $conn->prepare($updateQuery);
+        $stmt->bind_param("sssi", $firstName, $lastName, $email, $userID);
+        if (!$stmt->execute()) {
+            throw new Exception('Error updating profile information.');
+        }
+
+        // Update profile photo if uploaded
         if ($profilePhotoPath) {
             $updateImageQuery = "UPDATE user SET profile_image = ? WHERE userID = ?";
             $stmtImage = $conn->prepare($updateImageQuery);
             $stmtImage->bind_param("si", $profilePhotoPath, $userID);
-            $stmtImage->execute();
+            if (!$stmtImage->execute()) {
+                throw new Exception('Error updating profile photo.');
+            }
         }
 
         // Update password if provided and matches confirmation
-        if ($password && $password === $confirmPassword) {
-            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-            $updatePasswordQuery = "UPDATE user SET password = ? WHERE userID = ?";
-            $stmtPassword = $conn->prepare($updatePasswordQuery);
-            $stmtPassword->bind_param("si", $hashedPassword, $userID);
-            $stmtPassword->execute();
+        if (!empty($password)) {
+            if ($password === $confirmPassword) {
+                $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+                $updatePasswordQuery = "UPDATE user SET password = ? WHERE userID = ?";
+                $stmtPassword = $conn->prepare($updatePasswordQuery);
+                $stmtPassword->bind_param("si", $hashedPassword, $userID);
+                if (!$stmtPassword->execute()) {
+                    throw new Exception('Error updating password.');
+                }
+            } else {
+                throw new Exception('Password and confirm password do not match.');
+            }
         }
 
-        // Return success response
+        // Commit the transaction
+        $conn->commit();
+
         $response['success'] = true;
         $response['message'] = 'Profile updated successfully!';
-    } else {
-        $response['message'] = 'Error updating profile data.';
+    } catch (Exception $e) {
+        // Rollback transaction on error
+        $conn->rollback();
+        $response['message'] = $e->getMessage();
     }
 
     echo json_encode($response);
