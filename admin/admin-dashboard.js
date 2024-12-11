@@ -73,6 +73,14 @@ function fetchUsers() {
                     const typeCell = document.createElement("td");
                     typeCell.textContent = jeepney.type;  // Assuming 'type' is part of the data
                     row.appendChild(typeCell);
+
+                    const modifyButtonCell = document.createElement("td");
+                    const modifyButton = document.createElement("button");
+                    modifyButton.textContent = "Modify";
+                    modifyButton.classList.add("modify-btn");
+                    modifyButton.onclick = () => openJeepneyDetailsPopup(jeepney);  // Open the modal with jeepney details
+                    modifyButtonCell.appendChild(modifyButton);
+                    row.appendChild(modifyButtonCell);
     
                     tableBody.appendChild(row);
                 });
@@ -165,3 +173,41 @@ window.onload = function() {
             window.location.href = '/'; // Redirect to login on error
         });
 };
+function openJeepneyDetailsPopup(jeepney) {
+    // Populate the modal with jeepney details
+    document.getElementById("popupJeepneyID").textContent = jeepney.jeepneyID;
+    document.getElementById("popupPlateNumber").textContent = jeepney.plateNumber;
+    document.getElementById("popupRoute").textContent = jeepney.route;
+    document.getElementById("popupType").textContent = jeepney.type;
+    document.getElementById("popupJeepneyImage").src = `data:image/jpeg;base64,${jeepney.jeepney_image}`;
+
+    // Display the modal
+    document.getElementById("jeepneyDetailsPopup").style.display = "block";
+}
+
+function closeJeepneyDetailsPopup() {
+    // Hide the modal
+    document.getElementById("jeepneyDetailsPopup").style.display = "none";
+}
+
+function deleteJeepney() {
+    const jeepneyID = document.getElementById("popupJeepneyID").textContent;
+
+    fetch(`/api/jeepney/${jeepneyID}`, {
+        method: 'DELETE',
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            alert('Jeepney deleted successfully');
+            closeJeepneyDetailsPopup();
+            fetchJeepneys(); // Refresh the list
+        } else {
+            alert('Failed to delete jeepney');
+        }
+    })
+    .catch(error => {
+        console.error('Error deleting jeepney:', error);
+        alert('Error deleting jeepney');
+    });
+}

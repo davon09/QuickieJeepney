@@ -73,6 +73,7 @@
                             <th>Plate Number</th>
                             <th>Route</th>
                             <th>Type</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -82,6 +83,26 @@
             </div>
         </div>
     </div>
+    
+    <!-- Jeepney Details Popup (Modal) -->
+    <div id="jeepneyDetailsPopup" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeJeepneyDetailsPopup()">&times;</span>
+
+            <h2>Jeepney Details</h2>
+
+            <p><strong>Jeepney ID:</strong> <span id="popupJeepneyID"></span></p>
+            <p><strong>Plate Number:</strong> <span id="popupPlateNumber"></span></p>
+            <p><strong>Route:</strong> <span id="popupRoute"></span></p>
+            <p><strong>Type:</strong> <span id="popupType"></span></p>
+            <p><strong>Image:</strong></p>
+            <img id="popupJeepneyImage" src="" alt="Jeepney Image" style="width: 100px; height: auto;">
+
+            <button onclick="deleteJeepney()">Delete Jeepney</button>
+            <button onclick="closeJeepneyDetailsPopup()">Close</button>
+        </div>
+    </div>
+
 
     <script src="admin-dashboard.js"></script>
 </body>
