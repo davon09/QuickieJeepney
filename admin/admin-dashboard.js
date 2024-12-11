@@ -85,7 +85,8 @@ function fetchUsers() {
 // Sorting Function (ascending/descending)
 function sortUsers(order) {
     const table = document.getElementById("userTable");
-    const rows = Array.from(table.rows).slice(1);  // Skip the header row
+    const tbody = table.querySelector("tbody"); // Access the tbody instead of table directly
+    const rows = Array.from(tbody.querySelectorAll("tr")); // Get rows inside tbody
 
     rows.sort((a, b) => {
         const aName = a.cells[0].textContent.toLowerCase();
@@ -93,8 +94,8 @@ function sortUsers(order) {
         return (order === 'asc') ? aName.localeCompare(bName) : bName.localeCompare(aName);
     });
 
-    rows.fo
-    rEach(row => table.appendChild(row));  // Reorder rows in the table
+    tbody.innerHTML = ""; // Clear tbody before appending sorted rows
+    rows.forEach(row => tbody.appendChild(row)); // Append sorted rows to tbody
 }
 // Filter Users Function
 function filterUsers() {
