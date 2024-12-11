@@ -92,6 +92,18 @@ app.get('/api/users', (req, res) => {
   });
 });
 
+// Route to fetch jeepneys from database
+app.get('/api/jeepneys', (req, res) => {
+  const query = 'SELECT jeepneyID, plateNumber, route, type FROM jeepney';
+  db.query(query, (err, results) => {
+      if (err) {
+          console.error('Error fetching jeepneys:', err);
+          return res.status(500).json({ error: 'Failed to fetch jeepneys' });
+      }
+      res.json(results);
+  });
+});
+
 // Check if the user is logged in
 app.get('/api/check-login', (req, res) => {
   if (req.session.admin) {

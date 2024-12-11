@@ -6,6 +6,7 @@ function showDashboard() {
 function showManage() {
     document.getElementById("dashboard").style.display = "none";
     document.getElementById("manage-vehicles").style.display = "block";
+    fetchJeepneys();
 }
 
 // Fetch Users Data from Server and Populate the Table
@@ -47,7 +48,40 @@ function fetchUsers() {
             alert('Error loading users data');
         });
 }
-
+    function fetchJeepneys() {
+        fetch('/api/jeepneys')  
+            .then(response => response.json())
+            .then(jeepneys => {
+                const tableBody = document.querySelector("#jeepneyTable tbody");
+                tableBody.innerHTML = ''; // Clear any existing rows
+    
+                jeepneys.forEach(jeepney => {
+                    const row = document.createElement("tr");
+    
+                    const jeepneyIDCell = document.createElement("td");
+                    jeepneyIDCell.textContent = jeepney.jeepneyID;  // Assuming 'jeepneyID' is part of the data
+                    row.appendChild(jeepneyIDCell);
+    
+                    const plateNumberCell = document.createElement("td");
+                    plateNumberCell.textContent = jeepney.plateNumber;  // Assuming 'plateNumber' is part of the data
+                    row.appendChild(plateNumberCell);
+    
+                    const routeCell = document.createElement("td");
+                    routeCell.textContent = jeepney.route;  // Assuming 'route' is part of the data
+                    row.appendChild(routeCell);
+    
+                    const typeCell = document.createElement("td");
+                    typeCell.textContent = jeepney.type;  // Assuming 'type' is part of the data
+                    row.appendChild(typeCell);
+    
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching jeepneys:', error);
+                alert('Error loading jeepneys data');
+            });
+        }
 // Sorting Function (ascending/descending)
 function sortUsers(order) {
     const table = document.getElementById("userTable");
@@ -59,9 +93,9 @@ function sortUsers(order) {
         return (order === 'asc') ? aName.localeCompare(bName) : bName.localeCompare(aName);
     });
 
-    rows.forEach(row => table.appendChild(row));  // Reorder rows in the table
+    rows.fo
+    rEach(row => table.appendChild(row));  // Reorder rows in the table
 }
-
 // Filter Users Function
 function filterUsers() {
     const filterValue = document.getElementById("filter").value;
