@@ -31,6 +31,10 @@
             <!-- User Table -->
             <div class="user-table-container">
                 <h2>Registered Users</h2>
+                <div class="action-buttons">
+                    <button id="addManagerBtn" onclick="addManager()">Add Manager</button>
+                    <button id="addAdminBtn" onclick="addAdmin()">Add Admin</button>
+                </div>
                 <div class="filter-container">
                     <label for="filter">Filter By:</label>
                     <select id="filter" onchange="filterUsers()">
@@ -55,8 +59,57 @@
                         <!-- Users will be dynamically added here -->
                     </tbody>
                 </table>
+            </div>            
+        </div>
+
+        <!-- Add Manager Modal -->
+        <div id="addManagerModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h2>Add Manager</h2>
+                <form id="addManagerForm">
+                    <label for="firstName">First Name</label>
+                    <input type="text" id="firstName" name="firstName" required>
+                    
+                    <label for="lastName">Last Name</label>
+                    <input type="text" id="lastName" name="lastName" required>
+                    
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                    
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                    
+                    <!-- Message Placeholder -->
+                    <div id="formMessage" style="margin-top: 10px; font-size: 14px;"></div>
+                    
+                    <button type="submit">Add Manager</button>
+                </form>
             </div>
         </div>
+        <!-- Add Admin Modal -->
+        <div id="addAdminModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeAdminModal()">&times;</span>
+                <h2>Add Admin</h2>
+                <form id="addAdminForm">
+                    <label for="adminFirstName">First Name</label>
+                    <input type="text" id="adminFirstName" name="firstName" required>
+
+                    <label for="adminLastName">Last Name</label>
+                    <input type="text" id="adminLastName" name="lastName" required>
+
+                    <label for="adminEmail">Email</label>
+                    <input type="email" id="adminEmail" name="email" required>
+
+                    <label for="adminPassword">Password</label>
+                    <input type="password" id="adminPassword" name="password" required>
+
+                    <button type="submit">Add Admin</button>
+                </form>
+            </div>
+        </div>
+
         <!--Manage Vehicles Section-->
         
         <div id="manage-vehicles" class="content-section" style="display:none;">
@@ -85,8 +138,8 @@
     </div>
     
     <!-- Jeepney Details Popup (Modal) -->
-    <div id="jeepneyDetailsPopup" class="modal" style="display:none;">
-        <div class="modal-content">
+    <div id="jeepneyDetailsPopup" class="modaljeep" style="display:none;">
+        <div class="modal-content-jeep">
             <span class="close-btn" onclick="closeJeepneyDetailsPopup()">&times;</span>
 
             <h2>Jeepney Details</h2>

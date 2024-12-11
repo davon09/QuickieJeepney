@@ -173,6 +173,7 @@ window.onload = function() {
             window.location.href = '/'; // Redirect to login on error
         });
 };
+
 function openJeepneyDetailsPopup(jeepney) {
     // Populate the modal with jeepney details
     document.getElementById("popupJeepneyID").textContent = jeepney.jeepneyID;
@@ -211,3 +212,111 @@ function deleteJeepney() {
         alert('Error deleting jeepney');
     });
 }
+
+function addManager() {
+    // Example: Redirect to a manager registration page or show a modal
+    window.location.href = '/add-manager';
+}
+
+function addAdmin() {
+    // Example: Redirect to an admin registration page or show a modal
+    window.location.href = '/add-admin';
+}
+
+// Open Modal
+function addManager() {
+    document.getElementById("addManagerModal").style.display = "block";
+}
+
+// Close Modal
+function closeModal() {
+    document.getElementById("addManagerModal").style.display = "none";
+}
+
+// Handle Form Submission
+document.getElementById("addManagerForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    // Get form data
+    const firstName = document.getElementById("firstName").value;
+    const lastName = document.getElementById("lastName").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    // Send data to the server
+    fetch('/api/add-manager', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            firstName,
+            lastName,
+            email,
+            password,
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Manager added successfully!');
+            closeModal();
+            // Optionally, refresh the user table
+            fetchUsers();
+        } else {
+            alert('Error adding manager: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while adding the manager.');
+    });
+});
+
+// Open Admin Modal
+function addAdmin() {
+    document.getElementById("addAdminModal").style.display = "block";
+}
+
+// Close Admin Modal
+function closeAdminModal() {
+    document.getElementById("addAdminModal").style.display = "none";
+}
+
+// Handle Form Submission for Add Admin
+document.getElementById("addAdminForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    // Get form data
+    const firstName = document.getElementById("adminFirstName").value;
+    const lastName = document.getElementById("adminLastName").value;
+    const email = document.getElementById("adminEmail").value;
+    const password = document.getElementById("adminPassword").value;
+
+    // Send data to the backend
+    fetch('/api/add-admin', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            firstName,
+            lastName,
+            email,
+            password,
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Admin added successfully!');
+            closeAdminModal();
+        } else {
+            alert('Error adding admin: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while adding the admin.');
+    });
+});

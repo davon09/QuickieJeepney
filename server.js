@@ -92,6 +92,51 @@ app.get('/api/users', (req, res) => {
   });
 });
 
+// Route to add a new manager to the database
+app.post('/api/add-manager', (req, res) => {
+  const { firstName, lastName, email, password } = req.body;
+
+  // Validate input
+  if (!firstName || !lastName || !email || !password) {
+    return res.status(400).json({ success: false, message: 'All fields are required' });
+  }
+
+  // Insert the new manager into the database
+  const query = 'INSERT INTO manager (firstName, lastName, email, password) VALUES (?, ?, ?, ?)';
+  db.query(query, [firstName, lastName, email, password], (err, result) => {
+    if (err) {
+      console.error('MySQL query error:', err);
+      return res.status(500).json({ success: false, message: 'Database insertion error' });
+    }
+
+    console.log('Manager added successfully:', result.insertId);
+    res.status(201).json({ success: true, message: 'Manager added successfully', managerID: result.insertId });
+  });
+});
+
+// Route to add a new admin to the database
+app.post('/api/add-admin', (req, res) => {
+  const { firstName, lastName, email, password } = req.body;
+
+  // Validate input
+  if (!firstName || !lastName || !email || !password) {
+    return res.status(400).json({ success: false, message: 'All fields are required' });
+  }
+
+  // Insert the new admin into the database
+  const query = 'INSERT INTO admin (firstName, lastName, email, password) VALUES (?, ?, ?, ?)';
+  db.query(query, [firstName, lastName, email, password], (err, result) => {
+    if (err) {
+      console.error('MySQL query error:', err);
+      return res.status(500).json({ success: false, message: 'Database insertion error' });
+    }
+
+    console.log('Admin added successfully:', result.insertId);
+    res.status(201).json({ success: true, message: 'Admin added successfully', adminID: result.insertId });
+  });
+});
+
+
 // Route to fetch jeepneys from database
 app.get('/api/jeepneys', (req, res) => {
   const query = 'SELECT jeepneyID, plateNumber, route, type FROM jeepney';
