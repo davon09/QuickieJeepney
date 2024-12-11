@@ -170,6 +170,31 @@ table tbody tr:hover {
     background-color: #f1f1f1;
 }
 
+/*Manage Vehicles Table*/
+#manage-vehicles {
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+#jeepneyTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#jeepneyTable th, #jeepneyTable td {
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+#jeepneyTable th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.jeepney-table-container {
+    margin-top: 20px;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .sidebar {

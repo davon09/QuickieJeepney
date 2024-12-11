@@ -1,6 +1,11 @@
 // Handle Sidebar Navigation
 function showDashboard() {
     document.getElementById("dashboard").style.display = "block";
+    document.getElementById("manage-vehicles").style.display = "none";
+}
+function showManage() {
+    document.getElementById("dashboard").style.display = "none";
+    document.getElementById("manage-vehicles").style.display = "block";
 }
 
 // Fetch Users Data from Server and Populate the Table
