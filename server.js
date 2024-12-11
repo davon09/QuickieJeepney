@@ -83,7 +83,7 @@ app.get('/admin', (req, res) => {
 
 // Route to fetch users from the database
 app.get('/api/users', (req, res) => {
-  db.query('SELECT firstName, lastName, contactNumber, email, occupation FROM user', (err, result) => {
+  db.query('SELECT userID, firstName, lastName, contactNumber, email, occupation, isBanned FROM user', (err, result) => {
     if (err) {
       console.error('MySQL query error:', err);
       return res.status(500).json({ success: false, message: 'Database query error' });
@@ -136,47 +136,72 @@ app.post('/api/add-admin', (req, res) => {
   });
 });
 
-
-// Route to fetch jeepneys from database
+// Route to fetch jeepneys from the database
 app.get('/api/jeepneys', (req, res) => {
-  const query = 'SELECT jeepneyID, driverID, plateNumber, capacity, occupied, route, type, departure_time, jeep_image FROM jeepney';
+  const query = 'SELECT jeepneyID, plateNumber, route, type FROM jeepney';
   db.query(query, (err, results) => {
-      if (err) {
-          console.error('Error fetching jeepneys:', err);
-          return res.status(500).json({ error: 'Failed to fetch jeepneys' });
-      }
-      results = results.map(jeepney => {
-        if (jeepney.jeep_image) {
-            jeepney.jeep_image = jeepney.jeep_image.toString('base64'); // Convert BLOB to Base64
-        }
-        return jeepney;
-    });
-
-      res.json(results);
+    if (err) {
+      console.error('Error fetching jeepneys:', err);
+      return res.status(500).json({ error: 'Failed to fetch jeepneys' });
+    }
+    res.json(results);
   });
 });
 
-// Delete a jeepney based on the jeepneyID
-app.delete('/api/jeepney/:jeepneyID', (req, res) => {
-  const jeepneyID = req.params.jeepneyID;  // Get the jeepneyID from the URL parameter
+// Route to ban a user
+app.post('/api/ban-user/:userID', (req, res) => {
+  const userID = req.params.userID;
 
-  // Define your DELETE query
-  const query = 'DELETE FROM jeepney WHERE jeepneyID = ?';
+  // Update the user's status to 'banned' (1 for banned, 0 for not banned)
+  const query = 'UPDATE user SET isBanned = 1 WHERE userID = ?';
+  db.query(query, [userID], (err, result) => {
+    if (err) {
+      console.error('MySQL query error:', err);
+      return res.status(500).json({ success: false, message: 'Error banning user' });
+    }
 
-  // Execute the query
-  db.query(query, [jeepneyID], (err, results) => {
-      if (err) {
-          console.error('Error deleting jeepney:', err);
-          return res.status(500).json({ success: false, message: 'Failed to delete jeepney' });
-      }
+    if (result.affectedRows === 0) {
+      // If no rows are affected, that means no user with the given ID was found
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
 
-      if (results.affectedRows > 0) {
-          // If at least one row was deleted
-          res.json({ success: true, message: 'Jeepney deleted successfully' });
-      } else {
-          // If no jeepney with the given ID was found
-          res.status(404).json({ success: false, message: 'Jeepney not found' });
-      }
+    res.json({ success: true, message: 'User banned successfully' });
+  });
+});
+
+// Route to unban a user
+app.post('/api/unban-user/:userID', (req, res) => {
+  const userID = req.params.userID;
+
+  // Update the user's status to 'unbanned' (0 for unbanned)
+  const query = 'UPDATE user SET isBanned = 0 WHERE userID = ?';
+  db.query(query, [userID], (err, result) => {
+    if (err) {
+      console.error('MySQL query error:', err);
+      return res.status(500).json({ success: false, message: 'Error unbanning user' });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    res.json({ success: true, message: 'User unbanned successfully' });
+  });
+});
+
+// Route to delete a user
+app.delete('/api/delete-user/:userID', (req, res) => {
+  const userID = req.params.userID;
+
+  // Delete the user from the database
+  const query = 'DELETE FROM user WHERE userID = ?';
+  db.query(query, [userID], (err, result) => {
+    if (err) {
+      console.error('MySQL query error:', err);
+      return res.status(500).json({ success: false, message: 'Error deleting user' });
+    }
+
+    res.json({ success: true, message: 'User deleted successfully' });
   });
 });
 
