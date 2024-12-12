@@ -3,10 +3,10 @@ session_start();
 include '../../dbConnection/dbConnection.php';
 
 // Check if user is logged in (ensure the userID is in the session)
-//if (!isset($_SESSION['userID'])) {
+// if (!isset($_SESSION['userID'])) {
 //    header("Location: /QuickieJeepney/index.php"); // Redirect to login page if not logged in
 //    exit();
-//}
+// }
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -83,11 +83,16 @@ if ($resultPayment->num_rows > 0) {
         <div class="logo-section">
             <img src="../../images/qj-logo.png" alt="Quickie Jeepney Logo" class="logo-image">
         </div>
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> 71f70a71fe337edc9a02f36003114858dad36e34
         <div class="user-card">
             <button class="logout-btn" id="logoutBtn">
                 <h3><i class="fas fa-sign-out-alt"></i>Logout</h3>
             </button>
+<<<<<<< HEAD
             <a href="../profile/manager_profile.php" id="profileBtn">
                 <span class="image">
                     <?php
@@ -106,6 +111,13 @@ if ($resultPayment->num_rows > 0) {
                     <p><?= $occupation; ?></p>
                 </div>
             </a>
+=======
+            
+            <div class="text header-text">
+                <h3><?php echo isset($_SESSION['userName']) ? $_SESSION['userName'] : "Guest : TODO"; ?></h3>
+                <p><?php echo isset($_SESSION['userRole']) ? $_SESSION['userRole'] : "N/A : TODO"; ?></p>
+            </div>
+>>>>>>> 71f70a71fe337edc9a02f36003114858dad36e34
         </div>
     </header>
 
