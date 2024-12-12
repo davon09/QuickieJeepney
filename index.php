@@ -22,9 +22,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($result->num_rows > 0) {
             $user = $result->fetch_assoc();
             
-            // Verify the hashed password using password_verify()
-            if (password_verify($password, $user['password'])) {
-                
+            // Check if the password stored in the database is hashed or plain text
+            $storedPassword = $user['password'];
+
+            // Check if the password is hashed (bcrypt hashes are 60 characters long and start with "$2y$" or "$2b$")
+            if (strlen($storedPassword) === 60 && (strpos($storedPassword, '$2y$') === 0 || strpos($storedPassword, '$2b$') === 0)) {
+                // If the password is hashed, use password_verify()
+                $isPasswordValid = password_verify($password, $storedPassword);
+            } else {
+                // If the password is plain text, just compare it directly
+                $isPasswordValid = ($password === $storedPassword);
+            }
+
+            if ($isPasswordValid) {
                 // Successful login
                 session_start();
                 $_SESSION['userID'] = $user['userID'];
@@ -39,7 +49,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
                 exit();
             } else {
-                // echo "$password - " . $user['password'];
                 echo "<script>alert('Invalid password!'); window.history.back();</script>";
             }
         } else {

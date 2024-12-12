@@ -131,7 +131,7 @@ if ($resultJeepneys->num_rows > 0) {
             <button class="logout-btn" id="logoutBtn">
                 <h3><i class="fas fa-sign-out-alt"></i>Logout</h3>
             </button>
-            <a href="../profile/profile.php" id="profileBtn">
+            <a href="../profile/manager_profile.php" id="profileBtn">
                 <span class="image">
                     <?php
                     // Check if profile image exists and display it, otherwise show default

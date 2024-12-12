@@ -94,23 +94,23 @@ app.get('/api/users', (req, res) => {
 
 // Route to add a new manager to the database
 app.post('/api/add-manager', (req, res) => {
-  const { firstName, lastName, email, password } = req.body;
+  const { firstName, lastName, contactNumber, email, password, occupation } = req.body;
 
   // Validate input
-  if (!firstName || !lastName || !email || !password) {
+  if (!firstName || !lastName || !contactNumber || !email || !password || !occupation) {
     return res.status(400).json({ success: false, message: 'All fields are required' });
   }
 
   // Insert the new manager into the database
-  const query = 'INSERT INTO manager (firstName, lastName, email, password) VALUES (?, ?, ?, ?)';
-  db.query(query, [firstName, lastName, email, password], (err, result) => {
+  const query = 'INSERT INTO user (firstName, lastName, contactNumber, email, password, occupation) VALUES (?, ?, ?, ?, ?, ?)';
+  db.query(query, [firstName, lastName, contactNumber, email, password, occupation], (err, result) => {
     if (err) {
       console.error('MySQL query error:', err);
       return res.status(500).json({ success: false, message: 'Database insertion error' });
     }
 
     console.log('Manager added successfully:', result.insertId);
-    res.status(201).json({ success: true, message: 'Manager added successfully', managerID: result.insertId });
+    res.status(201).json({ success: true, message: 'Manager added successfully', userID: result.insertId });
   });
 });
 
@@ -157,9 +157,8 @@ app.get('/api/jeepneys', (req, res) => {
 
 // Delete a jeepney based on the jeepneyID
 app.delete('/api/jeepney/:jeepneyID', (req, res) => {
-  const jeepneyID = req.params.jeepneyID;  // Get the jeepneyID from the URL parameter
+  const jeepneyID = req.params.jeepneyID;  
 
-  // Define your DELETE query
   const query = 'DELETE FROM jeepney WHERE jeepneyID = ?';
 
   // Execute the query
@@ -177,6 +176,25 @@ app.delete('/api/jeepney/:jeepneyID', (req, res) => {
           res.status(404).json({ success: false, message: 'Jeepney not found' });
       }
   });
+});
+
+app.post('/api/add-jeepney', (req, res) => {
+  const { driverID, plateNumber, capacity, occupied, route, type, status } = req.body;
+
+  const newDriverID = "System_Assigned_ID"; 
+  const newRoute = "System_Assigned_Route";  
+  const newStatus = "active";                
+
+  db.query(
+    'INSERT INTO jeepney (jeepneyID, driverID, plateNumber, capacity, occupied, route, type, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+    [newDriverID, plateNumber, capacity, 0, newRoute, type, newStatus], // Set occupied to 0 initially
+    (err, results) => {
+      if (err) {
+        return res.status(500).json({ success: false, message: 'Database error' });
+      }
+      res.json({ success: true });
+    }
+  );
 });
 
 // Route to ban a user
@@ -258,6 +276,6 @@ app.post('/logout', (req, res) => {
 });
 
 // Start the server
-app.listen(port, () => {
+app.listen(port, '0.0.0.0',() => {
   console.log(`Server is running at http://localhost:${port}`);
 });

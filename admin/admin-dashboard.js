@@ -239,13 +239,15 @@ document.getElementById("addManagerForm").addEventListener("submit", function (e
 
     const firstName = document.getElementById("firstName").value;
     const lastName = document.getElementById("lastName").value;
+    const contactNumber =  document.getElementById("contactNumber").value;
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
+    const occupation = document.getElementById("occupation").value;
 
     fetch('/api/add-manager', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ firstName, lastName, email, password }),
+        body: JSON.stringify({ firstName, lastName, contactNumber, email, password, occupation }),
     })
     .then(response => response.json())
     .then(data => {
@@ -389,3 +391,63 @@ function deleteJeepney() {
         alert('Error deleting jeepney');
     });
 }
+// Show the Add/Update Jeepney Modal (for editing an existing jeepney)
+function showAddJeepneyModal(jeepneyID) {
+    // Show the modal
+    document.getElementById('addJeepneyModal').style.display = 'block';
+  
+    // Prepopulate the form with data for the jeepney with the given jeepneyID
+    fetch(`/api/jeepney/${jeepneyID}`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          const jeepney = data.jeepney;
+          document.getElementById('driverID').value = jeepney.driverID; 
+          document.getElementById('plateNumber').value = jeepney.plateNumber;
+          document.getElementById('capacity').value = jeepney.capacity;
+          document.getElementById('occupied').value = jeepney.occupied; 
+          document.getElementById('route').value = jeepney.route; 
+          document.getElementById('type').value = jeepney.type;
+          document.getElementById('status').value = jeepney.status; 
+        } else {
+          alert('Jeepney data not found.');
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching jeepney data:', error);
+        alert('Failed to load jeepney data.');
+      });
+  }
+  
+  // Close the Modal
+  function closeModal() {
+    document.getElementById('addJeepneyModal').style.display = 'none';
+  }
+  
+  // Submit the Form
+  function submitJeepneyForm(event) {
+    event.preventDefault();
+  
+    // Gather form data
+    const formData = new FormData(document.getElementById('addJeepneyForm'));
+    
+    // You may want to send the data to a backend API
+    fetch('/update-jeepney', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        alert('Jeepney updated successfully');
+        closeModal(); // Close the modal after success
+      } else {
+        alert('Error updating jeepney');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert('There was an error updating the jeepney.');
+    });
+  }
+  

@@ -99,7 +99,7 @@ if ($resultPassengers->num_rows > 0) {
         <div class="menu-title">Menu</div> 
         <hr>
         <ul class="menu-links">
-            <li class="nav-link active">
+            <li class="nav-link">
                 <a href="../menu/manager_menu.php" class="sidebar-link">
                     <i class="fas fa-home sidebar-icon" class="sidebar-icon"></i>Home
                 </a>
@@ -125,7 +125,7 @@ if ($resultPassengers->num_rows > 0) {
                     <i class="fas fa-calendar-alt sidebar-icon" class="sidebar-icon"></i>Payment
                 </a>
             </li>
-            <li class="nav-link">
+            <li class="nav-link active">
                 <a href="../passenger/manager_passenger.php" class="sidebar-link">
                     <i class="fas fa-calendar-alt sidebar-icon" class="sidebar-icon"></i>Manage Passengers
                 </a>

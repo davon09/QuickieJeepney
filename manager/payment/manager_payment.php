@@ -19,18 +19,30 @@ if (!$resultPayment) {
     die("Payment Query Failed: " . $conn->error);
 }
 
-// Fetch user data
-$sqlUser = "SELECT userID, firstName, lastName FROM user";
-$resultUser = $conn->query($sqlUser);
-
-if (!$resultUser) {
-    die("User Query Failed: " . $conn->error);
+// Fetch logged-in user's details including the occupation
+$userID = $_SESSION['userID'];
+$sqlUser = "SELECT firstName, lastName, occupation, email, profile_image FROM user WHERE userID = ?";
+$stmtUser = $conn->prepare($sqlUser);
+$stmtUser->bind_param("i", $userID);
+$stmtUser->execute();
+$resultUser = $stmtUser->get_result();
+if ($resultUser->num_rows > 0) {
+    $user = $resultUser->fetch_assoc();
+    $fullName = $user['firstName'] . ' ' . $user['lastName'];
+    $occupation = $user['occupation'];
+    $profileImage = $user['profile_image'];
+} else {
+    $fullName = "Guest";
+    $occupation = "N/A";
+    $profileImage = null;
 }
 
-$userData = [];
-while ($row = $resultUser->fetch_assoc()) {
-    $userData[$row['userID']] = $row;
-}
+$userDetailsHTML = '
+    <span class="name">' . $fullName . '</span>
+    <br>
+    <span class="occupation">' . $occupation . '</span>
+    <br>
+';
 
 $paymentHTML = '';
 if ($resultPayment->num_rows > 0) {
@@ -47,14 +59,6 @@ if ($resultPayment->num_rows > 0) {
                 <td>{$paymentRow['paymentMethod']}</td>
                 <td>{$paymentRow['paymentStatus']}</td>
                 <td>
-                    <div class='dropdown'>
-                        <button class='action-btn'>...</button>
-                        <div class='dropdown-content'>
-                            <a href='../users/view_user.php?userID={$userID}'>View User</a>
-                            <a href='../users/ban_user.php?userID={$userID}'>Ban User</a>
-                            <a href='../users/block_user.php?userID={$userID}'>Block User</a>
-                        </div>
-                    </div>
                 </td>
             </tr>
         ";
@@ -70,6 +74,8 @@ if ($resultPayment->num_rows > 0) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payments</title>
     <link rel="stylesheet" href="manager_payment.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <!-- Header -->
@@ -77,14 +83,29 @@ if ($resultPayment->num_rows > 0) {
         <div class="logo-section">
             <img src="../../images/qj-logo.png" alt="Quickie Jeepney Logo" class="logo-image">
         </div>
+        
         <div class="user-card">
             <button class="logout-btn" id="logoutBtn">
                 <h3><i class="fas fa-sign-out-alt"></i>Logout</h3>
             </button>
-            <div class="text header-text">
-                <h3><?php echo isset($_SESSION['userName']) ? $_SESSION['userName'] : "Guest"; ?></h3>
-                <p><?php echo isset($_SESSION['userRole']) ? $_SESSION['userRole'] : "N/A"; ?></p>
-            </div>
+            <a href="../profile/manager_profile.php" id="profileBtn">
+                <span class="image">
+                    <?php
+                    // Check if profile image exists and display it, otherwise show default
+                    if ($profileImage) {
+                        // Display the actual profile image from the database
+                        echo '<img src="' . htmlspecialchars($profileImage) . '" alt="Profile Image">';
+                    } else {
+                        // Display default profile image if no image is found
+                        echo '<img src="../../images/profile.png" alt="Profile Image">';
+                    }
+                    ?>
+                </span>
+                <div class="text header-text">
+                    <h3><?= $fullName; ?></h3>
+                    <p><?= $occupation; ?></p>
+                </div>
+            </a>
         </div>
     </header>
 
@@ -103,7 +124,7 @@ if ($resultPayment->num_rows > 0) {
                     <i class="fas fa-user sidebar-icon"></i>Profile
                 </a>
             </li>
-            <li class="nav-link active">
+            <li class="nav-link">
                 <a href="../vehicles/manager_vehicles.php" class="sidebar-link">
                     <i class="fas fa-car sidebar-icon"></i>Vehicles
                 </a>
@@ -114,7 +135,7 @@ if ($resultPayment->num_rows > 0) {
                 </a>
             </li>
 
-            <li class="nav-link">
+            <li class="nav-link active">
                 <a href="../payment/manager_payment.php" class="sidebar-link">
                     <i class="fas fa-calendar-alt sidebar-icon"></i>Payment
                 </a>

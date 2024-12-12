@@ -74,6 +74,9 @@
                     
                     <label for="lastName">Last Name</label>
                     <input type="text" id="lastName" name="lastName" required>
+
+                    <label for="contactNumber">Contact Number</label>
+                    <input type="text" id="contactNumber" name="contactNumber" required>
                     
                     <label for="email">Email</label>
                     <input type="email" id="email" name="email" required>
@@ -81,6 +84,9 @@
                     <label for="password">Password</label>
                     <input type="password" id="password" name="password" required>
                     
+                    <label for="occupation">Occupation</label>
+                    <input type="occupation" id="occupation" name="occupation" required>
+
                     <!-- Message Placeholder -->
                     <div id="formMessage" style="margin-top: 10px; font-size: 14px;"></div>
                     
@@ -120,6 +126,9 @@
             <!-- Jeepney Table -->
             <div class="jeepney-table-container">
                 <h2>Jeepney List</h2>
+                <div class="action-buttons">
+                    <button id="addJeepneyBtn" onclick="showAddJeepneyModal()">Add Jeepney</button>
+                </div>
                 <table id="jeepneyTable">
                     <thead>
                         <tr>
@@ -161,6 +170,40 @@
             <button onclick="closeJeepneyDetailsPopup()">Close</button>
         </div>
     </div>
+
+    <div id="addJeepneyModal" class="modal" style="display: none;">
+        <div class="modal-content">
+          <h2>Add New Jeepney</h2>
+          <form id="addJeepneyForm" onsubmit="submitJeepneyForm(event)">
+            
+            <label for="driverID">Driver ID (Assigned by system)</label>
+            <input type="text" id="driverID" name="driverID" disabled value="System_Assigned_ID">
+      
+            <label for="plateNumber">Plate Number</label>
+            <input type="text" id="plateNumber" name="plateNumber" required>
+      
+            <label for="capacity">Capacity</label>
+            <input type="number" id="capacity" name="capacity" required>
+      
+            <label for="occupied">Occupied</label>
+            <input type="number" id="occupied" name="occupied" disabled value="0">
+      
+            <label for="route">Route (Assigned by system)</label>
+            <input type="text" id="route" name="route" disabled value="System_Assigned_Route">
+      
+            <label for="type">Type</label>
+            <input type="text" id="type" name="type" required>
+      
+            <label for="status">Status</label>
+            <input type="text" id="status" name="status" disabled value="active">
+      
+            <button type="submit">Add Jeepney</button>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button onclick="closeModal()">Close</button>
+        </div>
+      </div>
 
     <script src="admin-dashboard.js"></script>
 </body>
