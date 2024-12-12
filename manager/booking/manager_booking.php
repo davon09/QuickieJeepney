@@ -2,11 +2,11 @@
 session_start();
 include '../../dbConnection/dbConnection.php';  
 
-// Check if user is logged in (ensure the userID is in the session)
-if (!isset($_SESSION['userID'])) {
-    header("Location: /QuickieJeepney/index.php"); // Redirect to login page if not logged in
-    exit();
-}
+// // Check if user is logged in (ensure the userID is in the session)
+// if (!isset($_SESSION['userID'])) {
+//     header("Location: /QuickieJeepney/index.php"); // Redirect to login page if not logged in
+//     exit();
+// }
 
 // Fetch logged-in user's details including the occupation
 $userID = $_SESSION['userID'];
