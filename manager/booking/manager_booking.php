@@ -204,8 +204,8 @@ function generatePieChart() {
                 </a>
             </li>
             <li class="nav-link">
-                <a href="../booking/manager_booking.php" class="sidebar-link">
-                    <i class="fas fa-calendar-alt sidebar-icon" class="sidebar-icon"></i>Manage Passenger
+                <a href="../passenger/manager_passenger.php" class="sidebar-link">
+                    <i class="fas fa-calendar-alt sidebar-icon" class="sidebar-icon"></i>Manage Passengers
                 </a>
             </li>
         </ul>

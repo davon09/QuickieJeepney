@@ -1,4 +1,3 @@
-php
 <?php
 session_start();
 include '../../dbConnection/dbConnection.php';
@@ -42,6 +41,7 @@ if ($resultPassengers->num_rows > 0) {
     while ($row = $resultPassengers->fetch_assoc()) {
         $passengersHTML .= "
             <div class='passenger-card'>
+                <img src='../../images/jeepney_icon.png' alt='Jeepney Icon' class='passenger-icon'>
                 <div class='passenger-info'>
                     <h3>{$row['plateNumber']}</h3>
                     <p>{$row['type']}</p>
@@ -99,7 +99,7 @@ if ($resultPassengers->num_rows > 0) {
         <div class="menu-title">Menu</div> 
         <hr>
         <ul class="menu-links">
-            <li class="nav-link">
+            <li class="nav-link active">
                 <a href="../menu/manager_menu.php" class="sidebar-link">
                     <i class="fas fa-home sidebar-icon" class="sidebar-icon"></i>Home
                 </a>
@@ -119,14 +119,15 @@ if ($resultPassengers->num_rows > 0) {
                     <i class="fas fa-calendar-alt sidebar-icon" class="sidebar-icon"></i>Booking Logs
                 </a>
             </li>
+
             <li class="nav-link">
-                <a href="../passenger/manage_passenger.php" class="sidebar-link">
-                    <i class="fas fa-users sidebar-icon" class="sidebar-icon"></i>Manage Passenger
+                <a href="../payment/manager_payment.php" class="sidebar-link">
+                    <i class="fas fa-calendar-alt sidebar-icon" class="sidebar-icon"></i>Payment
                 </a>
             </li>
             <li class="nav-link">
-                <a href="../payment/manager_payment.php" class="sidebar-link">
-                    <i class="fas fa-search sidebar-icon" class="sidebar-icon"></i>Payments
+                <a href="../passenger/manager_passenger.php" class="sidebar-link">
+                    <i class="fas fa-calendar-alt sidebar-icon" class="sidebar-icon"></i>Manage Passengers
                 </a>
             </li>
         </ul>

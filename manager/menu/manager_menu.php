@@ -183,7 +183,7 @@ if ($resultJeepneys->num_rows > 0) {
                 </a>
             </li>
             <li class="nav-link">
-                <a href="../booking/manager_booking.php" class="sidebar-link">
+                <a href="../passenger/manager_passenger.php" class="sidebar-link">
                     <i class="fas fa-calendar-alt sidebar-icon" class="sidebar-icon"></i>Manage Passengers
                 </a>
             </li>

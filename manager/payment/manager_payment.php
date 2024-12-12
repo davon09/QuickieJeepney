@@ -95,27 +95,33 @@ if ($resultPayment->num_rows > 0) {
         <ul class="menu-links">
             <li class="nav-link">
                 <a href="../menu/manager_menu.php" class="sidebar-link">
-                    <i class="fas fa-home sidebar-icon"></i> Home
+                    <i class="fas fa-home sidebar-icon"></i>Home
                 </a>
             </li>
             <li class="nav-link">
                 <a href="../profile/manager_profile.php" class="sidebar-link">
-                    <i class="fas fa-user sidebar-icon"></i> Profile
+                    <i class="fas fa-user sidebar-icon"></i>Profile
+                </a>
+            </li>
+            <li class="nav-link active">
+                <a href="../vehicles/manager_vehicles.php" class="sidebar-link">
+                    <i class="fas fa-car sidebar-icon"></i>Vehicles
                 </a>
             </li>
             <li class="nav-link">
-                <a href="../passenger/manage_passenger.php" class="sidebar-link">
-                    <i class="fas fa-users sidebar-icon"></i> Manage Passenger
+                <a href="../booking/manager_booking.php" class="sidebar-link">
+                    <i class="fas fa-calendar-alt sidebar-icon"></i>Booking Logs
                 </a>
             </li>
-            <li class="nav-link">
-                <a href="../status/jeepney_status.php" class="sidebar-link">
-                    <i class="fas fa-clipboard sidebar-icon"></i> Jeepney Status
-                </a>
-            </li>
+
             <li class="nav-link">
                 <a href="../payment/manager_payment.php" class="sidebar-link">
-                    <i class="fas fa-search sidebar-icon"></i> Payments
+                    <i class="fas fa-calendar-alt sidebar-icon"></i>Payment
+                </a>
+            </li>
+            <li class="nav-link">
+                <a href="../passenger/manager_passenger.php" class="sidebar-link">
+                    <i class="fas fa-calendar-alt sidebar-icon"></i>Manage Passengers
                 </a>
             </li>
         </ul>

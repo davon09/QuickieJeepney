@@ -3,10 +3,10 @@ session_start();
 include '../../dbConnection/dbConnection.php';  
 
 // Check if user is logged in (ensure the userID is in the session)
-if (!isset($_SESSION['userID'])) {
-    header("Location: /QuickieJeepney/index.php"); // Redirect to login page if not logged in
-    exit();
-}
+// if (!isset($_SESSION['userID'])) {
+//     header("Location: /QuickieJeepney/index.php"); // Redirect to login page if not logged in
+//     exit();
+// }
 
 // Fetch logged-in user's details including the occupation
 $userID = $_SESSION['userID'];
@@ -116,7 +116,7 @@ $userDetailsHTML = '
                 </a>
             </li>
             <li class="nav-link">
-                <a href="../booking/manager_booking.php" class="sidebar-link">
+                <a href="../passenger/manager_passenger.php" class="sidebar-link">
                     <i class="fas fa-calendar-alt sidebar-icon" class="sidebar-icon"></i>Manage Passengers
                 </a>
             </li>
