@@ -3,10 +3,10 @@ session_start();
 include '../../dbConnection/dbConnection.php';
 
 // Check if user is logged in (ensure the userID is in the session)
-//if (!isset($_SESSION['userID'])) {
+// if (!isset($_SESSION['userID'])) {
 //    header("Location: /QuickieJeepney/index.php"); // Redirect to login page if not logged in
 //    exit();
-//}
+// }
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -77,13 +77,15 @@ if ($resultPayment->num_rows > 0) {
         <div class="logo-section">
             <img src="../../images/qj-logo.png" alt="Quickie Jeepney Logo" class="logo-image">
         </div>
+
         <div class="user-card">
             <button class="logout-btn" id="logoutBtn">
                 <h3><i class="fas fa-sign-out-alt"></i>Logout</h3>
             </button>
+            
             <div class="text header-text">
-                <h3><?php echo isset($_SESSION['userName']) ? $_SESSION['userName'] : "Guest"; ?></h3>
-                <p><?php echo isset($_SESSION['userRole']) ? $_SESSION['userRole'] : "N/A"; ?></p>
+                <h3><?php echo isset($_SESSION['userName']) ? $_SESSION['userName'] : "Guest : TODO"; ?></h3>
+                <p><?php echo isset($_SESSION['userRole']) ? $_SESSION['userRole'] : "N/A : TODO"; ?></p>
             </div>
         </div>
     </header>
@@ -103,7 +105,7 @@ if ($resultPayment->num_rows > 0) {
                     <i class="fas fa-user sidebar-icon"></i>Profile
                 </a>
             </li>
-            <li class="nav-link active">
+            <li class="nav-link">
                 <a href="../vehicles/manager_vehicles.php" class="sidebar-link">
                     <i class="fas fa-car sidebar-icon"></i>Vehicles
                 </a>
@@ -114,7 +116,7 @@ if ($resultPayment->num_rows > 0) {
                 </a>
             </li>
 
-            <li class="nav-link">
+            <li class="nav-link active">
                 <a href="../payment/manager_payment.php" class="sidebar-link">
                     <i class="fas fa-calendar-alt sidebar-icon"></i>Payment
                 </a>
