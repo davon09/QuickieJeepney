@@ -229,7 +229,7 @@ function addManager() {
 }
 
 // Close Manager Modal
-function closeModal() {
+function closeManagerModal() {
     document.getElementById("addManagerModal").style.display = "none";
 }
 
@@ -253,7 +253,7 @@ document.getElementById("addManagerForm").addEventListener("submit", function (e
     .then(data => {
         if (data.success) {
             alert('Manager added successfully!');
-            closeModal();
+            closeManagerModal();
             fetchUsers();
         } else {
             alert('Error adding manager: ' + data.message);

@@ -69,7 +69,6 @@ body {
 }
 
 .content-section {
-    display: none;
     animation: fadeIn 0.5s;
 }
 
