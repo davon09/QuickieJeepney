@@ -4,6 +4,8 @@ const session = require('express-session');
 const mysql = require('mysql2');
 const app = express();
 const port = 3000;
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 // Middleware to parse POST request data
 app.use(express.json());
@@ -51,23 +53,42 @@ app.get('/', (req, res) => {
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
 
+  // Query the database for the user based on email
   db.query('SELECT * FROM admin WHERE email = ?', [email], (err, result) => {
     if (err) {
-      console.error('MySQL query error:', err);
-      return res.status(500).json({ success: false, message: 'Database query error' });
+        console.error('Database query error:', err);
+        return res.status(500).json({ success: false, message: 'Database query error' });
     }
 
-    if (result.length > 0) {
-      const admin = result[0];
-
-      if (password === admin.password) {
-        req.session.admin = admin;  // Store admin data in session
-        return res.json({ success: true });
-      } else {
+    if (result.length === 0) {
         return res.status(401).json({ success: false, message: 'Invalid credentials' });
-      }
+    }
+
+    const admin = result[0];
+
+    // Check if the password is hashed (using a simple rule, assuming bcrypt hash)
+    if (admin.password && admin.password.includes('$')) {
+        // Password is hashed (likely using bcrypt)
+        bcrypt.compare(password, admin.password, (err, isMatch) => {
+            if (err) {
+                console.error('Error comparing password:', err);
+                return res.status(500).json({ success: false, message: 'Error comparing password' });
+            }
+            if (isMatch) {
+                req.session.admin = admin;
+                res.json({ success: true });
+            } else {
+                res.status(401).json({ success: false, message: 'Invalid credentials' });
+            }
+        });
     } else {
-      return res.status(401).json({ success: false, message: 'Invalid credentials' });
+        // Password is stored as plain text (fallback case)
+        if (password === admin.password) {
+            req.session.admin = admin;
+            res.json({ success: true });
+        } else {
+            res.status(401).json({ success: false, message: 'Invalid credentials' });
+        }
     }
   });
 });
@@ -92,47 +113,53 @@ app.get('/api/users', (req, res) => {
   });
 });
 
-// Route to add a new manager to the database
+// Add Manager Route
 app.post('/api/add-manager', (req, res) => {
   const { firstName, lastName, contactNumber, email, password, occupation } = req.body;
 
-  // Validate input
-  if (!firstName || !lastName || !contactNumber || !email || !password || !occupation) {
-    return res.status(400).json({ success: false, message: 'All fields are required' });
-  }
-
-  // Insert the new manager into the database
-  const query = 'INSERT INTO user (firstName, lastName, contactNumber, email, password, occupation) VALUES (?, ?, ?, ?, ?, ?)';
-  db.query(query, [firstName, lastName, contactNumber, email, password, occupation], (err, result) => {
+  // Hash the password before saving it
+  bcrypt.hash(password, saltRounds, (err, hashedPassword) => {
     if (err) {
-      console.error('MySQL query error:', err);
-      return res.status(500).json({ success: false, message: 'Database insertion error' });
+      console.error('Error hashing password:', err);
+      return res.status(500).json({ success: false, message: 'Error hashing password' });
     }
 
-    console.log('Manager added successfully:', result.insertId);
-    res.status(201).json({ success: true, message: 'Manager added successfully', userID: result.insertId });
+    // Insert the new manager into the database with the hashed password
+    const query = 'INSERT INTO user (firstName, lastName, contactNumber, email, password, occupation) VALUES (?, ?, ?, ?, ?, ?)';
+    db.query(query, [firstName, lastName, contactNumber, email, hashedPassword, occupation], (err, result) => {
+      if (err) {
+        console.error('MySQL query error:', err);
+        return res.status(500).json({ success: false, message: 'Database insertion error' });
+      }
+
+      console.log('Manager added successfully:', result.insertId);
+      res.status(201).json({ success: true, message: 'Manager added successfully', userID: result.insertId });
+    });
   });
 });
 
-// Route to add a new admin to the database
+// Add Admin Route
 app.post('/api/add-admin', (req, res) => {
   const { firstName, lastName, email, password } = req.body;
 
-  // Validate input
-  if (!firstName || !lastName || !email || !password) {
-    return res.status(400).json({ success: false, message: 'All fields are required' });
-  }
-
-  // Insert the new admin into the database
-  const query = 'INSERT INTO admin (firstName, lastName, email, password) VALUES (?, ?, ?, ?)';
-  db.query(query, [firstName, lastName, email, password], (err, result) => {
+  // Hash the password before saving it
+  bcrypt.hash(password, saltRounds, (err, hashedPassword) => {
     if (err) {
-      console.error('MySQL query error:', err);
-      return res.status(500).json({ success: false, message: 'Database insertion error' });
+      console.error('Error hashing password:', err);
+      return res.status(500).json({ success: false, message: 'Error hashing password' });
     }
 
-    console.log('Admin added successfully:', result.insertId);
-    res.status(201).json({ success: true, message: 'Admin added successfully', adminID: result.insertId });
+    // Insert the new admin into the database with the hashed password
+    const query = 'INSERT INTO admin (firstName, lastName, email, password) VALUES (?, ?, ?, ?)';
+    db.query(query, [firstName, lastName, email, hashedPassword], (err, result) => {
+      if (err) {
+        console.error('MySQL query error:', err);
+        return res.status(500).json({ success: false, message: 'Database insertion error' });
+      }
+
+      console.log('Admin added successfully:', result.insertId);
+      res.status(201).json({ success: true, message: 'Admin added successfully', adminID: result.insertId });
+    });
   });
 });
 
