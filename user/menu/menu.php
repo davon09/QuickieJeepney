@@ -30,7 +30,6 @@ if ($resultUser->num_rows > 0) {
 $sql = "SELECT * FROM jeepney";
 $result = mysqli_query($conn, $sql);
 
-
 $htmlOutput = '';
 while ($row = mysqli_fetch_assoc($result)) {
     $jeepneyId = $row['jeepneyID']; 
@@ -46,6 +45,25 @@ while ($row = mysqli_fetch_assoc($result)) {
     $htmlOutput .= '<p class="departure">Departure: ' . $departureTimeFormatted . '</p>';
     $htmlOutput .= '<button class="book-now" data-id="' . $jeepneyId . '">BOOK NOW</button>';
     $htmlOutput .= '</div>';
+}
+
+// Fetch announcements
+$sqlAnnouncements = "SELECT announcementName, description, date, validUntil 
+                      FROM announcements 
+                      ORDER BY date ASC";
+
+$resultAnnouncements = $conn->query($sqlAnnouncements);
+
+$announcementHTML = '';
+if ($resultAnnouncements && $resultAnnouncements->num_rows > 0) {
+    while ($row = $resultAnnouncements->fetch_assoc()) {
+        $announcementHTML .= '<h4>' . htmlspecialchars($row['announcementName']) . '</h4>';
+        $announcementHTML .= '<p>' . htmlspecialchars($row['description']) . '</p>';
+        $announcementHTML .= '<small>Effective: ' . htmlspecialchars($row['date']) . 
+                             ' to ' . htmlspecialchars($row['validUntil']) . '</small><br><br>';
+    }
+} else {
+    $announcementHTML = '<p>No announcements at the moment.</p>';
 }
 
 $userDetailsHTML = '
@@ -129,10 +147,8 @@ $userDetailsHTML = '
                     <p>Ready to reserve a jeepney?</p>
                 </div>
                 <div class="announcement-card">
-                    <h3><i class="fas fa-bullhorn"></i>Announcements</h3>
-                    <p>The Jeepney Terminal will be moved in front of Shakey's Legarda.</p>
-                    <br><p>Session Road is closed for the Baguio Festival.</p>
-                    <br><p>Expect heavy hairnfall due to Bagyong Katrina.</p>
+                    <h3><i class="fas fa-bullhorn"></i> Announcements</h3>
+                    <?= $announcementHTML; ?>
                 </div>
             </div>
             <div class="right-column">
