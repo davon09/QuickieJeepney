@@ -106,7 +106,7 @@ header h1 {
 }
 
 /* Table Styles */
-.user-table-container, .jeepney-table-container {
+.user-table-container, .jeepney-table-container, .driver-table-container{
     margin-top: 20px;
     padding: 15px;
     background-color: #242424;
@@ -115,7 +115,7 @@ header h1 {
     transition: transform 0.3s ease-in-out;
 }
 
-.user-table-container:hover, .jeepney-table-container:hover {
+.user-table-container:hover, .jeepney-table-container:hover, .driver-table-container:hover {
     transform: scale(1.02);
 }
 
@@ -366,4 +366,27 @@ table th {
 
 #userTable td button:active {
     background-color: #c62828;
+}
+
+#driversTable {
+    margin-top: 20px;
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+#driversTable thead {
+    background: #333;
+    color: #fff;
+}
+#driversTable th, #driversTable td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+#driversTable tbody tr:nth-child(even) {
+    background: #f9f9f9;
+}
+#driversTable tbody tr:hover {
+    background: #f1f1f1;
 }

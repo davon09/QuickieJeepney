@@ -2,12 +2,21 @@
 function showDashboard() {
     document.getElementById("dashboard").style.display = "block";
     document.getElementById("manage-vehicles").style.display = "none";
+    document.getElementById("drivers").style.display = "none";
 }
 
 function showManage() {
     document.getElementById("dashboard").style.display = "none";
     document.getElementById("manage-vehicles").style.display = "block";
     fetchJeepneys();
+    document.getElementById("drivers").style.display = "none";
+}
+
+  function showDrivers() {
+    document.getElementById("dashboard").style.display = "none";
+    document.getElementById("manage-vehicles").style.display = "none";
+    document.getElementById("drivers").style.display = "block";
+    fetchDrivers(); // Fetch the list of drivers
 }
 
 // Fetch Users Data from Server and Populate the Table
@@ -62,8 +71,9 @@ function fetchUsers() {
                 // Add delete button
                 const deleteButton = document.createElement("button");
                 deleteButton.textContent = 'Delete';
-                deleteButton.onclick = () => deleteUser(user.userID); // Delete user
+                deleteButton.onclick = () => deleteDriver(driver.driverID); // Ensure driver.driverID exists
                 actionsCell.appendChild(deleteButton);
+
 
                 row.appendChild(actionsCell);
 
@@ -333,7 +343,7 @@ function fetchJeepneys() {
 
                 const modifyButtonCell = document.createElement("td");
                 const modifyButton = document.createElement("button");
-                modifyButton.textContent = "Modify";
+                modifyButton.textContent = "Details";
                 modifyButton.classList.add("modify-btn");
                 modifyButton.onclick = () => openJeepneyDetailsPopup(jeepney);  
                 modifyButtonCell.appendChild(modifyButton);
@@ -391,63 +401,148 @@ function deleteJeepney() {
         alert('Error deleting jeepney');
     });
 }
-// Show the Add/Update Jeepney Modal (for editing an existing jeepney)
-function showAddJeepneyModal(jeepneyID) {
-    // Show the modal
-    document.getElementById('addJeepneyModal').style.display = 'block';
+
+function addJeepneyModal() {
+    document.getElementById('addJeepneyModal').style.display = "block";
+}
+
+// Close Driver Modal
+function closeJeepneyModal() {
+    document.getElementById("addJeepneyModal").style.display = "none";
+}
   
-    // Prepopulate the form with data for the jeepney with the given jeepneyID
-    fetch(`/api/jeepney/${jeepneyID}`)
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          const jeepney = data.jeepney;
-          document.getElementById('driverID').value = jeepney.driverID; 
-          document.getElementById('plateNumber').value = jeepney.plateNumber;
-          document.getElementById('capacity').value = jeepney.capacity;
-          document.getElementById('occupied').value = jeepney.occupied; 
-          document.getElementById('route').value = jeepney.route; 
-          document.getElementById('type').value = jeepney.type;
-          document.getElementById('status').value = jeepney.status; 
-        } else {
-          alert('Jeepney data not found.');
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching jeepney data:', error);
-        alert('Failed to load jeepney data.');
-      });
-  }
-  
-  // Close the Modal
-  function closeModal() {
-    document.getElementById('addJeepneyModal').style.display = 'none';
-  }
-  
-  // Submit the Form
-  function submitJeepneyForm(event) {
-    event.preventDefault();
-  
-    // Gather form data
-    const formData = new FormData(document.getElementById('addJeepneyForm'));
-    
-    // You may want to send the data to a backend API
-    fetch('/update-jeepney', {
-      method: 'POST',
-      body: formData
+// Handle Form Submission for Add Jeepney
+document.getElementById("addJeepneyForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const plateNumber = document.getElementById("jeepneyPlateNumber").value;
+    const capacity = document.getElementById("jeepneyCapacity").value;
+    const type = document.getElementById("jeepneyType").value
+
+    fetch('/api/add-jeepney', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plateNumber, capacity, type }),
     })
     .then(response => response.json())
     .then(data => {
-      if (data.success) {
-        alert('Jeepney updated successfully');
-        closeModal(); // Close the modal after success
-      } else {
-        alert('Error updating jeepney');
-      }
+        if (data.success) {
+            alert('Jeepney added successfully!');
+            closeJeepneyModal();
+            fetchJeepneys();
+        } else {
+            alert('Error adding jeepney: ' + data.message);
+        }
     })
     .catch(error => {
-      console.error('Error:', error);
-      alert('There was an error updating the jeepney.');
+        console.error('Error:', error);
+        alert('An error occurred while adding the jeepney.');
     });
-  }
+});
   
+// Fetch Drivers Data from Server and Populate the Table
+function fetchDrivers() {
+    fetch('/api/drivers')
+        .then(response => response.json())
+        .then(drivers => {
+            const tableBody = document.querySelector("#driverTable tbody");
+            tableBody.innerHTML = ''; // Clear any existing rows
+
+            drivers.forEach(driver => {
+                const row = document.createElement("tr");
+
+                const firstNameCell = document.createElement("td");
+                firstNameCell.textContent = driver.firstName;
+                row.appendChild(firstNameCell);
+
+                const lastNameCell = document.createElement("td");
+                lastNameCell.textContent = driver.lastName;
+                row.appendChild(lastNameCell);
+
+                const contactNumberCell = document.createElement("td");
+                contactNumberCell.textContent = driver.contactNumber;
+                row.appendChild(contactNumberCell);
+
+                // Add delete button
+                const actionsCell = document.createElement("td");
+                const deleteButton = document.createElement("button");
+                deleteButton.textContent = 'Delete';
+                deleteButton.onclick = () => {
+                    console.log('Driver ID to delete:', driver.driverID); // Debug log
+                    deleteDriver(driver.driverID);
+                };
+                actionsCell.appendChild(deleteButton);
+                row.appendChild(actionsCell);
+
+                tableBody.appendChild(row);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching drivers:', error);
+            alert('Error loading drivers data');
+        });
+}
+
+// Delete Driver Function
+function deleteDriver(driverID) {
+    console.log('Driver ID to delete:', driverID); // Log the ID being sent
+    const confirmDelete = confirm("Are you sure you want to delete this driver?");
+    if (confirmDelete) {
+        fetch(`/api/delete-driver/${driverID}`, {
+            method: 'DELETE',
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Driver deleted successfully!');
+                fetchDrivers(); // Refresh the driver list
+            } else {
+                console.error('Error deleting driver:', data.message);
+                alert('Error deleting driver: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error deleting driver:', error);
+            alert('An error occurred while deleting the driver.');
+        });
+    }
+}
+
+// Add Driver Modal
+function addDriver() {
+    document.getElementById("addDriverModal").style.display = "block";
+}
+
+// Close Driver Modal
+function closeDriverModal() {
+    document.getElementById("addDriverModal").style.display = "none";
+}
+
+// Handle Form Submission for Add Driver
+document.getElementById("addDriverForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const firstName = document.getElementById("driverFirstName").value;
+    const lastName = document.getElementById("driverLastName").value;
+    const contactNumber = document.getElementById("driverContactNumber").value
+
+    fetch('/api/add-drivers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ firstName, lastName, contactNumber }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Driver added successfully!');
+            closeDriverModal();
+            fetchDrivers();
+        } else {
+            alert('Error adding driver: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while adding the driver.');
+    });
+});

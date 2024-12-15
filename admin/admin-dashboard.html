@@ -16,6 +16,7 @@
         <ul class="nav">
             <li><a href="#dashboard" onclick="showDashboard()">Dashboard</a></li>
             <li><a href="#manage-vehicles" onclick="showManage()">Manage Vehicles</a></li>
+            <li><a href="#drivers" onclick="showDrivers()">Drivers</a></li>
         </ul>
         <button id="logoutBtn" onclick="logout()">Logout</button>
     </div>
@@ -63,6 +64,61 @@
             </div>            
         </div>
 
+        <!-- Manage Vehicles Section -->
+        <div id="manage-vehicles" class="content-section" style="display:none;">
+            <header>
+                <h1>Manage Vehicles</h1>
+            </header>
+            <!-- Jeepney Table -->
+            <div class="jeepney-table-container">
+                <h2>Jeepney List</h2>
+                <div class="action-buttons">
+                    <button id="addJeepneyBtn" onclick="addJeepneyModal()">Add Jeepney</button>
+                </div>
+                <table id="jeepneyTable">
+                    <thead>
+                        <tr>
+                            <th>Jeepney ID</th>
+                            <th>Plate Number</th>
+                            <th>Route</th>
+                            <th>Type</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Jeepney data will be dynamically added here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="drivers" class="content-section" style="display:none;">
+            <header>
+                <h1>Drivers</h1>
+            </header>
+            <!-- Driver Table -->
+             <div class="driver-table-container">
+                <h2>Drivers List</h2>
+                <div class="action-buttons">
+                    <button id="addDriverBtn" onclick="addDriver()">Add Driver</button>
+                </div>
+                <table id="driverTable">
+                    <thead>
+                        <tr>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Contact Number</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Driver rows will be dynamically inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
         <!-- Add Manager Modal -->
         <div id="addManagerModal" class="modal">
             <div class="modal-content">
@@ -118,92 +174,75 @@
             </div>
         </div>
 
-        <!-- Manage Vehicles Section -->
-        <div id="manage-vehicles" class="content-section" style="display:none;">
-            <header>
-                <h1>Manage Vehicles</h1>
-            </header>
-            <!-- Jeepney Table -->
-            <div class="jeepney-table-container">
-                <h2>Jeepney List</h2>
-                <div class="action-buttons">
-                    <button id="addJeepneyBtn" onclick="showAddJeepneyModal()">Add Jeepney</button>
-                </div>
-                <table id="jeepneyTable">
-                    <thead>
-                        <tr>
-                            <th>Jeepney ID</th>
-                            <th>Plate Number</th>
-                            <th>Route</th>
-                            <th>Type</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Jeepney data will be dynamically added here -->
-                    </tbody>
-                </table>
+        <!-- Jeepney Details Popup (Modal) -->
+        <div id="jeepneyDetailsPopup" class="modaljeep" style="display:none;">
+            <div class="modal-content-jeep">
+                <span class="close-btn" onclick="closeJeepneyDetailsPopup()">&times;</span>
+
+                <h2>Jeepney Details</h2>
+
+                <p><strong>Jeepney ID:</strong> <span id="popupJeepneyID"></span></p>
+                <p><strong>Driver ID:</strong> <span id="popupDriverID"></span></p>
+                <p><strong>Plate Number:</strong> <span id="popupPlateNumber"></span></p>
+                <p><strong>Capacity:</strong> <span id="popupCapacity"></span></p>
+                <p><strong>Occupied</strong> <span id="popupOccupied"></span></p>
+                <p><strong>Route:</strong> <span id="popupRoute"></span></p>
+                <p><strong>Type:</strong> <span id="popupType"></span></p>
+                <p><strong>Image:</strong></p>
+                <img id="popupJeepneyImage" src="" alt="Jeepney Image" style="width: 100px; height: auto;">
+                <p><strong>Departure Time:</strong> <span id="popupDepartureTime"></span></p>
+                <p><strong>Status:</strong> <span id="popupStatus"></span></p>
+
+                <button onclick="deleteJeepney()">Delete Jeepney</button>
+                <button onclick="closeJeepneyDetailsPopup()">Close</button>
             </div>
         </div>
-    </div>
-    
-    <!-- Jeepney Details Popup (Modal) -->
-    <div id="jeepneyDetailsPopup" class="modaljeep" style="display:none;">
-        <div class="modal-content-jeep">
-            <span class="close-btn" onclick="closeJeepneyDetailsPopup()">&times;</span>
-
-            <h2>Jeepney Details</h2>
-
-            <p><strong>Jeepney ID:</strong> <span id="popupJeepneyID"></span></p>
-            <p><strong>Driver ID:</strong> <span id="popupDriverID"></span></p>
-            <p><strong>Plate Number:</strong> <span id="popupPlateNumber"></span></p>
-            <p><strong>Capacity:</strong> <span id="popupCapacity"></span></p>
-            <p><strong>Occupied</strong> <span id="popupOccupied"></span></p>
-            <p><strong>Route:</strong> <span id="popupRoute"></span></p>
-            <p><strong>Type:</strong> <span id="popupType"></span></p>
-            <p><strong>Image:</strong></p>
-            <img id="popupJeepneyImage" src="" alt="Jeepney Image" style="width: 100px; height: auto;">
-            <p><strong>Departure Time:</strong> <span id="popupDepartureTime"></span></p>
-            <p><strong>Status:</strong> <span id="popupStatus"></span></p>
-
-            <button onclick="deleteJeepney()">Delete Jeepney</button>
-            <button onclick="closeJeepneyDetailsPopup()">Close</button>
-        </div>
-    </div>
-
-    <div id="addJeepneyModal" class="modal" style="display: none;">
-        <div class="modal-content">
-          <h2>Add New Jeepney</h2>
-          <form id="addJeepneyForm" onsubmit="submitJeepneyForm(event)">
+        
+        <!-- Add Jeepney Modal -->
+        <div id="addJeepneyModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeJeepneyModal()">&times;</span>
+                <h2>Add New Jeepney</h2>
+                <form id="addJeepneyForm">
+                    <label for="jeepneyPlateNumber">Plate Number</label>
+                    <input type="text" id="jeepneyPlateNumber" name="plateNumber" required>
             
-            <label for="driverID">Driver ID (Assigned by system)</label>
-            <input type="text" id="driverID" name="driverID" disabled value="System_Assigned_ID">
-      
-            <label for="plateNumber">Plate Number</label>
-            <input type="text" id="plateNumber" name="plateNumber" required>
-      
-            <label for="capacity">Capacity</label>
-            <input type="number" id="capacity" name="capacity" required>
-      
-            <label for="occupied">Occupied</label>
-            <input type="number" id="occupied" name="occupied" disabled value="0">
-      
-            <label for="route">Route (Assigned by system)</label>
-            <input type="text" id="route" name="route" disabled value="System_Assigned_Route">
-      
-            <label for="type">Type</label>
-            <input type="text" id="type" name="type" required>
-      
-            <label for="status">Status</label>
-            <input type="text" id="status" name="status" disabled value="active">
-      
-            <button type="submit">Add Jeepney</button>
-          </form>
+                    <label for="jeepneyCapacity">Capacity</label>
+                    <input type="number" id="jeepneyCapacity" name="capacity" required>
+            
+                    <label for="jeepneyType">Type</label>
+                    <input type="text" id="jeepneyType" name="type" required>
+            
+                    <!-- Message Placeholder -->
+                    <div id="formMessage" style="margin-top: 10px; font-size: 14px;"></div>
+                    
+                    <button type="submit">Add Jeepney</button>
+                </form>
+            </div>
         </div>
-        <div class="modal-footer">
-          <button onclick="closeModal()">Close</button>
+
+        <!-- Add Driver Modal -->
+        <div id="addDriverModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeDriverModal()">&times;</span>
+                <h2>Add Manager</h2>
+                <form id="addDriverForm">
+                    <label for="driverFirstName">First Name</label>
+                    <input type="text" id="driverFirstName" name="firstName" required>
+                    
+                    <label for="driverLastName">Last Name</label>
+                    <input type="text" id="driverLastName" name="lastName" required>
+
+                    <label for="driverContactNumber">Contact Number</label>
+                    <input type="text" id="driverContactNumber" name="contactNumber" required>
+
+                    <!-- Message Placeholder -->
+                    <div id="formMessage" style="margin-top: 10px; font-size: 14px;"></div>
+                    
+                    <button type="submit">Add Driver</button>
+                </form>
+            </div>
         </div>
-      </div>
 
     <script src="admin-dashboard.js"></script>
 </body>

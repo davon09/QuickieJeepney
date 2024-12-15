@@ -206,22 +206,19 @@ app.delete('/api/jeepney/:jeepneyID', (req, res) => {
 });
 
 app.post('/api/add-jeepney', (req, res) => {
-  const { driverID, plateNumber, capacity, occupied, route, type, status } = req.body;
+  const { plateNumber, capacity, type } = req.body;
 
-  const newDriverID = "System_Assigned_ID"; 
-  const newRoute = "System_Assigned_Route";  
-  const newStatus = "active";                
-
-  db.query(
-    'INSERT INTO jeepney (jeepneyID, driverID, plateNumber, capacity, occupied, route, type, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-    [newDriverID, plateNumber, capacity, 0, newRoute, type, newStatus], // Set occupied to 0 initially
-    (err, results) => {
+    // Insert the new jeepney into the database
+    const query = 'INSERT INTO jeepney (plateNumber, capacity, type) VALUES (?, ?, ?)';
+    db.query(query, [plateNumber, capacity, type], (err, result) => {
       if (err) {
-        return res.status(500).json({ success: false, message: 'Database error' });
+        console.error('MySQL query error:', err);
+        return res.status(500).json({ success: false, message: 'Database insertion error' });
       }
-      res.json({ success: true });
-    }
-  );
+
+      console.log('Jeepney added successfully:', result.insertId);
+      res.status(201).json({ success: true, message: 'Jeepney added successfully', jeepneyID: result.insertId });
+    });
 });
 
 // Route to ban a user
@@ -280,6 +277,58 @@ app.delete('/api/delete-user/:userID', (req, res) => {
     res.json({ success: true, message: 'User deleted successfully' });
   });
 });
+
+// Route to fetch drivers from the database
+app.get('/api/drivers', (req, res) => {
+  const query = 'SELECT driverID, firstName, lastName, contactNumber FROM driver';
+  db.query(query, (err, results) => {
+      if (err) {
+          console.error('Error fetching drivers:', err);
+          return res.status(500).json({ success: false, message: 'Failed to fetch drivers' });
+      }
+      res.json(results); // Send the driver data as JSON
+  });
+});
+
+// Add Driver Route
+app.post('/api/add-drivers', (req, res) => {
+  const { firstName, lastName, contactNumber } = req.body;
+
+    // Insert the new driver into the database
+    const query = 'INSERT INTO driver (firstName, lastName, contactNumber) VALUES (?, ?, ?)';
+    db.query(query, [firstName, lastName, contactNumber], (err, result) => {
+      if (err) {
+        console.error('MySQL query error:', err);
+        return res.status(500).json({ success: false, message: 'Database insertion error' });
+      }
+
+      console.log('Driver added successfully:', result.insertId);
+      res.status(201).json({ success: true, message: 'Driver added successfully', driverID: result.insertId });
+    });
+});
+
+// Route to delete a driver
+app.delete('/api/delete-driver/:driverID', (req, res) => {
+  const driverID = req.params.driverID;
+  console.log('Driver ID received for deletion:', driverID); // Debug log
+
+  const query = 'DELETE FROM driver WHERE driverID = ?';
+  db.query(query, [driverID], (err, result) => {
+      if (err) {
+          console.error('MySQL query error:', err);
+          return res.status(500).json({ success: false, message: 'Error deleting driver' });
+      }
+
+      if (result.affectedRows > 0) {
+          res.json({ success: true, message: 'Driver deleted successfully' });
+      } else {
+          console.log('No driver found with ID:', driverID); // Debug log
+          res.status(404).json({ success: false, message: 'Driver not found' });
+      }
+  });
+});
+
+
 
 // Check if the user is logged in
 app.get('/api/check-login', (req, res) => {
