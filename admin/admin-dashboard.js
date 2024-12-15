@@ -439,6 +439,75 @@ document.getElementById("addJeepneyForm").addEventListener("submit", function (e
         alert('An error occurred while adding the jeepney.');
     });
 });
+
+function assignDriverModal() {
+    fetchJeepneysAndDrivers();
+    document.getElementById("assignDriverModal").style.display = "block";
+}
+
+function closeAssignDriverModal() {
+    document.getElementById("assignDriverModal").style.display = "none";
+}
+
+// Fetch Jeepneys and Drivers
+function fetchJeepneysAndDrivers() {
+    // Fetch jeepneys
+    fetch('/api/jeepneys')
+        .then(response => response.json())
+        .then(jeepneys => {
+            const jeepneySelect = document.getElementById("jeepneySelect");
+            jeepneySelect.innerHTML = ''; // Clear existing options
+
+            jeepneys.forEach(jeepney => {
+                const option = document.createElement("option");
+                option.value = jeepney.jeepneyID;
+                option.textContent = jeepney.plateNumber;  // Display plate number as option text
+                jeepneySelect.appendChild(option);
+            });
+        });
+
+    // Fetch drivers
+    fetch('/api/drivers')
+    .then(response => response.json())
+    .then(drivers => {
+        const driverSelect = document.getElementById("driverSelect");
+        driverSelect.innerHTML = ''; // Clear existing options
+
+        drivers.forEach(driver => {
+            const option = document.createElement("option");
+            option.value = driver.driverID;
+            option.textContent = `${driver.firstName} ${driver.lastName}`;  // Concatenate first and last name
+            driverSelect.appendChild(option);
+        });
+    });
+}
+
+// Handle form submission to assign a driver to a jeepney
+document.getElementById("assignDriverForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const jeepneyID = document.getElementById("jeepneySelect").value;
+    const driverID = document.getElementById("driverSelect").value;
+
+    // Send the assignment request to the server
+    fetch('/api/assignDriver', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ jeepneyID, driverID })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("Driver assigned successfully!");
+            document.getElementById("assignDriverModal").style.display = "none";  // Close the modal
+            fetchJeepneys();  // Optionally, refresh jeepney list or display
+        } else {
+            alert("Error assigning driver: " + data.error);
+        }
+    });
+});
   
 // Fetch Drivers Data from Server and Populate the Table
 function fetchDrivers() {

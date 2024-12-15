@@ -221,6 +221,30 @@ app.post('/api/add-jeepney', (req, res) => {
     });
 });
 
+// Route to assign a driver to a jeepney
+app.post('/api/assignDriver', (req, res) => {
+  const { jeepneyID, driverID } = req.body;
+
+  // Ensure jeepneyID and driverID are provided
+  if (!jeepneyID || !driverID) {
+      return res.status(400).json({ error: 'Jeepney and Driver IDs are required.' });
+  }
+
+  // SQL query to update the jeepney with the assigned driver
+  const query = 'UPDATE jeepney SET driverID = ? WHERE jeepneyID = ?';
+
+  db.query(query, [driverID, jeepneyID], (err, result) => {
+      if (err) {
+          console.error('Error assigning driver:', err);
+          return res.status(500).json({ error: 'Database error' });
+      }
+
+      // Respond with success
+      res.json({ success: true });
+  });
+});
+
+
 // Route to ban a user
 app.post('/api/ban-user/:userID', (req, res) => {
   const userID = req.params.userID;
@@ -327,8 +351,6 @@ app.delete('/api/delete-driver/:driverID', (req, res) => {
       }
   });
 });
-
-
 
 // Check if the user is logged in
 app.get('/api/check-login', (req, res) => {

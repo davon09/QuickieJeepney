@@ -74,6 +74,7 @@
                 <h2>Jeepney List</h2>
                 <div class="action-buttons">
                     <button id="addJeepneyBtn" onclick="addJeepneyModal()">Add Jeepney</button>
+                    <button id="assignDriverBtn" onclick="assignDriverModal()">Assign Driver</button>
                 </div>
                 <table id="jeepneyTable">
                     <thead>
@@ -217,6 +218,27 @@
                     <div id="formMessage" style="margin-top: 10px; font-size: 14px;"></div>
                     
                     <button type="submit">Add Jeepney</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Assign Driver Modal -->
+        <div id="assignDriverModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeAssignDriverModal()">&times;</span>
+                <h2>Assign Driver</h2>
+                <form id="assignDriverForm">
+                    <label for="jeepneySelect">Select Jeepney:</label>
+                    <select id="jeepneySelect" required>
+                        <!-- Jeepney options will be populated here dynamically -->
+                    </select><br>
+
+                    <label for="driverSelect">Select Driver:</label>
+                    <select id="driverSelect" required>
+                        <!-- Driver options will be populated here dynamically -->
+                    </select><br>
+
+                    <button type="submit">Assign Driver</button>
                 </form>
             </div>
         </div>
