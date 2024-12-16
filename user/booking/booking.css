@@ -163,15 +163,6 @@ body {
 }
 
 
-
-.arrow-icon {
-    position: absolute;
-    right: 15px;
-    color: #6e3d1e;
-    pointer-events: none;
-    font-size: 18px;
-}
-
 .book-btn {
     background-color: #A36E48;
     color: white;
