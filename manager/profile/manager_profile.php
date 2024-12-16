@@ -9,7 +9,8 @@ include '../../dbConnection/dbConnection.php';
 // }
 
 // Fetch logged-in user's details including the occupation
-$userID = $_SESSION['userID'];
+// $userID = $_SESSION['userID'];
+// todo
 $sqlUser = "SELECT firstName, lastName, occupation, email, contactNumber, profile_image FROM user WHERE userID = ?";
 $stmtUser = $conn->prepare($sqlUser);
 $stmtUser->bind_param("i", $userID);
@@ -107,17 +108,6 @@ $userDetailsHTML = '
             <li class="nav-link">
                 <a href="../booking/manager_booking.php" class="sidebar-link">
                     <i class="fas fa-calendar-alt sidebar-icon" class="sidebar-icon"></i>Booking Logs
-                </a>
-            </li>
-
-            <li class="nav-link">
-                <a href="../payment/manager_payment.php" class="sidebar-link">
-                    <i class="fas fa-calendar-alt sidebar-icon" class="sidebar-icon"></i>Payment
-                </a>
-            </li>
-            <li class="nav-link">
-                <a href="../passenger/manager_passenger.php" class="sidebar-link">
-                    <i class="fas fa-calendar-alt sidebar-icon" class="sidebar-icon"></i>Manage Passengers
                 </a>
             </li>
         </ul>
