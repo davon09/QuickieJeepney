@@ -41,39 +41,10 @@ $userDetailsHTML = '
 ';
 
 // Fetch transportation routes from the database
-$sqlRoutes = "SELECT routeName, startPoint, endPoint, startLat, startLng, endLat, endLng FROM transportation_routes";
+$sqlRoutes = "SELECT routeID, routeName, startPoint, endPoint, startLat, startLng, endLat, endLng FROM transportation_routes";
 $resultRoutes = $conn->query($sqlRoutes);
 
-// Fetch announcements that are still valid (validUntil >= today's date)
-$sql = "SELECT announcementName, description, 
-               DATE_FORMAT(date, '%d/%m/%Y') AS formattedDate, 
-               DATE_FORMAT(validUntil, '%d/%m/%Y') AS formattedValidUntil 
-        FROM announcements 
-        WHERE validUntil >= ? 
-        ORDER BY date DESC";
 
-$stmtAnnouncements = $conn->prepare($sql);
-if ($stmtAnnouncements === false) {
-    die("Error preparing statement: " . $conn->error);
-}
-
-$stmtAnnouncements->bind_param("s", $currentDate);
-$stmtAnnouncements->execute();
-$result = $stmtAnnouncements->get_result();
-
-$announcementsHTML = "";
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $announcementsHTML .= "
-        <li class='announcement-item'>
-            <strong>{$row['announcementName']}</strong><br>
-            {$row['description']}<br>
-            <small><em>Date: {$row['formattedDate']}, Valid Until: {$row['formattedValidUntil']}</em></small>
-        </li>";
-    }
-} else {
-    $announcementsHTML = "<li class='announcement-item'>No announcements available.</li>";
-}
 
 // Fetch available jeepneys
 $jeepneysHTML = '';
@@ -215,6 +186,11 @@ if ($resultJeepneys->num_rows > 0) {
                                             data-end-lng="<?php echo $route['endLng']; ?>">
                                         View on Map
                                     </button>
+                                     <!-- Remove Button -->
+                                     <button onclick="deleteRoute(<?php echo $route['routeID']; ?>, this)" 
+                                            style="background-color: #e74c3c; color: white; padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer;">
+                                        Remove
+                                    </button>
                                 </div>
                             <?php endwhile; ?>
                         <?php else: ?>
@@ -229,35 +205,76 @@ if ($resultJeepneys->num_rows > 0) {
                 <div class="announcements">
                     <div class="announcements-header">
                         <h2>Announcements</h2>
-                        <button class="add-btn add-announcement-btn">Add</button>
+                        <button class="add-btn add-announcement-btn" style="margin-left:140px; width:80px;">Add</button>
+                        <button class="remove-btn" id="toggle-remove-btn" style="background-color: #e74c3c; color: white; border: none; padding: 10px 12px; border-radius: 4px; cursor: pointer;">Remove</button>
                     </div>
-                    <ul class="announcement-list">
-                        <?php echo $announcementsHTML; ?>
-                    </ul>
+                    <!-- Announcement List -->
+                   
+                    <?php
+                    // Set the timezone to Philippine time
+                    date_default_timezone_set('Asia/Manila');
+                    $currentDate = date('Y-m-d'); // Current date in 'YYYY-MM-DD' format
+
+                    // Fetch only valid announcements (not expired)
+                    $query = "SELECT announcementID, announcementName, description, date, validUntil 
+                            FROM announcements 
+                            WHERE validUntil >= ?";
+
+                    $stmt = $conn->prepare($query);
+                    $stmt->bind_param("s", $currentDate);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+                    ?>
+
+                    <form id="remove-announcements-form">
+                        <ul class="announcement-list" style="list-style: none; padding: 0;">
+                            <?php if ($result->num_rows > 0): ?>
+                                <?php while ($row = $result->fetch_assoc()): ?>
+                                    <li data-id="<?php echo $row['announcementID']; ?>" style="border: 1px solid #ddd; margin: 10px 0; padding: 10px; border-radius: 5px;">
+                                        <strong><?php echo htmlspecialchars($row['announcementName']); ?></strong><br>
+                                        <?php echo htmlspecialchars($row['description']); ?><br>
+                                        <em>Date: <?php echo htmlspecialchars($row['date']); ?>, Valid Until: <?php echo htmlspecialchars($row['validUntil']); ?></em>
+                                    </li>
+                                <?php endwhile; ?>
+                            <?php else: ?>
+                                <li>No active announcements available.</li>
+                            <?php endif; ?>
+                        </ul>
+
+                        <!-- Confirm Removal Button -->
+                        <button type="button" id="confirm-remove-btn" style="display: none; background-color: #e74c3c; color: white; padding: 10px 12px; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px;">
+                            Confirm Removal
+                        </button>
+                    </form>
+
+                    <?php
+                    $stmt->close();
+                    $conn->close();
+                    ?>
                 </div>
                 <div class="available-jeepney">
-    <div class="section-header">
-        <h2>Available Jeepney</h2>
-        <a href="../vehicles/manager_vehicles.php" class="edit-btn">
-            <i class="fas fa-edit"></i>
-        </a>
-    </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Plate Number</th>
-                        <th>Capacity</th>
-                        <th>Occupied</th>
-                        <th>Route</th>
-                        <th>Type</th>
-                        <th>Departure Time</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php echo $jeepneysHTML; ?>
-                </tbody>
-            </table>
-        </div>
+                <div class="section-header">
+                    <h2>Available Jeepney</h2>
+                    <a href="../vehicles/manager_vehicles.php" class="edit-btn">
+                        <i class="fas fa-edit"></i>
+                    </a>
+                </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Plate Number</th>
+                                    <th>Capacity</th>
+                                    <th>Occupied</th>
+                                    <th>Route</th>
+                                    <th>Type</th>
+                                    <th>Departure Time</th>
+                                </tr>
+                        </thead>
+                        <tbody>
+                            <?php echo $jeepneysHTML; ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </section>
@@ -614,6 +631,102 @@ if ($resultJeepneys->num_rows > 0) {
 
         // Fetch announcements on page load
         refreshAnnouncements();
+    });
+
+    function deleteRoute(routeID, button) {
+        if (confirm('Are you sure you want to delete this route?')) {
+            fetch('delete_route.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'routeID=' + routeID
+            })
+            .then(response => response.text())
+            .then(data => {
+                if (data.trim() === 'success') {
+                    alert('Route deleted successfully.');
+                    button.closest('.route-card').remove(); // Remove the route card
+                } else {
+                    alert('Failed to delete the route.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const toggleRemoveBtn = document.getElementById("toggle-remove-btn");
+        const confirmRemoveBtn = document.getElementById("confirm-remove-btn");
+        const announcementList = document.querySelector(".announcement-list");
+        let isRemoveMode = false;
+
+        // Toggle checkboxes
+        toggleRemoveBtn.addEventListener("click", () => {
+            isRemoveMode = !isRemoveMode;
+
+            announcementList.querySelectorAll("li").forEach((item) => {
+                if (isRemoveMode) {
+                    if (!item.querySelector(".remove-checkbox")) {
+                        const checkbox = document.createElement("input");
+                        checkbox.type = "checkbox";
+                        checkbox.name = "announcement_ids[]";
+                        checkbox.className = "remove-checkbox";
+                        checkbox.value = item.dataset.id;
+                        checkbox.style.marginRight = "10px";
+                        item.prepend(checkbox);
+                    }
+                } else {
+                    const checkbox = item.querySelector(".remove-checkbox");
+                    if (checkbox) checkbox.remove();
+                }
+            });
+
+            // Show confirm button
+            confirmRemoveBtn.style.display = isRemoveMode ? "block" : "none";
+        });
+
+        // Confirm Removal: Submit via fetch
+        confirmRemoveBtn.addEventListener("click", () => {
+            const selectedIDs = [];
+            document.querySelectorAll(".remove-checkbox:checked").forEach((checkbox) => {
+                selectedIDs.push(checkbox.value);
+            });
+
+            if (selectedIDs.length === 0) {
+                alert("Please select at least one announcement to remove.");
+                return;
+            }
+
+            // Send IDs to the backend
+            fetch("remove_announcements.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ announcement_ids: selectedIDs })
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.status === "success") {
+                    alert("Announcements removed successfully!");
+                    selectedIDs.forEach((id) => {
+                        const item = document.querySelector(`li[data-id='${id}']`);
+                        if (item) item.remove();
+                    });
+                    confirmRemoveBtn.style.display = "none";
+                } else {
+                    alert("Failed to remove announcements: " + data.message);
+                }
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+                alert("An error occurred. Please try again.");
+            });
+        });
     });
 </script>
 
