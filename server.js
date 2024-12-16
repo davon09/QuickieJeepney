@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const session = require('express-session');
 const mysql = require('mysql2');
+const multer = require('multer');
 const app = express();
 const port = 3000;
 const bcrypt = require('bcrypt');
@@ -37,6 +38,10 @@ db.connect((err) => {
 
 // Serve static files from 'admin' folder
 app.use(express.static(path.join(__dirname, 'admin')));
+
+// Multer setup for file upload
+const storage = multer.memoryStorage(); // Store file in memory
+const upload = multer({ storage: storage });
 
 // Route to serve the login page
 app.get('/', (req, res) => {
@@ -205,21 +210,28 @@ app.delete('/api/jeepney/:jeepneyID', (req, res) => {
   });
 });
 
+// Add Jeepney route (with image upload)
 app.post('/api/add-jeepney', (req, res) => {
-  const { plateNumber, capacity, type } = req.body;
+  const { plateNumber, capacity, type, jeepneyImage } = req.body;
 
-    // Insert the new jeepney into the database
-    const query = 'INSERT INTO jeepney (plateNumber, capacity, type) VALUES (?, ?, ?)';
-    db.query(query, [plateNumber, capacity, type], (err, result) => {
-      if (err) {
-        console.error('MySQL query error:', err);
-        return res.status(500).json({ success: false, message: 'Database insertion error' });
-      }
+  // Ensure that jeepneyImage is provided
+  if (!jeepneyImage) {
+    return res.status(400).json({ success: false, message: 'Image is required' });
+  }
 
-      console.log('Jeepney added successfully:', result.insertId);
-      res.status(201).json({ success: true, message: 'Jeepney added successfully', jeepneyID: result.insertId });
-    });
+  // Now insert into the database, including the jeepneyImage (base64)
+  const query = 'INSERT INTO jeepney (plateNumber, capacity, type, jeep_image) VALUES (?, ?, ?, ?)';
+  db.query(query, [plateNumber, capacity, type, jeepneyImage], (err, result) => {
+    if (err) {
+      console.error('MySQL query error:', err);
+      return res.status(500).json({ success: false, message: 'Database insertion error' });
+    }
+
+    console.log('Jeepney added successfully:', result.insertId);
+    res.status(201).json({ success: true, message: 'Jeepney added successfully', jeepneyID: result.insertId });
+  });
 });
+
 
 // Route to assign a driver to a jeepney
 app.post('/api/assignDriver', (req, res) => {

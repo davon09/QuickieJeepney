@@ -412,32 +412,56 @@ function closeJeepneyModal() {
 }
   
 // Handle Form Submission for Add Jeepney
+// Handle Form Submission for Add Jeepney
 document.getElementById("addJeepneyForm").addEventListener("submit", function (e) {
     e.preventDefault();
 
     const plateNumber = document.getElementById("jeepneyPlateNumber").value;
     const capacity = document.getElementById("jeepneyCapacity").value;
-    const type = document.getElementById("jeepneyType").value
+    const type = document.getElementById("jeepneyType").value;
+    const jeepneyImage = document.getElementById("jeepneyImage").files[0];  // Get the image file
 
-    fetch('/api/add-jeepney', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ plateNumber, capacity, type }),
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Jeepney added successfully!');
-            closeJeepneyModal();
-            fetchJeepneys();
-        } else {
-            alert('Error adding jeepney: ' + data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while adding the jeepney.');
-    });
+    // Check if image is selected
+    if (jeepneyImage) {
+        const reader = new FileReader();
+
+        reader.onloadend = function () {
+            const imageBase64 = reader.result.split(',')[1];  // Get base64 string of the image
+
+            // Send the data including base64 image as JSON
+            fetch('/api/add-jeepney', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    plateNumber,
+                    capacity,
+                    type,
+                    jeepneyImage: imageBase64,  // Send the base64 string of the image
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Jeepney added successfully!');
+                    closeJeepneyModal();
+                    fetchJeepneys();  // Refresh the list of jeepneys after successful addition
+                } else {
+                    alert('Error adding jeepney: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while adding the jeepney.');
+            });
+        };
+
+        // Read the image file as base64
+        reader.readAsDataURL(jeepneyImage);
+    } else {
+        alert('Please select an image.');
+    }
 });
 
 function assignDriverModal() {
