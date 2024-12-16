@@ -90,15 +90,17 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
                 <input type="hidden" name="jeepneyID" value="<?= $jeepney['jeepneyID']; ?>">
                 <input type="hidden" name="userID" value="1"> <!-- Replace with session user ID -->
 
-                <div class="payment-method">
+                <div class="time-selection">
                     <label for="departure-time">SELECT TIME OF DEPARTURE</label>
                     <div class="dropdown-wrapper">
-                        <select id="payment-method" name="departure_time" required> 
+                        <select id="departure-time" name="departure_time" required> 
                             <option value="" disabled selected>Select departure time...</option>
                             <?= $departure_options; ?>
                         </select>
                     </div>
+                </div>
 
+                <div class="payment-method">
                     <label for="payment-method">SELECT PAYMENT METHOD</label>
                     <div class="dropdown-wrapper">
                         <select id="payment-method" name="payment_method" required> 
