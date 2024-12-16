@@ -40,6 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['jeepneyID']) && isset
 // Fetch logged-in user's details
 // $userID = $_SESSION['userID'];
 // todo
+$userID = 8; // !TEMP ONLY
 $sqlUser = "SELECT firstName, lastName, occupation, email, profile_image FROM user WHERE userID = ?";
 $stmtUser = $conn->prepare($sqlUser);
 $stmtUser->bind_param("i", $userID);
@@ -189,6 +190,17 @@ if (!$resultJeepney) {
 
     <!-- Modal Structure -->
     <div id="editModal" class="modal">
+        <?php
+            $choices = [
+                'Monday',
+                'Tuesday',
+                'Wednesday',
+                'Thursday',
+                'Friday',
+                'Saturday',
+                'Sunday',
+            ];
+        ?>
         <div class="modal-content">
             <span class="close-modal">&times;</span>
             <h2>Edit Jeepney Details</h2>
@@ -198,7 +210,26 @@ if (!$resultJeepney) {
                 <p><span>Driver:</span> <span id="modalDriverName"></span></p>
                 <p><span>Vehicle Type:</span> <span id="modalVehicleType"></span></p>
                 <p><span>Departure Time:</span>
-                    <input id="modalDepartureTime" type="time" name="modalDepartureTime">
+                    <!-- <input id="modalDepartureTime" type="time" name="modalDepartureTime"> -->
+                    <p id="modalDepartureTime"></p>
+                </p>
+                <p>
+                    <?php foreach ($choices as $index => $choice): ?>
+                        <label>
+                            <input type="checkbox" 
+                                id="checkbox-<?php echo $index; ?>" 
+                                data-target="content-<?php echo $index; ?>" />
+                            <?php echo $choice; ?>
+                        </label>
+                        <br/>
+                    <?php endforeach; ?>
+                </p>
+                <p>
+                    <?php foreach ($choices as $index => $choice): ?>
+                        <div id="content-<?php echo $index; ?>" class="toggle-content schedule-for-<?php echo $choice; ?>">
+                            <?php echo $choice; ?> departure schedule
+                        </div>
+                    <?php endforeach; ?>
                 </p>
                 <p><span>Status:</span>
                     <select id="modalStatus" name="status">
@@ -253,6 +284,11 @@ if (!$resultJeepney) {
                 });
             }
 
+            var cardEditBtn = document.querySelectorAll('.edit-btn');
+            cardEditBtn.forEach(editBtn => {
+
+            });
+
             jeepneyGrid.addEventListener('click', (e) => {
                 if (e.target.classList.contains('edit-btn')) {
                     const card = e.target.closest('.jeepney-card');
@@ -264,11 +300,65 @@ if (!$resultJeepney) {
                     const departureTime = card.getAttribute('data-departuretime');
                     const status = card.getAttribute('data-status'); // 'available' or 'unavailable'
 
+                    var departureTimeJSON = JSON.parse(departureTime);
+
+                    Object.keys(departureTimeJSON).forEach(key => {
+                        console.log(key, departureTimeJSON[key]);
+
+                        var timeArr = departureTimeJSON[key]; // ex. ["14:00", "15:00"]
+                        var timeInputContainer = document.querySelector('.schedule-for-' + key);
+
+                        timeArr.forEach(sched => {
+                            const timeInputLabel = document.createElement('p');
+                            timeInputLabel.style = "height: 1.5rem; margin: 0";
+                            timeInputLabel.textContent = "Departure Time: ";
+
+                            const timeInput = document.createElement('input');
+                            timeInput.setAttribute("class", key + "-sched");
+                            timeInput.setAttribute("type", "time");
+                            timeInput.style = "padding: 0 .5rem; height: 1.5rem";
+                            timeInput.value = sched;
+
+                            const removeTimeBtn = document.createElement('button');
+                            removeTimeBtn.textContent = "remove";
+                            removeTimeBtn.style = "margin-left: .5rem; height: 1.5rem; padding: 0 .5rem; background:rgb(169, 32, 32); color: white; border: 0px";
+
+                            const container = document.createElement('div');
+                            container.appendChild(timeInputLabel);
+                            container.appendChild(timeInput);
+                            container.appendChild(removeTimeBtn);
+
+                            container.style = "display: flex; gap: 1rem; margin: .25rem 0";
+
+                            timeInputContainer.appendChild(container);
+                        });
+
+                    });
+                    
+                    var keys = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+                    keys.forEach(function(key) {
+                        var timeInputContainer = document.querySelector('.schedule-for-' + key);
+                        console.log(timeInputContainer);
+
+                        const addTimeBtn = document.createElement('button');
+                        addTimeBtn.style = "background:rgb(45, 160, 66); color: white; border: 0px; padding: .25rem";
+                        addTimeBtn.textContent = "Add Time";
+
+                        const container = document.createElement('div');
+                        container.appendChild(addTimeBtn);
+
+                        addTimeBtn.addEventListener('click', () => {
+                            alert('add clicked');
+                        });
+
+                        timeInputContainer.appendChild(container);
+                    });
+
                     modalJeepneyID.textContent = jeepneyID;
                     modalPlateNumber.textContent = plateNumber;
                     modalDriverName.textContent = driverName || '';
                     modalVehicleType.textContent = vehicleType || '';
-                    modalDepartureTime.value = departureTime || '';
+                    modalDepartureTime.textContent = departureTime || '';
 
                     modalStatus.value = status.charAt(0).toUpperCase() + status.slice(1);
 
@@ -328,6 +418,17 @@ if (!$resultJeepney) {
                     }
                 })
                 .catch(err => console.error(err));
+            });
+        });
+
+        document.querySelectorAll('input[type=checkbox][data-target]').forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                var targetDiv = document.getElementById(this.getAttribute('data-target'));
+                if (this.checked) {
+                    targetDiv.style.display = 'block';
+                } else {
+                    targetDiv.style.display = 'none';
+                }
             });
         });
     </script>

@@ -11,6 +11,7 @@ include '../../dbConnection/dbConnection.php';
 // Fetch logged-in user's details including the occupation
 // $userID = $_SESSION['userID'];
 // todo
+$userID = 8; // !TEMP ONLY
 $sqlUser = "SELECT firstName, lastName, occupation, email, profile_image FROM user WHERE userID = ?";
 $stmtUser = $conn->prepare($sqlUser);
 $stmtUser->bind_param("i", $userID);
@@ -42,7 +43,7 @@ $sql = "
         CONCAT(d.firstName, ' ', d.lastName) AS driverName,
         j.route,
         b.status,
-        j.departure_time,
+        b.departure,
         p.paymentID,
         p.paymentStatus,
         p.paymentMethod,
@@ -50,7 +51,7 @@ $sql = "
     FROM 
         booking b
     JOIN 
-        payment p ON b.bookingID = p.bookingID
+        payment p ON p.bookingID = b.bookingID
     JOIN
         jeepney j ON b.jeepneyID = j.jeepneyID
     JOIN 
@@ -268,22 +269,49 @@ function generatePieChart() {
                             } else {
                                 $statusClass = 'status-unknown';
                             }
+
+                            // Decode the departure JSON
+                            $departureData = json_decode($row['departure'], true);
+
+                            // Prepare a variable for formatted departure info
+                            $departureString = '';
+
+                            if (is_array($departureData)) {
+                                // If you want to ensure a specific order of days, define it:
+                                $dayOrder = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+                                uksort($departureData, function($a, $b) use ($dayOrder) {
+                                    $posA = array_search($a, $dayOrder);
+                                    $posB = array_search($b, $dayOrder);
+                                    return $posA <=> $posB;
+                                });
+
+                                foreach ($departureData as $day => $time) {
+                                    // $time might be a string or an array, depending on your data structure
+                                    // If it's guaranteed to be a single string (like "20:00"), just print it
+                                    $departureString .= "<b>" . htmlspecialchars($day) . "</b>: " . htmlspecialchars($time) . "<br>";
+                                }
+                            } else {
+                                // If not a valid array, just output the raw data safely
+                                $departureString = htmlspecialchars($row['departure']);
+                            }
+
                             echo "<tr>
                                 <td>" . htmlspecialchars($row['bookingID']) . "</td>
                                 <td>" . htmlspecialchars($row['customerName']) . "</td>
                                 <td>" . htmlspecialchars($row['jeepneyPlate']) . "</td>
                                 <td>" . htmlspecialchars($row['driverName']) . "</td>
                                 <td>" . htmlspecialchars($row['route']) . "</td>
-                                <td><span class='status-badge $statusClass'>" . ucfirst($row['status']) . "</span></td>
-                                <td>" . htmlspecialchars($row['departure_time']) . "</td>
+                                <td><span class='status-badge $statusClass'>" . ucfirst(htmlspecialchars($row['status'])) . "</span></td>
+                                <td>$departureString</td>
                                 <td>" . htmlspecialchars($row['paymentStatus']) . "</td>
                                 <td>" . htmlspecialchars($row['paymentMethod']) . "</td>
                                 <td>" . htmlspecialchars($row['amount']) . "</td>
                             </tr>";
                         }
                     } else {
-                        echo "<tr><td colspan='7'>No records found.</td></tr>";
+                        echo "<tr><td colspan='10'>No records found.</td></tr>";
                     }
+
                     $conn->close();
                 ?>
             </tbody>

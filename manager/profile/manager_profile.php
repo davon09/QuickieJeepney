@@ -11,6 +11,7 @@ include '../../dbConnection/dbConnection.php';
 // Fetch logged-in user's details including the occupation
 // $userID = $_SESSION['userID'];
 // todo
+$userID = 8; // !TEMP ONLY
 $sqlUser = "SELECT firstName, lastName, occupation, email, contactNumber, profile_image FROM user WHERE userID = ?";
 $stmtUser = $conn->prepare($sqlUser);
 $stmtUser->bind_param("i", $userID);
