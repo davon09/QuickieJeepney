@@ -300,8 +300,9 @@ function generateHistogram() {
             <label for="status">Status: </label>
             <select id="status">
                 <option value="">All</option>
-                <option value="on-the-way">on-the-way</option>
-                <option value="departed">departed</option>
+                <option value="available">Available</option>
+                <option value="departed">Departed</option>
+                <option value="unavailable">Unavailable</option>
             </select>
             
             <button onclick="fetchData()">Apply Filters</button>
