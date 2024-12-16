@@ -59,68 +59,103 @@ $sql = "
     JOIN 
         user u ON b.userID = u.userID  
     WHERE 
-        b.status IN ('on-the-way', 'departed')
+        b.status IN ('available', 'departed', 'unavailable')
     ORDER BY 
         b.bookingID DESC;
 ";
 $result = $conn->query($sql);
-// Function to generate the pie chart and return it as a base64-encoded string
-function generatePieChart() {
+
+function generateHistogram() {
     // Include database connection
     include '../../dbConnection/dbConnection.php';
 
-    // Query the database to get the counts of each status (on-the-way and departed)
+    // Query the database to get counts of each status
     $sql = "SELECT status, COUNT(*) as count FROM booking GROUP BY status";
     $result = $conn->query($sql);
 
-    if ($result->num_rows > 0) {
-        // Initialize the counts
-        $onTheWayCount = 0;
-        $departedCount = 0;
+    // Initialize counts
+    $statusCounts = [
+        'available' => 0,
+        'departed' => 0,
+        'unavailable' => 0,
+        'unknown' => 0
+    ];
 
-        // Process the result set
+    // Process the result set
+    if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            if ($row['status'] == 'on-the-way') {
-                $onTheWayCount = $row['count'];
+            if ($row['status'] == 'available') {
+                $statusCounts['available'] = $row['count'];
             } elseif ($row['status'] == 'departed') {
-                $departedCount = $row['count'];
+                $statusCounts['departed'] = $row['count'];
+            } elseif ($row['status'] == 'unavailable') {
+                $statusCounts['unavailable'] = $row['count'];
+            } else {
+                $statusCounts['unknown'] += $row['count'];
             }
         }
-    } else {
-        // Default values if no records are found (or handle this case as needed)
-        $onTheWayCount = 0;
-        $departedCount = 0;
     }
 
-    // Total count for the pie chart
-    $total = $onTheWayCount + $departedCount;
+    // Total for scaling purposes
+    $maxCount = max($statusCounts) ?: 1; // Avoid division by zero
 
-    // Avoid division by zero if there is no data
-    if ($total == 0) {
-        $total = 1;  // Set a minimum total to avoid division by zero
-    }
+    // Create the image
+    $width = 700; // Image width
+    $height = 500; // Image height
+    $padding = 60; // Padding around the chart
+    $barWidth = 100; // Width of each bar
+    $spacing = 40; // Space between bars
 
-    // Calculate the angles for each pie slice
-    $onTheWayAngle = ($onTheWayCount / $total) * 360;
-    $departedAngle = ($departedCount / $total) * 360;
+    $image = imagecreatetruecolor($width, $height);
 
-    // Create a blank image
-    $image = imagecreatetruecolor(400, 400);
+    // Colors
+    $bgColor = imagecolorallocate($image, 240, 240, 240); // Light gray background
+    $barColor1 = imagecolorallocate($image, 60, 179, 113); // Green for available
+    $barColor2 = imagecolorallocate($image, 105, 105, 105); // Gray for departed
+    $barColor3 = imagecolorallocate($image, 220, 20, 60);   // Red for unavailable
+    $barColor4 = imagecolorallocate($image, 255, 215, 0);   // Gold for unknown
+    $gridColor = imagecolorallocate($image, 200, 200, 200); // Light gray for grid lines
+    $textColor = imagecolorallocate($image, 0, 0, 0); // Black for text
 
-    // Set the background color (white)
-    $bgColor = imagecolorallocate($image, 255, 255, 255);
+    // Fill the background
     imagefill($image, 0, 0, $bgColor);
 
-    // Set colors for the pie chart
-    $colorOnTheWay = imagecolorallocate($image, 255, 204, 0);  // Yellow
-    $colorDeparted = imagecolorallocate($image, 50, 205, 50);   // Green
+    // Draw grid lines
+    for ($i = 0; $i <= 5; $i++) {
+        $y = $height - $padding - ($i * ($height - 2 * $padding) / 5);
+        imageline($image, $padding, $y, $width - $padding, $y, $gridColor);
+        imagestring($image, 3, 20, $y - 8, ($maxCount / 5) * $i, $textColor);
+    }
 
-    // Draw the pie slices
-    imagefilledarc($image, 200, 200, 350, 350, 0, $onTheWayAngle, $colorOnTheWay, IMG_ARC_PIE);
-    imagefilledarc($image, 200, 200, 350, 350, $onTheWayAngle, 360, $colorDeparted, IMG_ARC_PIE);
+    // Draw bars
+    $x = $padding * 2;
+    foreach ($statusCounts as $status => $count) {
+        $barHeight = ($count / $maxCount) * ($height - 2 * $padding);
+        $y = $height - $padding - $barHeight;
 
-    // Draw the border around the pie chart
-    imagearc($image, 200, 200, 350, 350, 0, 360, imagecolorallocate($image, 0, 0, 0));
+        // Cast coordinates to integers
+        $x1 = (int)$x;
+        $y1 = (int)$y;
+        $x2 = (int)($x + $barWidth);
+        $y2 = (int)($height - $padding);
+
+        // Choose bar color based on status
+        $barColor = ($status == 'available') ? $barColor1 :
+                    (($status == 'departed') ? $barColor2 :
+                    (($status == 'unavailable') ? $barColor3 : $barColor4));
+
+        // Draw bar
+        imagefilledrectangle($image, $x1, $y1, $x2, $y2, $barColor);
+
+        // Add count above the bar
+        imagestring($image, 5, $x1 + ($barWidth / 2) - 10, $y1 - 25, $count, $textColor);
+
+        // Add status label below the bar
+        imagestring($image, 4, $x1 + ($barWidth / 2) - 25, $height - $padding + 10, ucfirst($status), $textColor);
+
+        // Move to the next bar position
+        $x += $barWidth + $spacing;
+    }
 
     // Capture the image as a base64 string
     ob_start();
@@ -128,15 +163,14 @@ function generatePieChart() {
     $imageData = ob_get_contents();
     ob_end_clean();
 
-    // Clean up the memory
+    // Clean up
     imagedestroy($image);
-
-    // Close the database connection
     $conn->close();
 
     // Return the base64-encoded image string
     return base64_encode($imageData);
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -148,6 +182,44 @@ function generatePieChart() {
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="manager_booking.js"></script>
+    <style>
+        /* General status badge styling */
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            font-size: 14px;
+            width: 130px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: white;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        /* Available status - green */
+        .status-on-the-way {
+            background-color: #28a745; /* Green */
+            color: #fff; /* White text */
+        }
+
+        /* Departed status - gray */
+        .status-departed {
+            background-color: #6c757d; /* Gray */
+            color: #fff; /* White text */
+        }
+
+        /* Unavailable status - red */
+        .status-unavailable {
+            background-color: #dc3545; /* Red */
+            color: #fff; /* White text */
+        }
+
+        /* Unknown status - yellow */
+        .status-unknown {
+            background-color: #ffc107; /* Yellow */
+            color: #212529; /* Dark text */
+        }
+    </style>
 </head>
 
 <body>
@@ -238,7 +310,7 @@ function generatePieChart() {
         <section class="statistics">
             <h2>Booking Status Statistics</h2>
             <!-- Image for booking pie chart -->
-            <img id="bookingPieChart" src="data:image/png;base64,<?php echo generatePieChart(); ?>" alt="Booking Status Pie Chart">
+            <img id="bookingHistogram" src="data:image/png;base64,<?php echo generateHistogram(); ?>" alt="Booking Status Histogram">
         </section>
 
         <!-- Report Table -->
@@ -262,11 +334,13 @@ function generatePieChart() {
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
                             $statusClass = '';
-                            if ($row['status'] === 'on-the-way') {
+                            if ($row['status'] === 'available') {
                                 $statusClass = 'status-on-the-way';
                             } elseif ($row['status'] === 'departed') {
                                 $statusClass = 'status-departed';
-                            } else {
+                            } elseif ($row['status'] === 'unavailable') {
+                                $statusClass = 'status-unavailable';
+                            }else {
                                 $statusClass = 'status-unknown';
                             }
 
@@ -446,6 +520,7 @@ function generatePieChart() {
     document.getElementById('dateFrom').addEventListener('change', fetchData);
     document.getElementById('dateTo').addEventListener('change', fetchData);
     document.getElementById('status').addEventListener('change', fetchData);
+
 
 </script>
 </html>

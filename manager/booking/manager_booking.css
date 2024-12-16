@@ -320,15 +320,6 @@ td[colspan="8"] {
     font-style: italic;
 }
 
-/* Status Badge Styling */
-.status-badge {
-    padding: 6px 12px;
-    border-radius: 16px;
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    color: white;
-}
 
 /* Export Buttons Styling */
 .export-buttons {
@@ -355,26 +346,6 @@ td[colspan="8"] {
 
 .export-buttons button:active {
     background-color: #1e8449;
-}
-.status-on-the-way {
-    background-color: #ffcc00; 
-    color: #fff;
-    padding: 5px 10px;
-    border-radius: 4px;
-}
-
-.status-departed {
-    background-color: #28a745; 
-    color: #fff;
-    padding: 5px 10px;
-    border-radius: 4px;
-}
-
-.status-unknown {
-    background-color: #6c757d; 
-    color: #fff;
-    padding: 5px 10px;
-    border-radius: 4px;
 }
 
 /* Pagination Container */
