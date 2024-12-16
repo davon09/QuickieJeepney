@@ -4,6 +4,7 @@ include '../../dbConnection/dbConnection.php';
 if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     $jeepneyId = $_GET['id'];
 
+    // Fetch jeepney and driver details
     $stmt = $conn->prepare(
         "SELECT j.jeepneyID, j.driverID, j.plateNumber, j.capacity, j.occupied, 
                 j.route, j.type, j.departure_time, j.jeep_image, 
@@ -19,17 +20,25 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
 
     if ($result->num_rows > 0) {
         $jeepney = $result->fetch_assoc(); 
-        $driverName = $jeepney['firstName'] . ' ' . $jeepney['lastName']; 
+        $driverName = $jeepney['firstName'] . ' ' . $jeepney['lastName'];
+
+        // Decode departure_time (assume it's stored as JSON in the database)
+        $schedule = json_decode($jeepney['departure_time'], true);
+        $departure_options = '';
+        foreach ($schedule as $day => $times) {
+            foreach ($times as $time) {
+                $departure_options .= '<option value="' . htmlspecialchars($time) . '">' . htmlspecialchars($day . ' - ' . $time) . '</option>';
+            }
+        }
     } else {
         echo '<p>No details found for this jeepney.</p>';
-        exit();  
+        exit();
     }
 
-    
     $stmt->close();
 } else {
     echo '<p>Invalid Jeepney ID.</p>';
-    exit(); 
+    exit();
 }
 ?>
 
@@ -49,12 +58,10 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
     <div class="content">
         <div class="jeepney-info">
             <div class="jeepney-container">
-                <!-- Display the image dynamically using serve_image.php -->
                 <img src="../menu/serve_image.php?id=<?= $jeepney['jeepneyID']; ?>" 
                      alt="Jeepney Image" class="jeepney-img">
                 <div class="overlay"></div>
 
-                <!-- Driver Info Section -->
                 <div class="driver-info">
                     <div class="driver-photo">
                         <img src="../../images/driver.png" alt="Driver" class="driver-avatar">
@@ -65,13 +72,9 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
             </div>
         </div>
 
-        <!-- Jeepney Details Section -->
         <div class="details">
             <p><strong>Jeep Plate Number:</strong> 
                <span class="highlight"><?= htmlspecialchars($jeepney['plateNumber']); ?></span>
-            </p>
-            <p><strong>Time of Departure:</strong> 
-               <span class="highlight"><?= htmlspecialchars($jeepney['departure_time']); ?></span>
             </p>
             <p><strong>Seat Capacity:</strong> 
                <span class="highlight"><?= htmlspecialchars($jeepney['capacity']); ?></span>
@@ -83,23 +86,29 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
                <span class="highlight"><?= htmlspecialchars($jeepney['type']); ?></span>
             </p>
 
-            <!-- Payment Method Section -->
-            <div class="payment-method">
-                <label for="payment-method">SELECT PAYMENT METHOD</label>
-                <div class="dropdown-wrapper">
-                    <select id="payment-method" name="payment_method" required> 
-                        <option value="" disabled selected>Select payment method...</option>
-                        <option value="cash">Cash</option>
-                        <option value="gcash">GCash</option>
-                    </select>
-                    <span class="arrow-icon">&#x25BC;</span>
-                </div>
-            </div>
-
-            <!-- Booking Confirmation Form -->
             <form action="confirm_booking.php" method="POST">
                 <input type="hidden" name="jeepneyID" value="<?= $jeepney['jeepneyID']; ?>">
-                <input type="hidden" name="userID" value="1"> <!-- Replace with actual user ID from session or context -->
+                <input type="hidden" name="userID" value="1"> <!-- Replace with session user ID -->
+
+                <div class="payment-method">
+                    <label for="departure-time">SELECT TIME OF DEPARTURE</label>
+                    <div class="dropdown-wrapper">
+                        <select id="payment-method" name="departure_time" required> 
+                            <option value="" disabled selected>Select departure time...</option>
+                            <?= $departure_options; ?>
+                        </select>
+                    </div>
+
+                    <label for="payment-method">SELECT PAYMENT METHOD</label>
+                    <div class="dropdown-wrapper">
+                        <select id="payment-method" name="payment_method" required> 
+                            <option value="" disabled selected>Select payment method...</option>
+                            <option value="cash">Cash</option>
+                            <option value="gcash">GCash</option>
+                        </select>
+                    </div>
+                </div>
+
                 <button type="submit" class="book-btn" id="book-btn" disabled>Confirm Booking</button>
             </form>
         </div>
@@ -107,26 +116,20 @@ if (isset($_GET['id']) && is_numeric($_GET['id'])) {
 </div>
 
 <script>
+// Enable booking button only if both dropdowns are selected
 let paymentMethodSelect = document.getElementById('payment-method');
+let departureTimeSelect = document.getElementById('departure-time');
 
-paymentMethodSelect.addEventListener('change', function() {
-    validatePaymentMethod(); //
-});
-
-function validatePaymentMethod() {
-    const paymentMethod = document.getElementById('payment-method').value;
+function validateForm() {
+    const paymentMethod = paymentMethodSelect.value;
+    const departureTime = departureTimeSelect.value;
+    const bookBtn = document.getElementById('book-btn');
     
-    if (paymentMethod === "cash" || paymentMethod === "gcash") {
-        bookBtn = document.getElementById('book-btn');
-        bookBtn.disabled = false;
-
-        return true; 
-    } else {
-        alert("Please select a valid payment method.");
-        return false;
-    }
+    bookBtn.disabled = paymentMethod === "" || departureTime === "";
 }
-</script>
 
+paymentMethodSelect.addEventListener('change', validateForm);
+departureTimeSelect.addEventListener('change', validateForm);
+</script>
 </body>
 </html>
