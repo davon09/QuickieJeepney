@@ -294,6 +294,7 @@ function generateHistogram() {
         <div class="filters">
             <label for="dayFrom">From Day: </label>
             <select id="dayFrom">
+                <option value="All">All</option>
                 <option value="Monday">Monday</option>
                 <option value="Tuesday">Tuesday</option>
                 <option value="Wednesday">Wednesday</option>
@@ -305,6 +306,7 @@ function generateHistogram() {
 
             <label for="dayTo">To Day: </label>
             <select id="dayTo">
+                <option value="All">All</option>
                 <option value="Monday">Monday</option>
                 <option value="Tuesday">Tuesday</option>
                 <option value="Wednesday">Wednesday</option>
@@ -452,13 +454,13 @@ function generateHistogram() {
             // Extract the day from the departure text (e.g., "Saturday: 20:00")
             const bookingDay = departureText.split(':')[0].trim();
 
-            // Convert day names to indices
-            const dayFromIndex = dayOrder.indexOf(dayFrom);
-            const dayToIndex = dayOrder.indexOf(dayTo);
-            const bookingDayIndex = dayOrder.indexOf(bookingDay);
+            // Check if "All" is selected, then skip day filtering
+            if (dayFrom !== "All" && dayTo !== "All") {
+                const dayFromIndex = dayOrder.indexOf(dayFrom);
+                const dayToIndex = dayOrder.indexOf(dayTo);
+                const bookingDayIndex = dayOrder.indexOf(bookingDay);
 
-            // Validate day range
-            if (dayFrom && dayTo) {
+                // Validate day range
                 if (bookingDayIndex < dayFromIndex || bookingDayIndex > dayToIndex) {
                     isValid = false;
                 }
