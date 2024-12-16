@@ -9,7 +9,8 @@ include '../../dbConnection/dbConnection.php';
 // }
 
 // Fetch logged-in user's details including the occupation
-$userID = $_SESSION['userID'];
+// $userID = $_SESSION['userID'];
+// todo
 $sqlUser = "SELECT firstName, lastName, occupation, email, profile_image FROM user WHERE userID = ?";
 $stmtUser = $conn->prepare($sqlUser);
 $stmtUser->bind_param("i", $userID);
@@ -41,10 +42,16 @@ $sql = "
         CONCAT(d.firstName, ' ', d.lastName) AS driverName,
         j.route,
         b.status,
-        j.departure_time
+        j.departure_time,
+        p.paymentID,
+        p.paymentStatus,
+        p.paymentMethod,
+        p.amount
     FROM 
         booking b
     JOIN 
+        payment p ON b.bookingID = p.bookingID
+    JOIN
         jeepney j ON b.jeepneyID = j.jeepneyID
     JOIN 
         driver d ON j.driverID = d.driverID
@@ -197,17 +204,6 @@ function generatePieChart() {
                     <i class="fas fa-calendar-alt sidebar-icon" class="sidebar-icon"></i>Booking Logs
                 </a>
             </li>
-
-            <li class="nav-link">
-                <a href="../payment/manager_payment.php" class="sidebar-link">
-                    <i class="fas fa-calendar-alt sidebar-icon" class="sidebar-icon"></i>Payment
-                </a>
-            </li>
-            <li class="nav-link">
-                <a href="../passenger/manager_passenger.php" class="sidebar-link">
-                    <i class="fas fa-calendar-alt sidebar-icon" class="sidebar-icon"></i>Manage Passengers
-                </a>
-            </li>
         </ul>
     </nav>
     <section class="main-content">
@@ -255,6 +251,9 @@ function generatePieChart() {
                     <th>Jeepney Route</th>
                     <th>Status</th>
                     <th>Departure Time</th>
+                    <th>Payment Status</th>
+                    <th>Payment Method</th>
+                    <th>Amount</th>
                 </tr>
             </thead>
             <tbody>
@@ -277,6 +276,9 @@ function generatePieChart() {
                                 <td>" . htmlspecialchars($row['route']) . "</td>
                                 <td><span class='status-badge $statusClass'>" . ucfirst($row['status']) . "</span></td>
                                 <td>" . htmlspecialchars($row['departure_time']) . "</td>
+                                <td>" . htmlspecialchars($row['paymentStatus']) . "</td>
+                                <td>" . htmlspecialchars($row['paymentMethod']) . "</td>
+                                <td>" . htmlspecialchars($row['amount']) . "</td>
                             </tr>";
                         }
                     } else {
