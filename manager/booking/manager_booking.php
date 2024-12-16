@@ -292,10 +292,27 @@ function generateHistogram() {
 
         <!-- Filters Section -->
         <div class="filters">
-            <label for="dateFrom">From Date: </label>
-            <input type="date" id="dateFrom">
-            <label for="dateTo">To Date: </label>
-            <input type="date" id="dateTo">
+            <label for="dayFrom">From Day: </label>
+            <select id="dayFrom">
+                <option value="Monday">Monday</option>
+                <option value="Tuesday">Tuesday</option>
+                <option value="Wednesday">Wednesday</option>
+                <option value="Thursday">Thursday</option>
+                <option value="Friday">Friday</option>
+                <option value="Saturday">Saturday</option>
+                <option value="Sunday">Sunday</option>
+            </select>
+
+            <label for="dayTo">To Day: </label>
+            <select id="dayTo">
+                <option value="Monday">Monday</option>
+                <option value="Tuesday">Tuesday</option>
+                <option value="Wednesday">Wednesday</option>
+                <option value="Thursday">Thursday</option>
+                <option value="Friday">Friday</option>
+                <option value="Saturday">Saturday</option>
+                <option value="Sunday">Sunday</option>
+            </select>
             
             <label for="status">Status: </label>
             <select id="status">
@@ -416,32 +433,46 @@ function generateHistogram() {
     }
     // Function to apply filters and update filteredData array
     function fetchData() {
-        const dateFrom = document.getElementById('dateFrom').value;
-        const dateTo = document.getElementById('dateTo').value;
-        const status = document.getElementById('status').value;
-        
+        const dayFrom = document.getElementById('dayFrom').value; // From Day
+        const dayTo = document.getElementById('dayTo').value;     // To Day
+        const status = document.getElementById('status').value;   // Status filter
+
         // Reset the filtered data to the complete table data initially
         filteredData = [...tableData];
-        
-        // Filter based on date and status
+
+        // Define day order for comparison
+        const dayOrder = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+        // Filter based on day and status
         filteredData = filteredData.filter(row => {
-            const bookingDate = row.cells[2].textContent.trim();  // Booking Date in column 3 (index 2)
-            const bookingStatus = row.cells[5].textContent.trim();  // Status in column 6 (index 5)
+            const departureText = row.cells[6].textContent.trim(); // Departure Time column (index 6)
+            const bookingStatus = row.cells[5].textContent.trim(); // Status column (index 5)
             let isValid = true;
-            // Filter by date
-            if (dateFrom && new Date(bookingDate) < new Date(dateFrom)) {
-                isValid = false;
+
+            // Extract the day from the departure text (e.g., "Saturday: 20:00")
+            const bookingDay = departureText.split(':')[0].trim();
+
+            // Convert day names to indices
+            const dayFromIndex = dayOrder.indexOf(dayFrom);
+            const dayToIndex = dayOrder.indexOf(dayTo);
+            const bookingDayIndex = dayOrder.indexOf(bookingDay);
+
+            // Validate day range
+            if (dayFrom && dayTo) {
+                if (bookingDayIndex < dayFromIndex || bookingDayIndex > dayToIndex) {
+                    isValid = false;
+                }
             }
-            if (dateTo && new Date(bookingDate) > new Date(dateTo)) {
-                isValid = false;
-            }
-            // Filter by status
+
+            // Validate status
             if (status && bookingStatus.toLowerCase() !== status.toLowerCase()) {
                 isValid = false;
             }
+
             return isValid;
         });
-        currentPage = 1;  // Reset to the first page when applying a new filter
+
+        currentPage = 1; // Reset to the first page when applying a new filter
         updateTable();
     }
     // Function to update the table with the current page's rows
