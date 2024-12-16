@@ -181,9 +181,12 @@ function generateHistogram() {
     <link rel="stylesheet" href="manager_booking.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx-style/0.8.13/xlsx-style.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
     <script src="manager_booking.js"></script>
     <style>
-        /* General status badge styling */
         .status-badge {
             display: inline-block;
             padding: 5px 10px;
@@ -196,28 +199,24 @@ function generateHistogram() {
             text-align: center;
         }
 
-        /* Available status - green */
         .status-on-the-way {
-            background-color: #28a745; /* Green */
-            color: #fff; /* White text */
+            background-color: #28a745;
+            color: #fff; 
         }
 
-        /* Departed status - gray */
         .status-departed {
-            background-color: #6c757d; /* Gray */
-            color: #fff; /* White text */
+            background-color: #6c757d; 
+            color: #fff; 
         }
 
-        /* Unavailable status - red */
         .status-unavailable {
-            background-color: #dc3545; /* Red */
-            color: #fff; /* White text */
+            background-color: #dc3545;
+            color: #fff; 
         }
 
-        /* Unknown status - yellow */
         .status-unknown {
-            background-color: #ffc107; /* Yellow */
-            color: #212529; /* Dark text */
+            background-color: #ffc107;
+            color: #212529; 
         }
     </style>
 </head>
@@ -528,24 +527,214 @@ function generateHistogram() {
     }
     // Export table data to Excel, CSV, and PDF
     function exportToExcel() {
+        // Get table data
         const table = document.getElementById("reportTable");
-        const wb = XLSX.utils.table_to_book(table);
-        XLSX.writeFile(wb, "Booking_Report.xlsx");
-    }
-  
-    function exportToCSV() {
-        const table = document.getElementById("reportTable");
-        const csv = XLSX.utils.table_to_csv(table);
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        saveAs(blob, "Booking_Report.csv");
+        const rows = table.querySelectorAll("tr");
+
+        // Prepare data for Excel
+        let excelData = [["Quickie Jeepney Booking Logs"]]; // Main header row
+        rows.forEach((row, index) => {
+            const rowData = [];
+            row.querySelectorAll("th, td").forEach((cell) => {
+                rowData.push(cell.textContent.trim());
+            });
+            if (index === 0) {
+                excelData.push(rowData); // Headers
+            } else {
+                excelData.push(rowData); // Data rows
+            }
+        });
+
+        // Create workbook and worksheet
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.aoa_to_sheet(excelData);
+
+        // Merge the main header (first row, A1 to J1)
+        if (!ws["!merges"]) ws["!merges"] = [];
+        ws["!merges"].push({
+            s: { r: 0, c: 0 }, // Start cell (Row 0, Column 0)
+            e: { r: 0, c: 9 }, // End cell (Row 0, Column 9)
+        });
+
+        // Add styles
+        const headerStyle = {
+            font: { bold: true, color: { rgb: "FFFFFF" } },
+            fill: { fgColor: { rgb: "16A085" } }, // Teal background
+            alignment: { horizontal: "center", vertical: "center" },
+        };
+
+        const columnHeaderStyle = {
+            font: { bold: true, color: { rgb: "FFFFFF" } },
+            fill: { fgColor: { rgb: "2C3E50" } }, // Dark teal for column headers
+            alignment: { horizontal: "center", vertical: "center" },
+        };
+
+        // Apply styles
+        ws['A1'].s = headerStyle; // Main header
+        for (let col = 0; col <= 9; col++) {
+            const cellAddress = XLSX.utils.encode_cell({ r: 1, c: col }); // Row 1 (headers)
+            if (ws[cellAddress]) ws[cellAddress].s = columnHeaderStyle;
+        }
+
+        // Adjust column widths
+        ws['!cols'] = [
+            { wch: 10 }, // Booking ID
+            { wch: 20 }, // Customer Name
+            { wch: 18 }, // Jeepney Plate Number
+            { wch: 20 }, // Driver Name
+            { wch: 30 }, // Jeepney Route
+            { wch: 15 }, // Status
+            { wch: 20 }, // Departure Time
+            { wch: 20 }, // Payment Status
+            { wch: 20 }, // Payment Method
+            { wch: 10 }, // Amount
+        ];
+
+        // Create filename
+        const today = new Date();
+        const formattedDate = today.toISOString().split('T')[0]; // YYYY-MM-DD
+        const filename = `QuickieJeepney_Log-${formattedDate}.xlsx`;
+
+        // Write the Excel file with xlsx-style
+        XLSX.utils.book_append_sheet(wb, ws, "BookingLogs");
+        XLSX.writeFile(wb, filename);
     }
     
-    function exportToPDF() {
-        const doc = new jsPDF();
+    function exportToCSV() {
         const table = document.getElementById("reportTable");
-        doc.autoTable({ html: table });
-        doc.save('Booking_Report.pdf');
+
+        if (!table) {
+            alert("Error: Table not found!");
+            return;
+        }
+
+        // Prepare the data for CSV
+        let csvContent = "data:text/csv;charset=utf-8,";
+
+        // Add the main header
+        csvContent += "Quickie Jeepney Booking Logs\n"; // Add title with extra space
+
+        // Extract table rows
+        const rows = table.querySelectorAll("tr");
+
+        // Format and add rows to the CSV
+        rows.forEach((row, index) => {
+            const rowData = [];
+            row.querySelectorAll("th, td").forEach((cell) => {
+                rowData.push(`"${cell.textContent.trim()}"`); // Escape content safely
+            });
+
+            // Add spacing after the header row
+            if (index === 0) {
+                csvContent += rowData.join(",") + "\n\n"; // Add space after column headers
+            } else {
+                csvContent += rowData.join(",") + "\n";
+            }
+        });
+
+        // Add export date at the bottom
+        const today = new Date();
+        const formattedDate = today.toISOString().split("T")[0]; // Format: YYYY-MM-DD
+        csvContent += `\nExported on: ${formattedDate}`;
+
+        // Generate a filename
+        const filename = `QuickieJeepney_Log-${formattedDate}.csv`;
+
+        // Create and trigger a download link
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", filename);
+        document.body.appendChild(link); // Append to DOM for Firefox compatibility
+        link.click();
+        document.body.removeChild(link); // Clean up
     }
+
+    
+    function exportToPDF() {
+        // Check for jsPDF availability
+        if (!window.jspdf || !window.jspdf.jsPDF) {
+            console.error("jsPDF library is not loaded.");
+            alert("Error: jsPDF library is missing!");
+            return;
+        }
+
+        // Initialize jsPDF in landscape mode
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF("landscape"); // Set orientation to landscape
+
+        // Title and export date
+        const title = "Quickie Jeepney - Booking Log Report";
+        const today = new Date();
+        const formattedDate = today.toISOString().split("T")[0]; // Format: YYYY-MM-DD
+        const displayDate = `Exported Date: ${formattedDate}`;
+
+        // Add title and date
+        doc.setFontSize(16);
+        doc.text(title, 14, 15);
+        doc.setFontSize(12);
+        doc.text(displayDate, 14, 22);
+
+        // Extract table data
+        const table = document.getElementById("reportTable");
+        if (!table) {
+            alert("Error: Table not found!");
+            return;
+        }
+
+        let pdfData = [];
+        const rows = table.querySelectorAll("tr");
+        rows.forEach((row) => {
+            const rowData = [];
+            row.querySelectorAll("th, td").forEach((cell) => {
+                rowData.push(cell.textContent.trim());
+            });
+            pdfData.push(rowData);
+        });
+
+        // AutoTable options for better layout
+        doc.autoTable({
+            head: [pdfData[0]], // Table headers
+            body: pdfData.slice(1), // Table rows
+            startY: 30, // Start position
+            theme: "grid", // Add borders
+            styles: {
+                fontSize: 8, // Smaller font size
+                cellPadding: 2, // Reduce cell padding
+                valign: "middle",
+                halign: "center",
+            },
+            headStyles: {
+                fillColor: [22, 160, 133], // Teal header background
+                textColor: 255, // White text
+                fontStyle: "bold",
+            },
+            columnStyles: {
+                0: { cellWidth: 20 }, // Booking ID
+                1: { cellWidth: 27 }, // Customer Name
+                2: { cellWidth: 35 }, // Jeepney Plate Number
+                3: { cellWidth: 40 }, // Driver Name
+                4: { cellWidth: 45 }, // Jeepney Route
+                5: { cellWidth: 20 }, // Status
+                6: { cellWidth: 35 }, // Departure Time
+                7: { cellWidth: 20 }, // Payment Status
+                8: { cellWidth: 20 }, // Payment Method
+                9: { cellWidth: 15 }, // Amount
+            },
+            margin: { top: 30, left: 10, right: 10 }, // Reduce margins
+            didDrawPage: function (data) {
+                // Add export date at the bottom of each page
+                doc.setFontSize(10);
+                const pageHeight = doc.internal.pageSize.height;
+                doc.text(`Quickie Jeepney 2024`, 10, pageHeight - 10);
+            },
+        });
+
+        // Save the PDF
+        const filename = `QuickieJeepney_Log-${formattedDate}.pdf`;
+        doc.save(filename);
+    }
+
     // Initialize table data when the page loads
     document.addEventListener('DOMContentLoaded', function() {
         getTableData();  // Fetch and load all table data initially
