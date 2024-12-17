@@ -439,10 +439,10 @@ if (!$resultJeepney) {
                 formData.append('status', updatedStatus);
                 formData.append('departure_time', JSON.stringify(schedule));
 
-                // view the values of the payload
-                for (let [key, value] of formData.entries()) {
-                    console.log(key, value);
-                }
+                // // view the values of the payload
+                // for (let [key, value] of formData.entries()) {
+                //     console.log(key, value);
+                // }
 
                 fetch('update_vehicle.php', {
                     method: 'POST',
