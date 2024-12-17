@@ -2,34 +2,6 @@
 session_start();
 include '../../dbConnection/dbConnection.php';
 
-// Handle AJAX request to update status
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['jeepneyID']) && isset($_POST['departure_time']) && isset($_POST['status'])) {
-    $jeepneyID = $_POST['jeepneyID'];
-    $status = $_POST['status'];
-    $departureTime = $_POST['departure_time'];
-
-    $dbStatus = ($status === 'Unavailable') ? 'Unavailable' : 'Available';
-    
-    // Example: If there's a 'status' column in the jeepney table:
-    $sql = "UPDATE jeepney SET status = ?, departure_time = ? WHERE jeepneyID = ?";
-    $stmt = $conn->prepare($sql);
-    if ($stmt) {
-        $stmt->bind_param("ssi", $dbStatus, $departureTime, $jeepneyID);
-        $updated = $stmt->execute();
-        $stmt->close();
-
-        if ($updated) {
-            echo json_encode(['success' => true]);
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Database update failed']);
-        }
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Query preparation failed']);
-    }
-
-    exit; // Stop execution here after handling AJAX
-}
-
 // Normal page load logic
 // // Check if user is logged in
 // if (!isset($_SESSION['userID'])) {
@@ -209,25 +181,56 @@ if (!$resultJeepney) {
                 <p><span>Plate Number:</span> <span id="modalPlateNumber"></span></p>
                 <p><span>Driver:</span> <span id="modalDriverName"></span></p>
                 <p><span>Vehicle Type:</span> <span id="modalVehicleType"></span></p>
-                <p><span>Departure Time:</span>
+                <p><span>Departure Schedule:</span>
                     <!-- <input id="modalDepartureTime" type="time" name="modalDepartureTime"> -->
                     <p id="modalDepartureTime"></p>
                 </p>
-                <p>
+
+                <!-- hidden -->
+                <div style="display:flex; gap:2px; flex-wrap:wrap; height: 0px;"> <!-- remove 'height: 0px' to show -->
                     <?php foreach ($choices as $index => $choice): ?>
-                        <label>
+                        <label class="schedule-label" for="checkbox-<?php echo $index; ?>">
                             <input type="checkbox" 
                                 id="checkbox-<?php echo $index; ?>" 
-                                data-target="content-<?php echo $index; ?>" />
+                                type="checkbox"
+                                data-target="content-<?php echo $index; ?>"
+                                class="toggle-checkbox"/>
                             <?php echo $choice; ?>
                         </label>
                         <br/>
                     <?php endforeach; ?>
-                </p>
+                </div>
+                <script>
+                    // Wait for DOM to load
+                    document.addEventListener('DOMContentLoaded', () => {
+                        const checkboxes = document.querySelectorAll('.toggle-checkbox');
+                        
+                        checkboxes.forEach(checkbox => {
+                            checkbox.click(); // Simulate a click on each checkbox
+                        });
+                    });
+
+                    // Get all labels that act like buttons
+                    const labels = document.querySelectorAll('.schedule-label');
+
+                    labels.forEach(label => {
+                        const checkbox = label.querySelector('input[type="checkbox"]'); // Get the checkbox within the label
+
+                        // Add event listener to the checkbox
+                        checkbox.addEventListener('change', function() {
+                            if (this.checked) {
+                                label.classList.add('checked'); // Add "checked" class when checkbox is checked
+                            } else {
+                                label.classList.remove('checked'); // Remove "checked" class when unchecked
+                            }
+                        });
+                    });
+                </script>
+                
                 <p>
                     <?php foreach ($choices as $index => $choice): ?>
                         <div id="content-<?php echo $index; ?>" class="toggle-content schedule-for-<?php echo $choice; ?>">
-                            <?php echo $choice; ?> departure schedule
+                            <p style="margin: 0 0 .5rem 0;"><b><?php echo $choice; ?> departure schedule</b></p>
                         </div>
                     <?php endforeach; ?>
                 </p>
@@ -291,6 +294,17 @@ if (!$resultJeepney) {
 
             jeepneyGrid.addEventListener('click', (e) => {
                 if (e.target.classList.contains('edit-btn')) {
+
+                    // remove contents
+                    var scheduleContainers = document.querySelectorAll('[class*="schedule-for-"]');
+                    scheduleContainers.forEach((element, index) => {
+                        const firstChild = element.firstElementChild; // this contains the header
+                        // Remove all other child nodes except the first child
+                        while (element.lastElementChild !== firstChild) {
+                            element.removeChild(element.lastElementChild);
+                        }
+                    });
+
                     const card = e.target.closest('.jeepney-card');
 
                     const jeepneyID = card.getAttribute('data-jeepneyid');
@@ -303,44 +317,20 @@ if (!$resultJeepney) {
                     var departureTimeJSON = JSON.parse(departureTime);
 
                     Object.keys(departureTimeJSON).forEach(key => {
-                        console.log(key, departureTimeJSON[key]);
-
                         var timeArr = departureTimeJSON[key]; // ex. ["14:00", "15:00"]
                         var timeInputContainer = document.querySelector('.schedule-for-' + key);
 
                         timeArr.forEach(sched => {
-                            const timeInputLabel = document.createElement('p');
-                            timeInputLabel.style = "height: 1.5rem; margin: 0";
-                            timeInputLabel.textContent = "Departure Time: ";
-
-                            const timeInput = document.createElement('input');
-                            timeInput.setAttribute("class", key + "-sched");
-                            timeInput.setAttribute("type", "time");
-                            timeInput.style = "padding: 0 .5rem; height: 1.5rem";
-                            timeInput.value = sched;
-
-                            const removeTimeBtn = document.createElement('button');
-                            removeTimeBtn.textContent = "remove";
-                            removeTimeBtn.style = "margin-left: .5rem; height: 1.5rem; padding: 0 .5rem; background:rgb(169, 32, 32); color: white; border: 0px";
-
-                            const container = document.createElement('div');
-                            container.appendChild(timeInputLabel);
-                            container.appendChild(timeInput);
-                            container.appendChild(removeTimeBtn);
-
-                            container.style = "display: flex; gap: 1rem; margin: .25rem 0";
-
-                            timeInputContainer.appendChild(container);
+                            addTimeInput(timeInputContainer, key, sched); // key contains day of week, no initial value
                         });
-
                     });
                     
                     var keys = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
                     keys.forEach(function(key) {
                         var timeInputContainer = document.querySelector('.schedule-for-' + key);
-                        console.log(timeInputContainer);
 
                         const addTimeBtn = document.createElement('button');
+                        addTimeBtn.setAttribute('type', 'button');
                         addTimeBtn.style = "background:rgb(45, 160, 66); color: white; border: 0px; padding: .25rem";
                         addTimeBtn.textContent = "Add Time";
 
@@ -348,7 +338,7 @@ if (!$resultJeepney) {
                         container.appendChild(addTimeBtn);
 
                         addTimeBtn.addEventListener('click', () => {
-                            alert('add clicked');
+                            addTimeInput(timeInputContainer, key, null); // key contains day of week, no initial value
                         });
 
                         timeInputContainer.appendChild(container);
@@ -358,13 +348,54 @@ if (!$resultJeepney) {
                     modalPlateNumber.textContent = plateNumber;
                     modalDriverName.textContent = driverName || '';
                     modalVehicleType.textContent = vehicleType || '';
-                    modalDepartureTime.textContent = departureTime || '';
+                    // modalDepartureTime.textContent = departureTime || '';
 
                     modalStatus.value = status.charAt(0).toUpperCase() + status.slice(1);
 
                     editModal.style.display = 'flex';
                 }
             });
+
+            function addTimeInput(timeInputContainer, key, inputValue) {
+                const timeInputLabel = document.createElement('p');
+                timeInputLabel.style = "height: 1.5rem; margin: 0";
+                timeInputLabel.textContent = "Departure Time: ";
+
+                const timeInput = document.createElement('input');
+                timeInput.classList.add(key + "-sched");
+                timeInput.classList.add("schedule-input");
+                timeInput.setAttribute("type", "time");
+                timeInput.style = "padding: 0 .5rem; height: 1.5rem";
+                // set the input value if argument is not empty
+                if (inputValue) {
+                    timeInput.value = inputValue; // Set the input value
+                } else {
+                    timeInput.value = ''; // Clear the input value if inputValue is empty
+                }
+
+                const removeTimeBtn = document.createElement('button');
+                removeTimeBtn.setAttribute('type', 'button');
+                removeTimeBtn.textContent = "remove";
+                removeTimeBtn.style = "margin-left: .5rem; height: 1.5rem; padding: 0 .5rem; background:rgb(169, 32, 32); color: white; border: 0px";
+
+                const container = document.createElement('div');
+                container.classList.add("time-input-container");
+                container.appendChild(timeInputLabel);
+                container.appendChild(timeInput);
+                container.appendChild(removeTimeBtn);
+
+                container.style = "display: flex; gap: 1rem; margin: .25rem 0";
+
+                timeInputContainer.appendChild(container);
+
+                removeTimeBtn.addEventListener('click', () => {
+                    const parentDiv = removeTimeBtn.closest('.time-input-container');
+
+                    if (parentDiv) {
+                        parentDiv.remove(); // Remove the parent div
+                    }
+                });
+            }
 
             closeModalBtn.addEventListener('click', () => {
                 editModal.style.display = 'none';
@@ -381,18 +412,39 @@ if (!$resultJeepney) {
 
                 const updatedStatus = modalStatus.value; // 'Available' or 'Unavailable'
                 const jeepneyID = modalJeepneyID.textContent;
-                const updatedDepartureTime = modalDepartureTime.value;
+
+                // grab the values for the schedule
+                let schedule = {};
+                const days = <?php echo json_encode($choices); ?>; // Mon to Sun
+                days.forEach(day => {
+                    // Select the container for each day's schedule
+                    const dayContainer = document.querySelector(`.schedule-for-${day}`);
+                    
+                    // Check if the container exists and has input elements
+                    if (dayContainer) {
+                        const inputs = dayContainer.querySelectorAll("input");
+                        
+                        // Collect input values into an array
+                        const values = Array.from(inputs).map(input => input.value).filter(value => value.trim() !== "");
+                        
+                        // If values are not empty, add them to the schedule object
+                        if (values.length > 0) {
+                            schedule[day] = values;
+                        }
+                    }
+                });
 
                 const formData = new FormData();
                 formData.append('jeepneyID', jeepneyID);
                 formData.append('status', updatedStatus);
-                formData.append('departure_time', updatedDepartureTime);
+                formData.append('departure_time', JSON.stringify(schedule));
 
+                // view the values of the payload
                 for (let [key, value] of formData.entries()) {
                     console.log(key, value);
                 }
 
-                fetch('manager_vehicles.php', { // same file handling AJAX
+                fetch('update_vehicle.php', {
                     method: 'POST',
                     body: formData
                 })
@@ -400,19 +452,8 @@ if (!$resultJeepney) {
                 .then(data => {
                     if(data.success) {
                         alert('Jeepney status updated!');
-                        const card = document.querySelector(`.jeepney-card[data-jeepneyid="${jeepneyID}"]`);
-                        if (card) {
-                            card.setAttribute('data-status', updatedStatus.toLowerCase());
-                            const statusDiv = card.querySelector('.status');
-                            if (statusDiv) statusDiv.textContent = updatedStatus.toUpperCase();
-                            statusDiv.classList.remove('available', 'unavailable');
-                            statusDiv.classList.add(updatedStatus.toLowerCase());
-
-                            card.setAttribute('data-departuretime', updatedDepartureTime);
-                            const departureTimeInput = card.querySelector('#modalDepartureTime');
-                            departureTimeInput.value = updatedDepartureTime;
-                        }
-                        editModal.style.display = 'none';
+                        
+                        location.reload();
                     } else {
                         alert('Error updating jeepney status: ' + (data.message || 'Unknown error'));
                     }

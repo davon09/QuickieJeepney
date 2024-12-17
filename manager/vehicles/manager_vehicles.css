@@ -260,6 +260,11 @@ hr {
     color: #5d4037;
 }
 
+/* Default button styling */
+.schedule-label {
+    display: none;
+}
+
 .controls {
     display: flex;
     justify-content: space-between;
@@ -335,7 +340,7 @@ hr {
 }
 
 .modal-content p {
-    margin: 10px 0;
+    margin: 5px 0;
     font-size: 14px;
 }
 
@@ -391,7 +396,7 @@ hr {
 /* Initially hide all divs */
 .toggle-content {
     display: none;
-    margin-top: 10px;
+    margin-bottom: 10px;
     padding: 10px;
     background: #f2f2f2;
     border: 1px solid #ddd;
