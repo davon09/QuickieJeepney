@@ -59,7 +59,7 @@ $sql = "
     JOIN 
         user u ON b.userID = u.userID  
     WHERE 
-        b.status IN ('available', 'departed', 'unavailable')
+        b.status IN ('Booked', 'Done')
     ORDER BY 
         b.bookingID DESC;
 ";
@@ -75,21 +75,18 @@ function generateHistogram() {
 
     // Initialize counts
     $statusCounts = [
-        'available' => 0,
-        'departed' => 0,
-        'unavailable' => 0,
+        'Booked' => 0,
+        'Done' => 0,
         'unknown' => 0
     ];
 
     // Process the result set
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            if ($row['status'] == 'available') {
-                $statusCounts['available'] = $row['count'];
-            } elseif ($row['status'] == 'departed') {
-                $statusCounts['departed'] = $row['count'];
-            } elseif ($row['status'] == 'unavailable') {
-                $statusCounts['unavailable'] = $row['count'];
+            if ($row['status'] == 'Booked') {
+                $statusCounts['Booked'] = $row['count'];
+            } elseif ($row['status'] == 'Done') {
+                $statusCounts['Done'] = $row['count'];
             } else {
                 $statusCounts['unknown'] += $row['count'];
             }
@@ -110,10 +107,9 @@ function generateHistogram() {
 
     // Colors
     $bgColor = imagecolorallocate($image, 240, 240, 240); // Light gray background
-    $barColor1 = imagecolorallocate($image, 60, 179, 113); // Green for available
-    $barColor2 = imagecolorallocate($image, 105, 105, 105); // Gray for departed
-    $barColor3 = imagecolorallocate($image, 220, 20, 60);   // Red for unavailable
-    $barColor4 = imagecolorallocate($image, 255, 215, 0);   // Gold for unknown
+    $barColor1 = imagecolorallocate($image, 255, 165, 0); // Orange for Booked
+    $barColor2 = imagecolorallocate($image, 0, 134, 0); // Green for Done
+    $barColor3 = imagecolorallocate($image, 112,112,112);   // Gold for unknown
     $gridColor = imagecolorallocate($image, 200, 200, 200); // Light gray for grid lines
     $textColor = imagecolorallocate($image, 0, 0, 0); // Black for text
 
@@ -140,9 +136,9 @@ function generateHistogram() {
         $y2 = (int)($height - $padding);
 
         // Choose bar color based on status
-        $barColor = ($status == 'available') ? $barColor1 :
-                    (($status == 'departed') ? $barColor2 :
-                    (($status == 'unavailable') ? $barColor3 : $barColor4));
+        $barColor = ($status == 'Booked') ? $barColor1 :
+                    (($status == 'Done') ? $barColor2 :
+                    (($status == 'unavailable') ? $barColor3 : $barColor3));
 
         // Draw bar
         imagefilledrectangle($image, $x1, $y1, $x2, $y2, $barColor);
@@ -199,18 +195,13 @@ function generateHistogram() {
             text-align: center;
         }
 
-        .status-on-the-way {
-            background-color: #28a745;
+        .status-booked {
+            background-color: orange;
             color: #fff; 
         }
 
-        .status-departed {
-            background-color: #6c757d; 
-            color: #fff; 
-        }
-
-        .status-unavailable {
-            background-color: #dc3545;
+        .status-done {
+            background-color: green; 
             color: #fff; 
         }
 
@@ -318,12 +309,12 @@ function generateHistogram() {
             <label for="status">Status: </label>
             <select id="status">
                 <option value="">All</option>
-                <option value="available">Available</option>
-                <option value="departed">Departed</option>
-                <option value="unavailable">Unavailable</option>
+                <option value="Booked">Booked</option>
+                <option value="Done">Done</option>
             </select>
             
             <button onclick="fetchData()">Apply Filters</button>
+            <button onclick="resetFilters()">Reset Filters</button>
         </div>
 
         <section class="statistics">
@@ -353,13 +344,11 @@ function generateHistogram() {
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
                             $statusClass = '';
-                            if ($row['status'] === 'available') {
-                                $statusClass = 'status-on-the-way';
-                            } elseif ($row['status'] === 'departed') {
-                                $statusClass = 'status-departed';
-                            } elseif ($row['status'] === 'unavailable') {
-                                $statusClass = 'status-unavailable';
-                            }else {
+                            if ($row['status'] === 'Booked') {
+                                $statusClass = 'status-booked';
+                            } elseif ($row['status'] === 'Done') {
+                                $statusClass = 'status-done';
+                            } else {
                                 $statusClass = 'status-unknown';
                             }
 
@@ -419,7 +408,7 @@ function generateHistogram() {
 </body>
 <script>
     let currentPage = 1;
-    const rowsPerPage = 5;  // Set the number of rows per page
+    const rowsPerPage = 20;  // Set the number of rows per page
     let tableData = [];  // All the rows in the table
     let filteredData = [];  // Filtered rows based on the filter criteria
     // Function to fetch all the rows from the table and store in the tableData array
@@ -466,7 +455,10 @@ function generateHistogram() {
             }
 
             // Validate status
-            if (status && bookingStatus.toLowerCase() !== status.toLowerCase()) {
+            if (status.toLowerCase() && bookingStatus.toLowerCase() !== status.toLowerCase()) {
+                console.log(status.toLowerCase());
+                console.log(bookingStatus.toLowerCase());
+                
                 isValid = false;
             }
 
@@ -476,6 +468,19 @@ function generateHistogram() {
         currentPage = 1; // Reset to the first page when applying a new filter
         updateTable();
     }
+
+    function resetFilters() {
+        // Reset filter inputs to their default values
+        document.getElementById('dayFrom').value = "All";
+        document.getElementById('dayTo').value = "All";
+        document.getElementById('status').value = "";
+
+        // Reset filtered data to the full table data and reload
+        filteredData = [...tableData];
+        currentPage = 1; // Reset to the first page
+        updateTable();
+    }
+
     // Function to update the table with the current page's rows
     function updateTable() {
         const tableBody = document.querySelector('#reportTable tbody');
@@ -740,8 +745,8 @@ function generateHistogram() {
         getTableData();  // Fetch and load all table data initially
     });
     // Attach event listeners to filter inputs
-    document.getElementById('dateFrom').addEventListener('change', fetchData);
-    document.getElementById('dateTo').addEventListener('change', fetchData);
+    // document.getElementById('dateFrom').addEventListener('change', fetchData);
+    // document.getElementById('dateTo').addEventListener('change', fetchData);
     document.getElementById('status').addEventListener('change', fetchData);
 
 
