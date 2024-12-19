@@ -53,6 +53,13 @@ body {
     position: relative;
 }
 
+.profile-pic {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
 .profile-image {
     position: relative;
     margin-right: 20px;
@@ -112,6 +119,7 @@ body {
     justify-content: space-between;
     margin-bottom: 20px;
     width: 100%;
+    gap: 50px;
 }
 
 .form-group {

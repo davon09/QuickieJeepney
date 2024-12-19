@@ -44,27 +44,56 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // Update password
-    if (isset($_POST['password']) && !empty($_POST['password'])) {
+    if (isset($_POST['password'], $_POST['confirmPassword']) && !empty($_POST['password'])) {
         $password = $_POST['password'];
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-        $updatePasswordSQL = "UPDATE user SET password = ? WHERE userID = ?";
-        $stmt = $conn->prepare($updatePasswordSQL);
-        $stmt->bind_param("si", $hashedPassword, $userID);
-        $stmt->execute();
+        $confirmPassword = $_POST['confirmPassword'];
+    
+        if ($password === $confirmPassword) {
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT); // Securely hash the password
+            $updatePasswordSQL = "UPDATE user SET password = ? WHERE userID = ?";
+            $stmt = $conn->prepare($updatePasswordSQL);
+            $stmt->bind_param("si", $hashedPassword, $userID);
+            $stmt->execute();
+        } else {
+            echo "<script>alert('Passwords do not match.');</script>";
+        }
     }
 
-    if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] == 0) {
-        $image = $_FILES['profile_image']['tmp_name'];
-        $imageData = file_get_contents($image);
-        $imageData = mysqli_real_escape_string($conn, $imageData);
+    // Handle Profile Photo Upload
+    if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
+        $fileName = $_FILES['profile_image']['name'];
+        $fileTmpName = $_FILES['profile_image']['tmp_name'];
+        $fileType = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+        $allowedTypes = ['jpg', 'jpeg', 'png', 'gif'];
 
-        $sql = "UPDATE user SET profile_image = ? WHERE userID = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("si", $imageData, $userID);
-        if ($stmt->execute()) {
-            echo "Profile image uploaded successfully!";
+        if (in_array($fileType, $allowedTypes)) {
+            $newFileName = uniqid('profile_', true) . '.' . $fileType;
+
+            $uploadDir = '../../uploads/profile_photos/';
+            if (!file_exists($uploadDir)) {
+                mkdir($uploadDir, 0777, true);
+            }
+
+            $uploadFile = $uploadDir . $newFileName;
+
+
+            if (move_uploaded_file($fileTmpName, $uploadFile)) {
+                $profilePhotoPath = $uploadFile;
+
+                $updateImageSQL = "UPDATE user SET profile_image = ? WHERE userID = ?";
+                $stmtImage = $conn->prepare($updateImageSQL);
+                $stmtImage->bind_param("si", $profilePhotoPath, $userID);
+                if (!$stmtImage->execute()) {
+                    echo "Error updating profile photo in the database.";
+                    exit();
+                }
+            } else {
+                echo "Error uploading the photo.";
+                exit();
+            }
         } else {
-            echo "Error updating profile image: " . $conn->error;
+            echo "Invalid file type. Only jpg, jpeg, png, gif are allowed.";
+            exit();
         }
     }
     
@@ -98,18 +127,17 @@ $conn->close();
     <div class="profile-details">
         <div class="profile-image">
         <?php
-        if (!empty($user['profile_image'])) {
-            echo '<img class="profile-pic" src="data:image/png;base64,' . base64_encode($user['profile_image']) . '" alt="Profile Picture">';
-        } else {
-            echo '<img class="profile-pic" src="../../images/profile.png" alt="Profile Picture">';
-        }
-        ?>
-
-        <span class="edit-icon">
-            <img src="../../images/camera.png" alt="Edit Profile">
-            <input type="file" name="profile_image" id="profile_image" style="display:none;">
-        </span>
-            
+            if (!empty($user['profile_image'])) {
+                $profileImagePath = str_replace('../../', 'uploads/', $user['profile_image']);
+                echo '<img class="profile-pic" src="' . htmlspecialchars($profileImagePath) . '" alt="Profile Picture">';
+            } else {
+                echo '<img class="profile-pic" src="images/profile.png" alt="Default Profile Picture">';
+            }
+            ?>
+            <span class="edit-icon">
+                <img src="../../images/camera.png" alt="Edit Profile">
+                <input type="file" name="profile_image" id="profile_image" style="display:none;">
+            </span>
         </div>
         <div class="profile-info">
             <h3><?php echo htmlspecialchars($user['firstName'] . ' ' . $user['lastName']); ?></h3> <!-- current user name -->
@@ -137,6 +165,13 @@ $conn->close();
         <div class="form-group">
             <label for="email">Email Address</label>
             <input type="email" id="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" readonly>
+        </div>
+        <div class="form-group">
+            <label for="confirmPassword">Confirm Password</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm new password">
+            <span class="password-toggle">
+                <i class="fa fa-eye-slash"></i>
+            </span>
         </div>
     </div>
 
