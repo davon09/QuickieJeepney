@@ -118,24 +118,16 @@ if (!$resultJeepney) {
         <div class="container">
             <h1>Jeepney Status</h1>
             <div class="controls">
-    <div class="filter">
-        <label for="filter">Filter by:</label>
-        <select id="filter">
-            <option value="all">All</option>
-            <option value="available">Available</option>
-            <option value="unavailable">Unavailable</option>
-        </select>
-    </div>
-    <div class="sort">
-        <label for="sort">Sort by:</label>
-        <select id="sort">
-            <option value="none">None</option>
-            <option value="traditional">Traditional</option>
-            <option value="modern">Modern</option>
-        </select>
-    </div>
-    <input type="text" id="searchPlate" placeholder="Search Plate Number..." class="search-bar">
-</div>
+                <div class="filter">
+                    <label for="filter">Filter by:</label>
+                    <select id="filter">
+                        <option value="all">All</option>
+                        <option value="available">Available</option>
+                        <option value="unavailable">Unavailable</option>
+                    </select>
+                </div>
+                <input type="text" id="searchPlate" placeholder="Search Plate Number..." class="search-bar">
+            </div>
 
             <div class="jeepney-grid" id="jeepneyGrid">
                 <?php if ($resultJeepney->num_rows > 0): ?>
@@ -143,14 +135,13 @@ if (!$resultJeepney) {
                         $displayStatus = ($row['status'] === 'Unavailable') ? 'Unavailable' : 'Available';
                     ?>
                         <div class="jeepney-card" 
-    data-jeepneyid="<?= htmlspecialchars($row['jeepneyID']) ?>"
-    data-plate="<?= htmlspecialchars($row['plateNumber']) ?>"
-    data-driverName="<?= htmlspecialchars($row['firstName'] . ' ' . $row['lastName']) ?>"
-    data-vehicletype="<?= htmlspecialchars($row['type']) ?>"
-    data-departuretime="<?= htmlspecialchars($row['departure_time']) ?>"
-    data-status="<?= strtolower($displayStatus) ?>"
->
-
+                            data-jeepneyid="<?= htmlspecialchars($row['jeepneyID']) ?>"
+                            data-plate="<?= htmlspecialchars($row['plateNumber']) ?>"
+                            data-driverName="<?= htmlspecialchars($row['firstName'] . ' ' . $row['lastName']) ?>"
+                            data-vehicletype="<?= htmlspecialchars($row['type']) ?>"
+                            data-departuretime="<?= htmlspecialchars($row['departure_time']) ?>"
+                            data-status="<?= strtolower($displayStatus) ?>"
+                        >
                             <img src="data:image/jpeg;base64,<?= base64_encode($row['jeep_image']) ?>" alt="Jeepney Image">
                             
                             <div class="status <?= strtolower($displayStatus) ?>">
@@ -168,8 +159,6 @@ if (!$resultJeepney) {
             </div>
         </div>
     </section>
-
-    
 
     <!-- Modal Structure -->
     <div id="editModal" class="modal">
@@ -258,54 +247,45 @@ if (!$resultJeepney) {
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-    const sortSelect = document.getElementById('sort');
-    const filterSelect = document.getElementById('filter');
-    const searchInput = document.getElementById('searchPlate');
-    const jeepneyGrid = document.getElementById('jeepneyGrid');
+            const filterSelect = document.getElementById('filter');
+            const searchInput = document.getElementById('searchPlate');
+            const jeepneyGrid = document.getElementById('jeepneyGrid');
 
-    sortSelect.addEventListener('change', applyFiltersAndSorting);
-    filterSelect.addEventListener('change', applyFiltersAndSorting);
-    searchInput.addEventListener('input', applyFiltersAndSorting);
+            const editModal = document.getElementById('editModal');
+            const closeModalBtn = editModal.querySelector('.close-modal');
+            const editForm = document.getElementById('editForm');
 
-    function applyFiltersAndSorting() {
-        const filterValue = filterSelect.value.toLowerCase();
-        const searchValue = searchInput.value.toLowerCase();
-        const sortValue = sortSelect.value.toLowerCase();
+            const modalJeepneyID = document.getElementById('modalJeepneyID');
+            const modalPlateNumber = document.getElementById('modalPlateNumber');
+            const modalDriverName = document.getElementById('modalDriverName');
+            const modalVehicleType = document.getElementById('modalVehicleType');
+            const modalDepartureTime = document.getElementById('modalDepartureTime');
+            const modalStatus = document.getElementById('modalStatus');
 
-        const jeepneyCards = Array.from(jeepneyGrid.querySelectorAll('.jeepney-card'));
+            filterSelect.addEventListener('change', applyFilters);
+            searchInput.addEventListener('input', applyFilters);
 
-        // Filter logic
-        jeepneyCards.forEach(card => {
-            const plate = card.getAttribute('data-plate').toLowerCase();
-            const status = card.getAttribute('data-status').toLowerCase();
-            const matchesFilter = filterValue === 'all' || status === filterValue;
-            const matchesSearch = plate.includes(searchValue);
+            function applyFilters() {
+                const filterValue = filterSelect.value.toLowerCase();
+                const searchValue = searchInput.value.toLowerCase();
 
-            card.style.display = matchesFilter && matchesSearch ? '' : 'none';
-        });
+                const jeepneyCards = jeepneyGrid.querySelectorAll('.jeepney-card');
 
-        // Sorting logic
-        const visibleCards = jeepneyCards.filter(card => card.style.display !== 'none');
+                jeepneyCards.forEach(card => {
+                    const plate = card.getAttribute('data-plate').toLowerCase();
+                    let status = card.getAttribute('data-status').toLowerCase();
+                    let originalStatus = (status === 'unavailable') ? 'unavailable' : 'available';
 
-        if (sortValue !== 'none') {
-            visibleCards.sort((a, b) => {
-                const typeA = a.getAttribute('data-vehicletype').toLowerCase();
-                const typeB = b.getAttribute('data-vehicletype').toLowerCase();
+                    const matchesFilter = filterValue === 'all' || originalStatus === filterValue;
+                    const matchesSearch = plate.includes(searchValue);
 
-                if (sortValue === 'traditional') {
-                    return typeA === 'traditional' ? -1 : 1;
-                } else if (sortValue === 'modern') {
-                    return typeA === 'modern' ? -1 : 1;
-                }
-                return 0;
-            });
-
-            // Reorder the elements in the DOM
-            visibleCards.forEach(card => jeepneyGrid.appendChild(card));
-        }
-    }
-});
-
+                    if (matchesFilter && matchesSearch) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
 
             var cardEditBtn = document.querySelectorAll('.edit-btn');
             cardEditBtn.forEach(editBtn => {
@@ -480,6 +460,7 @@ if (!$resultJeepney) {
                 })
                 .catch(err => console.error(err));
             });
+        });
 
         document.querySelectorAll('input[type=checkbox][data-target]').forEach(function(checkbox) {
             checkbox.addEventListener('change', function() {
